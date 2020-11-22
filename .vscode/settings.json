@@ -1,0 +1,6 @@
+{
+    "python.formatting.provider": "black",
+    "files.eol": "\n",
+    "files.insertFinalNewline": true,
+    "editor.rulers": [80]
+}
