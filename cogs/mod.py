@@ -16,6 +16,7 @@ class Mod(commands.Cog):
     @commands.has_guild_permissions(kick_members=True)
     @commands.guild_only()
     async def kick_user(self, ctx, member: discord.Member, *, reason=None) -> None:
+        """ Kick a user, with an optional reason. """
         try:
             if await perms.check_priv(ctx, member=member):
                 return
@@ -32,6 +33,7 @@ class Mod(commands.Cog):
     @commands.has_guild_permissions(ban_members=True)
     @commands.guild_only()
     async def ban_user(self, ctx, member: discord.Member, *, reason=None) -> None:
+        """ Ban a user, with an optional reason. """
         try:
             if await perms.check_priv(ctx, member=member):
                 return

@@ -41,9 +41,12 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, err):
         if isinstance(err, errors.CommandInvokeError):
-            await ctx.send("oops, something bad happened! contact andreas#0001 for help.")
-            await ctx.send(default.traceback_maker(err))
-        
+            await ctx.send(
+                "oops, something bad happened! contact andreas#0001 for help.\n"
+                + default.traceback_maker(err)
+            )
+        if isinstance(err, errors.MissingRequiredArgument):
+            await ctx.send_help(str(ctx.command))
 
 
 def setup(bot):
