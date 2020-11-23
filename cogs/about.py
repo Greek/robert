@@ -7,7 +7,6 @@ import psutil
 import os
 
 class About(commands.Cog):
-    """The description for About goes here."""
 
     def __init__(self, bot):
         self.bot = bot
