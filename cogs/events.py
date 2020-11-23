@@ -15,6 +15,10 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        print(
+            f"Logged on as {self.bot.user} on {len(self.bot.guilds)} guild(s)"
+        )
+
         if self.config.status == "idle":
             status = discord.Status.idle
         elif self.config.status == "dnd":
@@ -36,8 +40,10 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, err):
-        if isinstance(err, errors.MissingRequiredArgument):
-            pass
+        if isinstance(err, errors.CommandInvokeError):
+            await ctx.send("oops, something bad happened! contact andreas#0001 for help.")
+            await ctx.send(default.traceback_maker(err))
+        
 
 
 def setup(bot):

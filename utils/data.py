@@ -20,9 +20,6 @@ class Bot(AutoShardedBot):
                 )  # ignore this pylance
             )
 
-    async def on_ready(self):
-        print("Logged on as {0} (ID: {0.id})".format(self.user))
-
 
 class HelpFormat(DefaultHelpCommand):
     def get_destination(self, no_pm: bool = False):
