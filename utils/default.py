@@ -4,6 +4,7 @@ import ast
 from collections import namedtuple
 
 def get(file):
+    """ Helper function to open files. """ 
     try:
         with open(file, encoding='utf8') as data:
             return json.load(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
@@ -13,12 +14,14 @@ def get(file):
         raise FileNotFoundError("JSON file wasn't found")
 
 def responsible(prosecutor, reason):
+    """ Surround text with preset text. """
     usr = f"[{prosecutor}]"
     if reason is None:
         return f"{usr} no reason provided."
     return f"{usr} {reason}"
 
 def traceback_maker(err, advance: bool = True):
+    """ Properly render a traceback error. Useful for sending errors. """
     _traceback = ''.join(traceback.format_tb(err.__traceback__))
     error = ('```py\n{1}{0}: {2}\n```').format(type(err).__name__, _traceback, err)
     return error if advance else f"{type(err).__name__}: {err}"

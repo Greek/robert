@@ -6,6 +6,7 @@ from discord.ext.commands import AutoShardedBot, DefaultHelpCommand
 from utils import perms
 
 class Bot(AutoShardedBot):
+    """ Custom bot class extenting AutoShardedBot """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         try:
@@ -17,7 +18,7 @@ class Bot(AutoShardedBot):
             print(
                 "Could not load extension {0} due to {1.__class__.__name__}: {1}".format(
                     cog, exc
-                )  # ignore this pylance
+                )  # ignore this pylance err
             )
 
 

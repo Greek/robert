@@ -1,6 +1,7 @@
 import json
 
 def change_value(file: str, value: str, changeto: str):
+    """ Change the value of a field inside a JSON file. """
     try:
         with open(file, "r") as jsonFile:
             data = json.load(jsonFile)
