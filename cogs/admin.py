@@ -18,7 +18,7 @@ class Admin(commands.Cog):
             self.bot.load_extension(f"cogs.{cog}")
         except Exception as e:
             return await ctx.send(default.traceback_maker(e))
-        await ctx.send(f"loaded {cog}")
+        await ctx.send(f"loaded `{cog}.py`")
 
     @commands.command(name="unload", hidden=True)
     @commands.check(perms.only_owner)
@@ -27,7 +27,7 @@ class Admin(commands.Cog):
             self.bot.unload_extension(f"cogs.{cog}")
         except Exception as e:
             return await ctx.send(default.traceback_maker(e))
-        await ctx.send(f"unloaded {cog}")
+        await ctx.send(f"unloaded `{cog}.py`")
 
     @commands.command(name="reload", hidden=True)
     @commands.check(perms.only_owner)
@@ -36,9 +36,9 @@ class Admin(commands.Cog):
             self.bot.reload_extension(f"cogs.{cog}")
         except Exception as e:
             return await ctx.send(default.traceback_maker(e))
-        await ctx.send(f"reloaded {cog}")
+        await ctx.send(f"reloaded `{cog}.py`")
 
-    @commands.group(name="change")
+    @commands.group(name="change", hidden=True)
     @commands.check(perms.only_owner)
     async def change(self, ctx):
         if ctx.invoked_subcommand is None:
