@@ -1,0 +1,9 @@
+{
+    "prefix": "ap ",
+    "token": "token!",
+    "owners": [],
+    "playing": "ap help",
+    "playing_type": "",
+    "status": "dnd",
+    "version": "0.0.0"
+}
