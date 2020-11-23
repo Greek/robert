@@ -73,7 +73,7 @@ class Admin(commands.Cog):
         except Exception as e:
             await ctx.send(default.traceback_maker(e))
 
-    @commands.command(name="eval")
+    @commands.command(name="eval", hidden="True")
     @commands.check(perms.only_owner)
     async def eval_fn(self, ctx, *, cmd):
         """
