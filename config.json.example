@@ -1,7 +1,7 @@
 {
     "prefix": "ap ",
     "token": "token!",
-    "owners": [],
+    "owners": [403308385539194880],
     "playing": "ap help",
     "playing_type": "",
     "status": "dnd",
