@@ -20,13 +20,13 @@ class Mod(commands.Cog):
         try:
             if await perms.check_priv(ctx, member=member):
                 return
-            await member.kick(reason=default.responsible(ctx.author, member))
+            await member.kick(reason=default.responsible(ctx.author, reason))
             await ctx.send(
-                f"{ctx.author} kicked {str(member)} for no reason"
+                f"{ctx.author.name} kicked {str(member)} for no reason"
                 if reason is None
-                else f"{ctx.author} kicked {str(member)} for \"{reason}\"."
+                else f"{ctx.author.name} kicked {str(member)} for \"{reason}\"."
             )
-        except commands.errors.BotMissingPermissions:             
+        except discord.HTTPException:             
             await ctx.send("i can't do that.")
             
     @commands.command(name="ban")
@@ -37,13 +37,13 @@ class Mod(commands.Cog):
         try:
             if await perms.check_priv(ctx, member=member):
                 return
-            await member.ban(reason=default.responsible(ctx.author, member))
+            await member.ban(reason=default.responsible(ctx.author, reason))
             await ctx.send(
-                f"{ctx.author} banned {str(member)} for no reason"
+                f"{ctx.author.name} banned {str(member)} for no reason"
                 if reason is None
-                else f"{ctx.author} banned {str(member)} for \"{reason}\"."
+                else f"{ctx.author.name} banned {str(member)} for \"{reason}\"."
             )
-        except commands.errors.BotMissingPermissions:
+        except discord.HTTPException:
             await ctx.send("i can't do that.")
 
     #endregion
