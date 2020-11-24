@@ -1,9 +1,12 @@
 # -*- coding: utf-8 -*-
 
+import utils.perms
 from discord.ext import commands
 from utils import default, perms, _io
 import discord
 import ast
+import sys
+import time
 
 class Admin(commands.Cog):
 
@@ -37,6 +40,14 @@ class Admin(commands.Cog):
         except Exception as e:
             return await ctx.send(default.traceback_maker(e))
         await ctx.send(f"reloaded `{cog}.py`")
+
+    @commands.command(name="kill", hidden=True)
+    @commands.check(perms.only_owner)
+    async def kill_bot(self, ctx):
+        await ctx.send("gn")
+        time.sleep(1)
+        sys.exit()
+
 
     @commands.group(name="change", hidden=True)
     @commands.check(perms.only_owner)
