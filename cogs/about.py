@@ -17,14 +17,14 @@ class About(commands.Cog):
     async def about(self, ctx):
         """ About the bot """
         try:
-            ramUsage = self.process.memory_full_info().rss / 1024**2
-            avgmembers = round(len(self.bot.users) / len(self.bot.guilds))
+            ram_usage = self.process.memory_full_info().rss / 1024**2
+            avg_members = round(len(self.bot.users) / len(self.bot.guilds))
 
-            embedColour = discord.Embed.Empty
+            embed_color = discord.Embed.Empty
             if hasattr(ctx, 'guild') and ctx.guild is not None:
-                embedColour = ctx.me.top_role.colour
+                embed_color = ctx.me.top_role.color
 
-            embed = discord.Embed(colour=embedColour)
+            embed = discord.Embed(color=embed_color)
             embed.set_thumbnail(url=ctx.bot.user.avatar_url)
             # embed.add_field(name="Last boot", value=default.timeago(
             #     datetime.now() - self.bot.uptime), inline=True)
@@ -35,10 +35,10 @@ class About(commands.Cog):
                 inline=True)
             embed.add_field(name="Library", value="discord.py", inline=True)
             embed.add_field(
-                name="Servers", value=f"{len(ctx.bot.guilds)} ( averaging: {avgmembers} users/server )", inline=True)
+                name="Servers", value=f"{len(ctx.bot.guilds)} ( averaging: {avg_members} users/server )", inline=True)
             embed.add_field(name="Commands loaded", value=len(
                 [x.name for x in self.bot.commands]), inline=True)
-            embed.add_field(name="RAM usage", value=f"{ramUsage:.2f} MB", inline=True)
+            embed.add_field(name="RAM usage", value=f"{ram_usage:.2f} MB", inline=True)
             
 
             await ctx.send(content=f"about **{ctx.bot.user}** | **{self.config.version}**", embed=embed)
