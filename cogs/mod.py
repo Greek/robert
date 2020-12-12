@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from utils.default import traceback_maker
 import discord
 from discord.ext import commands
 from utils import default, perms
@@ -9,6 +10,9 @@ class Mod(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+
+    def check_msg(ctx, m):
+        return m.author == ctx.user
 
     #region User Management
 
@@ -47,6 +51,17 @@ class Mod(commands.Cog):
             await ctx.send("i can't do that.")
 
     #endregion
+
+    @commands.command(name="purge")
+    @commands.has_guild_permissions(manage_messages=True)
+    @commands.guild_only()
+    async def mass_delete(self, ctx, amount: int, target: discord.Member = None):
+        """ Mass delete messages at once. """
+        try:
+            await ctx.channel.purge(limit=amount)
+            await ctx.send(f"purged {amount} messages")
+        except discord.HTTPException:
+            await ctx.send("i can't do that.")
 
 def setup(bot):
     bot.add_cog(Mod(bot))
