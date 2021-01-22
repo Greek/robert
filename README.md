@@ -24,7 +24,6 @@ Steps:
 5. `playing_type [listening|watching]` - represents what playing state the bot
    is in.
 6. `status [online|dnd|idle]` - represents the status of the user.
-7. `version` - represents the version of the bot.
 
 ## credits
 
