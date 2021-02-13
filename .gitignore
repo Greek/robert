@@ -28,3 +28,7 @@ var/
 # Our configuration files
 config.py
 config.json
+
+# other 
+.idea
+media/*

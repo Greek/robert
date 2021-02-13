@@ -49,6 +49,19 @@ class Admin(commands.Cog):
         sys.exit()
 
 
+    @commands.command(hidden=True)
+    @commands.check(perms.only_owner)
+    async def dm(self, ctx, user_id: int, *, message: str):
+        """dm someone for the trollz"""
+        user = self.bot.get_user(user_id)
+        if not user:
+            return await ctx.send(f"can't find mr **{user_id}**")
+        try:
+            await user.send(message)
+            await ctx.send(f"messaged **{user_id}**")
+        except discord.Forbidden:
+            await ctx.send("he don't wanna talk :neutral_face:")
+
     @commands.group(name="change", hidden=True)
     @commands.check(perms.only_owner)
     async def change(self, ctx):

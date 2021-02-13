@@ -39,9 +39,8 @@ class About(commands.Cog):
             embed.add_field(name="Commands loaded", value=len(
                 [x.name for x in self.bot.commands]), inline=True)
             embed.add_field(name="RAM usage", value=f"{ram_usage:.2f} MB", inline=True)
-            
 
-            await ctx.send(content=f"about **{ctx.bot.user}** | **{self.config.version}**", embed=embed)
+            await ctx.send(content=f"about **{ctx.bot.user}**", embed=embed)
         except Exception:
             pass
 
