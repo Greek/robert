@@ -1,6 +1,6 @@
 # bot
 
-A Discord bot made in Python.
+A Discord bot made in Python. It uses a slightly modified version of Discord.py, which 
 
 ## how to run
 
@@ -9,7 +9,7 @@ Linux based systems.
 
 Steps:
 
-1. Install [Python][python] (any version above 2.x should do)
+1. (Windows only) Install [Python][python] (any version above 2.x should do)
 2. (Unix only) Run `sudo apt install gcc python3-dev`
 3. Install requirements: `python -m pip install -r requirements.txt`
 4. Copy `config.json.example` to `config.json` and change [appropriate values][values].
@@ -27,10 +27,12 @@ Steps:
 
 ## credits
 
-I cheated and ~~plagirized~~ borrowed code from Alex's "discord_bot.py" discord
+I cheated and ~~plagiarized~~ borrowed code from Alex's "discord_bot.py" discord
 bot, mainly utilities and helper functions. the whole structure of the bot is
 inspired from Alex's bot.
 
 [python]: https://www.python.org/
 
 [values]: #config-settings
+
+
