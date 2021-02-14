@@ -29,6 +29,9 @@ var/
 config.py
 config.json
 
+# Logging
+*.log
+
 # other 
 .idea
 media/*
