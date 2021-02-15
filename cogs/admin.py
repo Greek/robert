@@ -20,7 +20,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-import utils.perms
 from discord.ext import commands
 from utils import default, perms, _io
 import discord
@@ -110,7 +109,7 @@ class Admin(commands.Cog):
             activity=discord.Activity(type=playing_type, name=playing),
             status=status,
         )
-            _io.change_value(self.config, "playing", playing)
+            _io.change_value("./config.json", "playing", playing)
             await ctx.send(f"changed playing status to \"{playing}\"")
         except discord.InvalidArgument as err:
             await ctx.send(err)
