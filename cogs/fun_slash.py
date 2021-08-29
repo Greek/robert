@@ -23,9 +23,9 @@ class FunSlash(commands.Cog):
         """
         try:
             member = member or ctx.author
-            embed = discord.Embed(description=f"{member.mention}")
-            embed.set_author(name=str(member), icon_url=member.avatar_url)
-            embed.set_thumbnail(url=member.avatar_url)
+            embed = discord.Embed(color=member.color, description=f"{member.mention}")
+            embed.set_author(name=str(member), icon_url=member.avatar)
+            embed.set_thumbnail(url=member.avatar)
             embed.add_field(name="Join date", value=f"{member.joined_at}"[0:10])
             embed.add_field(name="Creation date", value=f"{member.created_at}"[0:10])
             embed.add_field(name="Roles", value=", ".join([r.mention for r in member.roles]), inline=False)

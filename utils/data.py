@@ -25,7 +25,8 @@ import os
 import logging
 
 from discord.ext.commands import AutoShardedBot, MinimalHelpCommand
-from utils import perms
+from utils import perms, default
+
 
 class Bot(AutoShardedBot):
     """ Custom bot class extending AutoShardedBot """
@@ -59,8 +60,9 @@ class HelpFormat(MinimalHelpCommand):
 
     def get_ending_note(self):
         command_name = self.invoked_with
+        cfg_prefix = default.get("config.json").prefix
         return "You can get help with a specific command with \"{0}{1} <cmd>\"\n" \
-            "It provides more information on what you can do with that command.".format(self.clean_prefix, command_name)
+            "It provides more information on what you can do with that command.".format(cfg_prefix, command_name)
 
     def get_opening_note(self):
         pass
