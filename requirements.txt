@@ -1,3 +1,3 @@
-discord.py-papachar==1.0.1 # using a slightly modified version of disc.py, basically the same thing.
-psutil
+discord.py-papachar==1.0.1 # dislash.py will override this
+psutil~=5.8.0
 aiohttp==3.6.0
