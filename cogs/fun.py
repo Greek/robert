@@ -21,10 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from discord import Embed
 from discord.ext import commands
 import discord
-from dislash import slash_command, Option, OptionType
+
+from utils import default
 
 
 class Fun(commands.Cog):
@@ -43,8 +43,9 @@ class Fun(commands.Cog):
         Get information for a specific user.
         """
         try:
-            member = member or ctx.author
-            embed = discord.Embed(colour=int(member.color), description=f"{member.mention}")
+            if member is None:
+                member = ctx.author
+            embed = discord.Embed(description=f"{member.mention}")
             embed.set_author(name=str(member), icon_url=member.avatar_url)
             embed.set_thumbnail(url=member.avatar_url)
             embed.add_field(name="Join date", value=f"{member.joined_at}"[0:10])
@@ -53,7 +54,7 @@ class Fun(commands.Cog):
             embed.set_footer(text="ID: " + str(member.id))
             await ctx.send(embed=embed)
         except Exception as e:
-            await ctx.send(e)
+            await ctx.send(default.traceback_maker(e))
 
 def setup(bot):
     bot.add_cog(Fun(bot))

@@ -4,6 +4,9 @@ from discord.ext import commands
 from dislash import slash_command, Option, OptionType
 import discord
 
+from utils import default
+
+
 class FunSlash(commands.Cog):
     """The description for FunSlash goes here."""
 
@@ -20,7 +23,7 @@ class FunSlash(commands.Cog):
         """
         try:
             member = member or ctx.author
-            embed = discord.Embed(colour=member.color, description=f"{member.mention}")
+            embed = discord.Embed(description=f"{member.mention}")
             embed.set_author(name=str(member), icon_url=member.avatar_url)
             embed.set_thumbnail(url=member.avatar_url)
             embed.add_field(name="Join date", value=f"{member.joined_at}"[0:10])
@@ -29,7 +32,7 @@ class FunSlash(commands.Cog):
             embed.set_footer(text="ID: " + str(member.id))
             await ctx.send(embed=embed)
         except Exception as e:
-            await ctx.send(e)
+            await ctx.send(default.traceback_maker(e))
 
 def setup(bot):
     bot.add_cog(FunSlash(bot))

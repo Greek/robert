@@ -33,9 +33,11 @@ async def check_priv(ctx, member):
     try:
         # Self checks
         if member == ctx.author:
-            return await ctx.send(f"you can't {ctx.command.name} yourself.")
+            # return await ctx.send(f"you can't {ctx.command.name} yourself.")
+            return
         if member.id == ctx.bot.user.id:
-            return await ctx.send("YO WTF 😡😡😡😡")
+            # return await ctx.send(f"you can't {ctx.command.name} me.")
+            return
 
         # Check if user bypasses
         if ctx.author.id == ctx.guild.owner.id:
