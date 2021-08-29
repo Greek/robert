@@ -53,7 +53,7 @@ class Mod(commands.Cog):
                 else f"{ctx.author.name} kicked {str(member)} for \"{reason}\"."
             )
         except discord.HTTPException:             
-            await ctx.send("i can't do that.")
+            await ctx.send("i can't do that for you.")
             
     @commands.command(name="ban")
     @commands.has_guild_permissions(ban_members=True)
@@ -70,7 +70,7 @@ class Mod(commands.Cog):
                 else f"{ctx.author.name} banned {str(member)} for \"{reason}\"."
             )
         except discord.HTTPException:
-            await ctx.send("i can't do that.")
+            await ctx.send("i can't do that for you.")
 
     #endregion
 
@@ -83,7 +83,7 @@ class Mod(commands.Cog):
             await ctx.channel.purge(limit=amount)
             await ctx.send(f"purged {amount} messages")
         except discord.HTTPException:
-            await ctx.send("i can't do that.")
+            await ctx.send("i can't do that for you.")
 
 def setup(bot):
     bot.add_cog(Mod(bot))
