@@ -21,9 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-
+from discord import Embed
 from discord.ext import commands
 import discord
+from dislash import slash_command, Option, OptionType
+
 
 class Fun(commands.Cog):
     """The description for Fun goes here."""
@@ -36,14 +38,13 @@ class Fun(commands.Cog):
         await ctx.send("you know what **screams** insecure?\n\n\"http://\"!")
 
     @commands.command(name="user")
-    async def get_user_info(self, ctx, member: discord.Member = None):
+    async def get_user_info(self, ctx, member=discord.Member):
         """
         Get information for a specific user.
         """
         try:
-            if member is None:
-                member = ctx.author
-            embed = discord.Embed(colour=member.color, description=f"{member.mention}")
+            member = member or ctx.author
+            embed = discord.Embed(colour=int(member.color), description=f"{member.mention}")
             embed.set_author(name=str(member), icon_url=member.avatar_url)
             embed.set_thumbnail(url=member.avatar_url)
             embed.add_field(name="Join date", value=f"{member.joined_at}"[0:10])
