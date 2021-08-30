@@ -37,10 +37,10 @@ class Fun(commands.Cog):
     async def get_shitty_pun(self, ctx):
         await ctx.send("you know what **screams** insecure?\n\n\"http://\"!")
 
-    @commands.command(name="user")
+    @commands.command(name="who")
     async def get_user_info(self, ctx, member: discord.Member = None):
         """
-        Get information for a specific user.
+        Get info about a user.
         """
         try:
             if member is None:
@@ -55,6 +55,13 @@ class Fun(commands.Cog):
             await ctx.send(embed=embed)
         except Exception as e:
             await ctx.send(e)
+
+    @commands.command(name="avatar")
+    async def get_user_avatar(self, ctx):
+        try:
+            await ctx.send(ctx.guild.icon.with_format("png").with_size(2048))
+        except Exception as e:
+            await ctx.send(default.traceback_maker(err=e))
 
 def setup(bot):
     bot.add_cog(Fun(bot))
