@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 import discord
+import dislash
 from discord.ext import commands
 from discord.ext.commands import errors
 from discord.ext.commands.cooldowns import BucketType
@@ -74,6 +75,9 @@ class Events(commands.Cog):
         if isinstance(err, errors.MissingRequiredArgument):
             await ctx.send_help(str(ctx.command))
 
+        if isinstance(err, errors.BotMissingPermissions):
+            await ctx.send("i can't do this, do i have the right perms?")
+
         if isinstance(err, commands.CommandOnCooldown):
             print(f"[COOLDOWN] {err}")
 
@@ -96,6 +100,10 @@ class Events(commands.Cog):
             if message.content.startswith("sex smp"):
                 await message.channel.send("https://tenor.com/view/dream-dream-team-sapnap-georgenotfound-technoblade-gif-19248460")
 
+    @commands.Cog.listener()
+    async def on_slash_command_error(self, inter, error):
+        if isinstance(error, dislash.errors.BotMissingPermissions):
+            await inter.reply("i can't do this, do i have perms?")
 
 def setup(bot):
     bot.add_cog(Events(bot))
