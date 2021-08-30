@@ -16,6 +16,7 @@ Steps:
 5. Run `python bot.py`
 
 ## config settings
+Please make sure you have all these fields in, the bot might break if you don't!
 
 1. `prefix` - the prefix used for running commands
 2. `token` - login token
@@ -24,6 +25,7 @@ Steps:
 5. `playing_type [listening|watching]` - represents what playing state the bot
    is in.
 6. `status [online|dnd|idle]` - represents the status of the user.
+7. `accent_color` - an accent color, primarily used in embeds.
 
 ## credits
 

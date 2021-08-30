@@ -25,8 +25,10 @@ import json
 import ast
 from collections import namedtuple
 
+import discord
+
 def get(file):
-    """ Helper function to open files. """ 
+    """ Helper function to open files. """
     try:
         with open(file, encoding='utf8') as data:
             return json.load(data, object_hook=lambda d: namedtuple('X', d.keys())(*d.values()))
@@ -41,6 +43,17 @@ def responsible(prosecutor, reason):
     if reason is None:
         return f"{usr} no reason provided."
     return f"{usr} {reason}"
+
+def branded_embed(title, description):
+    f = open("config.json")
+    config = json.load(f)
+    accent_color = config.get("accent_color")
+
+    if not (accent_color is None):
+        embed = discord.Embed(title=title, description=description, color=int(accent_color, 16))
+    else:
+        embed = discord.Embed(title=title, description=description, color=discord.Embed.Empty)
+    return embed
 
 def traceback_maker(err, advance: bool = True):
     """ Properly render a traceback error. Useful for sending errors. """
