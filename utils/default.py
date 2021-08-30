@@ -26,6 +26,13 @@ import ast
 from collections import namedtuple
 
 import discord
+import i18n
+
+i18n.set('skip_locale_root_data', True)
+i18n.translations.container.clear()
+i18n.set('file_format', 'yaml')
+i18n.set('filename_format', '{locale}.{format}')
+i18n.load_path.append('./lang/')
 
 def get(file):
     """ Helper function to open files. """
@@ -43,6 +50,9 @@ def responsible(prosecutor, reason):
     if reason is None:
         return f"{usr} no reason provided."
     return f"{usr} {reason}"
+
+def translate(key, **kwargs):
+    return i18n.t(key, **kwargs)
 
 def branded_embed(title, description):
     f = open("config.json")

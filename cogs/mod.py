@@ -26,6 +26,7 @@ from utils.default import traceback_maker
 import discord
 from discord.ext import commands
 from utils import default, perms
+from utils.default import translate as _
 
 class Mod(commands.Cog):
     """Commands for moderators"""
@@ -52,7 +53,7 @@ class Mod(commands.Cog):
             )
             await sent.delete(delay=3)
         except discord.HTTPException:
-            sent = await ctx.send("i can't do that for you.")
+            sent = await ctx.reply(_("events.missing_permission"))
             await sent.delete(delay=3)
             
     @commands.command(name="ban")
@@ -71,7 +72,7 @@ class Mod(commands.Cog):
             )
             await sent.delete(delay=3)
         except discord.HTTPException:
-            sent = await ctx.send("i can't do that for you.")
+            sent = await ctx.reply(_("events.missing_permission"))
             await sent.delete(delay=3)
 
     @commands.command(name="purge")
@@ -84,7 +85,7 @@ class Mod(commands.Cog):
             sent = await ctx.send(f"purged {amount} messages")
             await sent.delete(delay=3)
         except discord.HTTPException:
-            sent = await ctx.send("i can't do that for you.")
+            sent = await ctx.reply(_("events.missing_permission"))
             await sent.delete(delay=3)
 
 def setup(bot):

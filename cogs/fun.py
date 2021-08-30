@@ -43,10 +43,9 @@ class Fun(commands.Cog):
         Get info about a user.
         """
         try:
-            if member is None:
-                member = ctx.author
+            member = member or ctx.author
             embed = discord.Embed(colour=member.color, description=f"{member.mention}")
-            embed.set_author(name=str(member), icon_url=member.avatar)
+            embed.set_author(name=str(member), url=member.avatar)
             embed.set_thumbnail(url=member.avatar)
             embed.add_field(name="Join date", value=f"{member.joined_at}"[0:10])
             embed.add_field(name="Creation date", value=f"{member.created_at}"[0:10])

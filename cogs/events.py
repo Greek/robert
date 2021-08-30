@@ -28,8 +28,8 @@ from discord.ext import commands
 from discord.ext.commands import errors
 from discord.ext.commands.cooldowns import BucketType
 from utils import default
+from utils.default import translate as _
 import datetime
-
 
 class Events(commands.Cog):
     """Event listeners :Smile:"""
@@ -42,7 +42,7 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print(
-            f"Logged on as {self.bot.user} on {len(self.bot.guilds)} guild(s)"
+            f"Logged on as {self.bot.user} on {len(self.bot.guilds)} guild(s)\n"
         )
 
         if self.config.status == "idle":
@@ -68,15 +68,15 @@ class Events(commands.Cog):
     async def on_command_error(self, ctx, err):
         if isinstance(err, errors.CommandInvokeError):
             await ctx.send(
-                "oops, something bad happened! contact andreas#0001 for help.\n"
+                _("events.command_error") + "\n"
                 + default.traceback_maker(err)
             )
 
         if isinstance(err, errors.MissingRequiredArgument):
-            await ctx.send_help(str(ctx.command))
+            await ctx.send_help(_("events.missing_args") + "\n" + str(ctx.command))
 
         if isinstance(err, errors.BotMissingPermissions):
-            await ctx.send("i can't do this, do i have the right perms?")
+            await ctx.send(_("events.missing_permission"))
 
         if isinstance(err, commands.CommandOnCooldown):
             print(f"[COOLDOWN] {err}")
@@ -103,7 +103,7 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_slash_command_error(self, inter, error):
         if isinstance(error, dislash.errors.BotMissingPermissions):
-            await inter.reply("i can't do this, do i have perms?")
+            await inter.reply(_("events.missing_permission"))
 
 def setup(bot):
     bot.add_cog(Events(bot))

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from discord import PartialEmoji, Emoji
 from discord.ext import commands
-from discord.ext.commands import EmojiConverter
-from dislash import slash_command, Option, OptionType, ActionRow, Button, ButtonStyle
+from dislash import slash_command, Option, OptionType
+from utils.default import translate as _
 import discord
 
 from utils import default
@@ -33,7 +33,9 @@ class FunSlash(commands.Cog):
             embed.set_footer(text="ID: " + str(member.id))
             await ctx.send(embed=embed)
         except Exception as e:
-            await ctx.send(default.traceback_maker(e))
+            await ctx.send(_("events.command_error"))
+            return print(e)
+
 
 def setup(bot):
     bot.add_cog(FunSlash(bot))
