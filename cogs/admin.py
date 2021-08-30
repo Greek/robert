@@ -156,7 +156,7 @@ class Admin(commands.Cog):
             exec(compile(parsed, filename="<ast>", mode="exec"), env)
 
             result = await eval(f"{fn_name}()", env)
-            await ctx.send(result)
+            await ctx.send(f"{result}")
         except Exception as e:
             await ctx.send(e)
 

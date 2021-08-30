@@ -1,0 +1,4 @@
+events:
+  command_error: oops, something bad happened! contact andreas#0001 for help.
+  missing_permission: i can't do this, do i have the right perms?
+  missing_args: are you missing something?
