@@ -35,24 +35,24 @@ class About(commands.Cog):
         self.process = psutil.Process(os.getpid())
         self.config = default.get("config.json")
 
-    @commands.command(aliases=['info', 'stats', 'status'])
+    @commands.command(name="about", aliases=['info', 'stats', 'status'])
     async def about(self, ctx):
         """ About the bot """
         try:
             ram_usage = self.process.memory_full_info().rss / 1024**2
-            avg_members = round(len(self.bot.users) / len(self.bot.guilds))
+            avg_members = sum(g.member_count for g in self.bot.guilds) / len(self.bot.guilds)
 
             embed_color = discord.Embed.Empty
             if hasattr(ctx, 'guild') and ctx.guild is not None:
                 embed_color = ctx.me.top_role.color
 
             embed = discord.Embed(color=embed_color)
-            embed.set_thumbnail(url=ctx.bot.user.avatar_url)
+            embed.set_thumbnail(url=ctx.bot.user.avatar)
             # embed.add_field(name="Last boot", value=default.timeago(
             #     datetime.now() - self.bot.uptime), inline=True)
             embed.add_field(
                 name=f"Developer{'' if len(self.config.owners) == 1 else 's'}",
-                value=', '.join([str(self.bot.get_user(x))
+                value=', '.join([str(await self.bot.fetch_user(x))
                                 for x in self.config.owners]),
                 inline=True)
             embed.add_field(name="Library", value="discord.py", inline=True)
@@ -64,7 +64,7 @@ class About(commands.Cog):
 
             await ctx.send(content=f"about **{ctx.bot.user}**", embed=embed)
         except Exception as e:
-            pass
+            await ctx.send(default.traceback_maker(e))
 
 def setup(bot):
     bot.add_cog(About(bot))
