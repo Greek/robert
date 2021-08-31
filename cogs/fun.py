@@ -53,12 +53,17 @@ class Fun(commands.Cog):
         except Exception as e:
             await ctx.send(e)
 
-    @commands.command(name="avatar")
-    async def get_user_avatar(self, ctx):
-        try:
-            await ctx.send(ctx.guild.icon.with_format("png").with_size(2048))
-        except Exception as e:
-            await ctx.send(default.traceback_maker(err=e))
+    @commands.command(name="8ball", description=_("cmds.8ball.desc"))
+    async def random_response_generator(self, ctx):  # i know, lame name
+        pass
+
+    # @commands.command(name="avatar")
+    # async def get_user_avatar(self, ctx):
+    #     try:
+    #         await ctx.send(ctx.guild.icon.with_format("png").with_size(2048))
+    #     except Exception as e:
+    #         await ctx.send(default.traceback_maker(err=e))
+
 
 def setup(bot):
     bot.add_cog(Fun(bot))

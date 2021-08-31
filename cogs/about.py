@@ -46,7 +46,7 @@ class About(commands.Cog):
             if hasattr(ctx, 'guild') and ctx.guild is not None:
                 embed_color = ctx.me.top_role.color
 
-            embed = discord.Embed(color=embed_color)
+            embed = discord.Embed(title=f"about {ctx.bot.user.name}", color=embed_color)
             embed.set_thumbnail(url=ctx.bot.user.avatar)
             # embed.add_field(name="Last boot", value=default.timeago(
             #     datetime.now() - self.bot.uptime), inline=True)
@@ -62,7 +62,7 @@ class About(commands.Cog):
                 [x.name for x in self.bot.commands]), inline=True)
             embed.add_field(name="RAM usage", value=f"{ram_usage:.2f} MB", inline=True)
 
-            await ctx.send(content=f"about **{ctx.bot.user}**", embed=embed)
+            await ctx.send(content=f"", embed=embed)
         except Exception as e:
             await ctx.send(default.traceback_maker(e))
 
