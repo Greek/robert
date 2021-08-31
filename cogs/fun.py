@@ -35,23 +35,20 @@ class Fun(commands.Cog):
         self.bot = bot
 
     @commands.command(name="shitty-pun")
-    async def get_shitty_pun(self, ctx):
+    async def get_shitty_pun(self, ctx, asd: int):
         await ctx.send("you know what **screams** insecure?\n\n\"http://\"!")
 
     @commands.command(name="who", description=_("cmds.who.desc"))
     async def get_user_info(self, ctx, member: discord.Member = None):
-        try:
-            member = member or ctx.author
-            embed = discord.Embed(colour=member.color, description=f"{member.mention}")
-            embed.set_author(name=str(member), icon_url=member.avatar)
-            embed.set_thumbnail(url=member.avatar)
-            embed.add_field(name="Join date", value=f"{member.joined_at}"[0:10])
-            embed.add_field(name="Creation date", value=f"{member.created_at}"[0:10])
-            embed.add_field(name="Roles", value=", ".join([r.mention for r in member.roles[1:]]), inline=False)
-            embed.set_footer(text="ID: " + str(member.id))
-            await ctx.send(embed=embed)
-        except Exception as e:
-            await ctx.send(e)
+        member = member or ctx.author
+        embed = discord.Embed(colour=member.color, description=f"{member.mention}")
+        embed.set_author(name=str(member), icon_url=member.avatar)
+        embed.set_thumbnail(url=member.avatar)
+        embed.add_field(name="Join date", value=f"{member.joined_at}"[0:10])
+        embed.add_field(name="Creation date", value=f"{member.created_at}"[0:10])
+        embed.add_field(name="Roles", value=", ".join([r.mention for r in member.roles[1:]]), inline=False)
+        embed.set_footer(text="ID: " + str(member.id))
+        await ctx.send(embed=embed)
 
     @commands.command(name="8ball", description=_("cmds.8ball.desc"))
     async def random_response_generator(self, ctx):  # i know, lame name

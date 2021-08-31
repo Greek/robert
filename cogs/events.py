@@ -24,6 +24,7 @@ SOFTWARE.
 
 import discord
 import dislash
+import uuid
 from discord.ext import commands
 from discord.ext.commands import errors
 from discord.ext.commands.cooldowns import BucketType
@@ -67,13 +68,21 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, err):
         if isinstance(err, errors.CommandInvokeError):
-            await ctx.send(
-                _("events.command_error") + "\n"
-                + default.traceback_maker(err)
-            )
+            log = self.bot.get_channel(882216323042648105)
+            guild = await self.bot.fetch_guild(ctx.guild.id)
+            ref_id = uuid.uuid4()
+            embed = default.branded_embed(title="oops!", description=_("events.command_error.title"),
+                                          footer_text=_("events.command_error.footer", ref_id=ref_id), color="red")
+            await log.send(f"~~———————————————————————————————————————————————————————————————————————————————————~~" +
+                           f"\n[ERROR] Occurred in guild \"{guild}\" ({guild.id})\n" +
+                           f"Command invoked: `{ctx.message.content}`\nReference ID: `{ref_id}` " +
+                           default.traceback_maker(err=err))
+
+            await ctx.send(embed=embed)
 
         if isinstance(err, errors.MissingRequiredArgument):
-            await ctx.send_help(_("events.missing_args") + "\n" + str(ctx.command))
+            await ctx.send(_("events.missing_args") + "\n")
+            await ctx.send_help(str(ctx.command))
 
         if isinstance(err, errors.BotMissingPermissions):
             await ctx.send(_("events.missing_permission"))
@@ -132,11 +141,12 @@ class Events(commands.Cog):
                 await message.channel.send("https://thot.wtf/i/2021/02/13/fucking%20sex.gif")
 
             if message.content.startswith("spunch bop"):
-                await message.channel.send("https://tenor.com/view/spunch-bop-spongebob-crying-cube-mr-krabs-gif-19973394")
+                await message.channel.send(
+                    "https://tenor.com/view/spunch-bop-spongebob-crying-cube-mr-krabs-gif-19973394")
 
             if message.content.startswith("sex smp"):
-                await message.channel.send("https://tenor.com/view/dream-dream-team-sapnap-georgenotfound-technoblade-gif-19248460")
-
+                await message.channel.send(
+                    "https://tenor.com/view/dream-dream-team-sapnap-georgenotfound-technoblade-gif-19248460")
 
 
 def setup(bot):
