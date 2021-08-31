@@ -25,6 +25,7 @@ from discord.ext import commands
 import discord
 
 from utils import default
+from utils.default import translate as _
 
 
 class Fun(commands.Cog):
@@ -37,11 +38,8 @@ class Fun(commands.Cog):
     async def get_shitty_pun(self, ctx):
         await ctx.send("you know what **screams** insecure?\n\n\"http://\"!")
 
-    @commands.command(name="who")
+    @commands.command(name="who", description=_("cmds.who.desc"))
     async def get_user_info(self, ctx, member: discord.Member = None):
-        """
-        Get info about a user.
-        """
         try:
             member = member or ctx.author
             embed = discord.Embed(colour=member.color, description=f"{member.mention}")

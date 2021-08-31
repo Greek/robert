@@ -15,8 +15,8 @@ class FunSlash(commands.Cog):
         self.bot = bot
 
     @slash_command(name="who",
-                   description="Get info about a user.",
-                   options=[Option("member", "The user you want.", OptionType.USER, required=True)]
+                   description=_("cmds.who.desc"),
+                   options=[Option("member", _("cmds.who.options.member"), OptionType.USER, required=True)]
     )
     async def get_user_info(self, ctx, member=None):
         """

@@ -1,4 +1,28 @@
+cmds:
+  # Moderation commands
+    ban:
+      desc: Ban a user, with an optional reason.
+      res_noreason: successfully banned %{member} for no reason.
+      res_reason: successfully banned %{member} for "%{reason}"
+    kick:
+      desc: Kick a user, with an optional reason.
+      res_noreason: successfully kicked %{member} for no reason.
+      res_reason: successfully kicked %{member} for "%{reason}"
+    purge:
+      desc: Mass delete messages at once.
+      res: purged %{amount} message(s)
+  # "Fun" commands
+    who:
+      desc: Get info about a user.
+      options:
+        member: The user you want.
+
 events:
   command_error: oops, something bad happened! contact andreas#0001 for help.
   missing_permission: i can't do this, do i have the right perms?
   missing_args: are you missing something?
+
+interactives:
+  ip:
+    desc: What's the IP?
+    res: Pyrelic is currently under development, a release date will be announced in \#announcements, so keep an eye out!
