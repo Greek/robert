@@ -67,7 +67,7 @@ def branded_embed(title: str = None, description: str = None, fields: list = Non
         elif color == "red":
             color = 0xed4245
     else:
-        color = int(accent_color, 16) or discord.Embed.Empty
+        color = color or int(accent_color, 16)
 
     if title is None:
         embed = discord.Embed(description=description, color=color)
