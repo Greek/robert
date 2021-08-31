@@ -82,6 +82,43 @@ class Events(commands.Cog):
             print(f"[COOLDOWN] {err}")
 
     @commands.Cog.listener()
+    async def on_slash_command_error(self, inter, error):
+        if isinstance(error, dislash.errors.BotMissingPermissions):
+            await inter.reply(_("events.missing_permission"))
+
+    @commands.Cog.listener()
+    async def on_guild_join(self, guild):
+        owner = await self.bot.fetch_user(guild.owner_id)
+        log_channel = self.bot.get_channel(882216228670808074)
+
+        embed = default.branded_embed(title=f"New Guild", description=f"Guild \"{guild.name}\"", color="green")
+
+        embed.add_field(name="Owner", value=f"{owner.name}#{owner.discriminator}", inline=True)
+        embed.add_field(name="Member count", value=f"{guild.member_count}", inline=True)
+        embed.add_field(name="Max presences?", value=f"{guild.max_presences}", inline=True)
+        try:
+            invites = await guild.invites()
+            stringified = str(invites)
+            embed.add_field(name="Invite", value=f"{stringified[2:25]}", inline=True)
+        except discord.errors.Forbidden:
+            embed.add_field(name="Invite", value=f"Could not fetch invite.", inline=True)
+            pass
+        embed.set_footer(text=f"Guild ID: {str(guild.id)}")
+        await log_channel.send(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_guild_remove(self, guild):
+        owner = await self.bot.fetch_user(guild.owner_id)
+        log_channel = self.bot.get_channel(882216228670808074)
+        embed = default.branded_embed(title=f"Left Guild", description=f"Guild \"{guild.name}\"", color="red")
+
+        embed.add_field(name="Owner", value=f"{owner.name}#{owner.discriminator}", inline=True)
+        embed.add_field(name="Member count", value=f"{guild.member_count}", inline=True)
+        embed.add_field(name="Max presences?", value=f"{guild.max_presences}", inline=True)
+        embed.set_footer(text=f"Guild ID: {str(guild.id)}")
+        await log_channel.send(embed=embed)
+
+    @commands.Cog.listener()
     @commands.cooldown(1, 30, BucketType.user)
     async def on_message(self, message):
         time_difference = (datetime.datetime.utcnow() - self.last_timeStamp).total_seconds()
@@ -96,14 +133,11 @@ class Events(commands.Cog):
 
             if message.content.startswith("spunch bop"):
                 await message.channel.send("https://tenor.com/view/spunch-bop-spongebob-crying-cube-mr-krabs-gif-19973394")
-            
+
             if message.content.startswith("sex smp"):
                 await message.channel.send("https://tenor.com/view/dream-dream-team-sapnap-georgenotfound-technoblade-gif-19248460")
 
-    @commands.Cog.listener()
-    async def on_slash_command_error(self, inter, error):
-        if isinstance(error, dislash.errors.BotMissingPermissions):
-            await inter.reply(_("events.missing_permission"))
+
 
 def setup(bot):
     bot.add_cog(Events(bot))
