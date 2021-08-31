@@ -6,7 +6,7 @@ from utils.default import get
 from dislash import InteractionClient
 
 cfg = get("config.json")
-guilds = [865970213535350826]
+guilds = [880389498570178591]
 
 bot = Bot(
     command_prefix=cfg.prefix,
