@@ -54,15 +54,64 @@ def responsible(prosecutor, reason):
 def translate(key, **kwargs):
     return i18n.t(key, **kwargs)
 
-def branded_embed(title, description):
+def branded_embed(title: str = None, description: str = None, fields: list = None, color=None,
+                 image: str = None, thumbnail: str = None, footer_text: str = None, footer_icon: str = None,
+                 author_text: str = None, author_image: str = None, author_url: str = None, title_url: str = None):
+
     f = open("config.json")
     config = json.load(f)
     accent_color = config.get("accent_color")
-
-    if not (accent_color is None):
-        embed = discord.Embed(title=title, description=description, color=int(accent_color, 16))
+    if color is not None:
+        if color == "green":
+            color = 0x57f287
+        elif color == "red":
+            color = 0xed4245
     else:
-        embed = discord.Embed(title=title, description=description, color=discord.Embed.Empty)
+        color = int(accent_color, 16) or discord.Embed.Empty
+
+    if title is None:
+        embed = discord.Embed(description=description, color=color)
+    else:
+        if description is None:
+            if title_url is None:
+                embed = discord.Embed(title=title, color=color)
+            else:
+                embed = discord.Embed(title=title, color=color, url=title_url)
+        else:
+            if title_url is None:
+                embed = discord.Embed(title=title, description=description, color=color)
+            else:
+                embed = discord.Embed(title=title, description=description, color=color, url=title_url)
+    if fields is not None:
+        for x in range(len(fields)):
+            if True in fields[x]:
+                inline = True
+            else:
+                inline = False
+            embed.add_field(name=fields[x][0], value=fields[x][1], inline=inline)
+
+    if thumbnail is not None:
+        embed.set_thumbnail(url=thumbnail)
+    if image is not None:
+        embed.set_image(url=image)
+
+    if footer_text is not None:
+        if footer_icon is not None:
+            embed.set_footer(text=footer_text, icon_url=footer_icon)
+        else:
+            embed.set_footer(text=footer_text)
+
+    if author_text is not None:
+        if author_image is not None:
+            if author_url is not None:
+                embed.set_author(name=author_text, url=author_url, icon_url=author_image)
+            else:
+                embed.set_author(name=author_text, icon_url=author_image)
+        else:
+            if author_url is not None:
+                embed.set_author(name=author_text, url=author_url)
+            else:
+                embed.set_author(name=author_text)
     return embed
 
 def traceback_maker(err, advance: bool = True):
