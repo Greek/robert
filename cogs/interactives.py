@@ -29,7 +29,7 @@ class Interactives(commands.Cog):
     async def on_slash_command_error(self, inter, error):
         if isinstance(error, discord.errors.NotFound):
             pass # Ignore exception.
-        embed = default.branded_embed(title="What's the IP?", description=_("interactives.ip.res"))
+        embed = default.branded_embed(title=_("interactives.ip.desc"), description=_("interactives.ip.res"))
         await inter.respond(embed=embed, ephemeral=True)
 
 def setup(bot):
