@@ -74,7 +74,7 @@ class Events(commands.Cog):
             embed = default.branded_embed(title="oops!", description=_("events.command_error.title"),
                                           footer_text=_("events.command_error.footer", ref_id=ref_id), color="red")
             await log.send(f"~~———————————————————————————————————————————————————————————————————————————————————~~" +
-                           f"\n[ERROR] Occurred in guild \"{guild}\" ({guild.id})\n" +
+                           f"**[ERROR]**\nOccurred in guild \"{guild}\" ({guild.id})\n" +
                            f"Command invoked: `{ctx.message.content}`\nReference ID: `{ref_id}` " +
                            default.traceback_maker(err=err))
 
