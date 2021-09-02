@@ -22,7 +22,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from utils.default import traceback_maker
 import discord
 from discord.ext import commands
 from utils import default, perms
@@ -81,7 +80,7 @@ class Mod(commands.Cog):
             await ctx.channel.purge(limit=amount + 1)
         except discord.HTTPException:
             return await ctx.reply(_("events.missing_permission"))
-        sent = await ctx.send(_("cmds.purge.res", amount=amount))
+        sent = await ctx.reply(_("cmds.purge.res", amount=amount), mention_author=False)
         await sent.delete(delay=3)
 
 def setup(bot):
