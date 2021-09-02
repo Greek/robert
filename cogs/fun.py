@@ -23,6 +23,7 @@ SOFTWARE.
 """
 from discord.ext import commands
 import discord
+import requests
 
 from utils import default
 from utils.default import translate as _
@@ -48,6 +49,28 @@ class Fun(commands.Cog):
         embed.add_field(name="Creation date", value=f"{member.created_at}"[0:10])
         embed.add_field(name="Roles", value=", ".join([r.mention for r in member.roles[1:]]), inline=False)
         embed.set_footer(text="ID: " + str(member.id))
+        await ctx.send(embed=embed)
+
+    @commands.command(name="xkcd", description=_("cmds.xkcd.desc"))
+    async def get_random_xkcd(self, ctx, *, comic: int = None):
+        if comic:
+            try:
+                r = requests.get(f"https://xkcd.com/{comic}/info.0.json")
+                r.raise_for_status()
+            except Exception:
+                await ctx.reply(_("cmds.xkcd.could_not_find_comic"))
+                return
+        else:
+            r = requests.get(f"https://xkcd.com/info.0.json")
+        res = r.json()
+        embed = default.branded_embed(title=f"{res['safe_title']}", description=f"{res['alt']}", color=0x909090,
+                                      title_url=f"https://xkcd.com/{res['num']}")
+        embed.set_image(url=f"{res['img']}")
+        embed.set_footer(text=_("cmds.xkcd.posted_on", m=res['month'], d=res['day'], y=res['year']))
+        if comic:
+            embed.set_author(name=f"xkcd comic #{comic}", url=f"https://xkcd.com/{comic}")
+        else:
+            embed.set_author(name=f"the latest xkcd comic", url=f"https://xkcd.com")
         await ctx.send(embed=embed)
 
     @commands.command(name="8ball", description=_("cmds.8ball.desc"))

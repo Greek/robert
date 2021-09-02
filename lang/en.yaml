@@ -16,6 +16,10 @@ cmds:
       desc: "Get info about a user."
       options:
         member: "The user you want."
+    xkcd:
+      desc: "Get a comic from xkcd.com!"
+      could_not_find_comic: "i couldn't find that comic, try something else?"
+      posted_on: "Posted on %{m}/%{d}/%{y}"
 
 events:
   command_error:
