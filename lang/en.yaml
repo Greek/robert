@@ -1,34 +1,34 @@
 cmds:
   # Moderation commands
     ban:
-      desc: "Ban a user, with an optional reason."
-      res_noreason: "successfully banned %{member} for no reason."
-      res_reason: successfully banned %{member} for "%{reason}"
+      desc: 'Ban a user, with an optional reason.'
+      res_noreason: 'successfully banned %{member} for no reason.'
+      res_reason: 'successfully banned %{member} for "%{reason}"'
     kick:
-      desc: "Kick a user, with an optional reason."
-      res_noreason: "successfully kicked %{member} for no reason."
-      res_reason: successfully kicked %{member} for "%{reason}"
+      desc: 'Kick a user, with an optional reason.'
+      res_noreason: 'successfully kicked %{member} for no reason.'
+      res_reason: 'successfully kicked %{member} for "%{reason}"'
     purge:
-      desc: "Mass delete messages at once."
-      res: "purged %{amount} message(s)"
+      desc: 'Mass delete messages at once.'
+      res: 'purged %{amount} message(s)'
   # "Fun" commands
     who:
-      desc: "Get info about a user."
+      desc: 'Get info about a user.'
       options:
-        member: "The user you want."
+        member: 'The user you want.'
     xkcd:
-      desc: "Get a comic from xkcd.com!"
+      desc: 'Get a comic from xkcd.com!'
       could_not_find_comic: "i couldn't find that comic, try something else?"
       posted_on: "Posted on %{m}/%{d}/%{y}"
 
 events:
   command_error:
-    title: "something bad happened.. this issue has been reported. join [our server](https://discord.gg/Rhc9mvKVj3) if you need help!"
-    footer: "Reference ID: %{ref_id}"
+    title: 'something bad happened.. this issue has been reported. join [our server](https://discord.gg/Rhc9mvKVj3) if you need help!'
+    footer: 'Reference ID: %{ref_id}'
   missing_permission: "i can't do this, do i have the right perms?"
-  missing_args: "are you missing something?"
+  missing_args: 'are you missing something?'
 
 interactives:
   ip:
     desc: "What's the IP?"
-    res: "Pyrelic is currently under development, a release date will be announced in #announcements, so keep an eye out!"
+    res: 'Pyrelic is currently under development, a release date will be announced in #announcements, so keep an eye out!'
