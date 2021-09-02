@@ -23,10 +23,16 @@ SOFTWARE.
 import discord
 import os
 import logging
+import warnings
 
 from discord.ext.commands import AutoShardedBot, MinimalHelpCommand
+from dislash import InteractionClient
 from utils import perms, default
 
+do_not_load = (
+    'cogs.interactives',
+    'cogs.fun_slash'
+)
 
 class Bot(AutoShardedBot):
     """ Custom bot class extending AutoShardedBot """
@@ -39,10 +45,24 @@ class Bot(AutoShardedBot):
             handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
             logger.addHandler(handler)
 
+            guilds = [880389498570178591]
+            inter_client = InteractionClient(self, test_guilds=guilds)
+            
             for cog in os.listdir("cogs"):
                 if cog.endswith(".py"):
                     name = cog[:-3]
                     self.load_extension(f"cogs.{name}")
+
+            # Do not load following cogs
+            for cog in do_not_load:
+                try:
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore")  # silencing async warnings here
+                        self.unload_extension(cog)
+                        inter_client.delete_global_commands()
+                except Exception as e:
+                    print(f"Couldn't unload extenstion {cog}\n{e}")
+
         except Exception as exc:
             print(
                 "Could not load extension {0} due to {1.__class__.__name__}: {1}".format(
