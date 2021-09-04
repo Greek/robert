@@ -34,9 +34,6 @@ class Mod(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    def check_msg(ctx, m):
-        return m.author == ctx.user
-
     @commands.command(name="kick", description=_("cmds.kick.desc"))
     @commands.has_guild_permissions(kick_members=True)
     @commands.guild_only()
