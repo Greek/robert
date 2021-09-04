@@ -77,7 +77,7 @@ class Mod(commands.Cog):
             await ctx.channel.purge(limit=amount + 1)
         except discord.HTTPException:
             return await ctx.reply(_("events.missing_permission"))
-        sent = await ctx.reply(_("cmds.purge.res", amount=amount), mention_author=False)
+        sent = await ctx.send(_("cmds.purge.res", ctx=ctx.author.mention, amount=amount))
         await sent.delete(delay=3)
 
 def setup(bot):
