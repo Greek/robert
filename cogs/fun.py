@@ -21,6 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+import aiohttp
 from discord.ext import commands
 import discord
 import requests
@@ -51,49 +52,32 @@ class Fun(commands.Cog):
         embed.set_footer(text="ID: " + str(member.id))
         await ctx.reply(embed=embed, mention_author=False)
 
-    @commands.command(name="xkcd", description=_("cmds.xkcd.desc"))
-    async def get_random_xkcd(self, ctx, *, comic: int = None):
+    @commands.command(name="asyncxk", description=_("cmds.xkcd.desc1"))
+    async def get_xkcd(self, ctx, *, comic: int = None):
         if comic:
             try:
-                r = requests.get(f"https://xkcd.com/{comic}/info.0.json")
-                r.raise_for_status()
+                # r = requests.get(f"https://xkcd.com/{comic}/info.0.json")
+                # r.raise_for_status()
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(f"https://xkcd.com/{comic}/info.0.json") as res:
+                        json = await res.json()
+                        res.raise_for_status()
             except Exception:
                 await ctx.reply(_("cmds.xkcd.could_not_find_comic"))
                 return
         else:
-            r = requests.get(f"https://xkcd.com/info.0.json")
-        res = r.json()
-        embed = default.branded_embed(title=f"{res['safe_title']}", description=f"{res['alt']}", color=0x909090,
-                                      title_url=f"https://xkcd.com/{res['num']}")
-        embed.set_image(url=f"{res['img']}")
-        embed.set_footer(text=_("cmds.xkcd.posted_on", m=res['month'], d=res['day'], y=res['year']))
+            async with aiohttp.ClientSession() as session:
+                async with session.get(f"https://xkcd.com/info.0.json") as res:
+                    json = await res.json()
+        embed = default.branded_embed(title=f"{json['safe_title']}", description=f"{json['alt']}", color=0x909090,
+                                      title_url=f"https://xkcd.com/{json['num']}")
+        embed.set_image(url=f"{json['img']}")
+        embed.set_footer(text=_("cmds.xkcd.posted_on", m=json['month'], d=json['day'], y=json['year']))
         if comic:
             embed.set_author(name=f"xkcd comic #{comic}", url=f"https://xkcd.com/{comic}")
         else:
             embed.set_author(name=f"the latest xkcd comic", url=f"https://xkcd.com")
         await ctx.reply(embed=embed, mention_author=False)
-
-    @commands.command(name="xkcd", description=_("cmds.xkcd.desc"))
-    async def get_random_xkcd(self, ctx, *, comic: int = None):
-        if comic:
-            try:
-                r = requests.get(f"https://xkcd.com/{comic}/info.0.json")
-                r.raise_for_status()
-            except Exception:
-                await ctx.reply(_("cmds.xkcd.could_not_find_comic"))
-                return
-        else:
-            r = requests.get(f"https://xkcd.com/info.0.json")
-        res = r.json()
-        embed = default.branded_embed(title=f"{res['safe_title']}", description=f"{res['alt']}", color=0x909090,
-                                      title_url=f"https://xkcd.com/{res['num']}")
-        embed.set_image(url=f"{res['img']}")
-        embed.set_footer(text=_("cmds.xkcd.posted_on", m=res['month'], d=res['day'], y=res['year']))
-        if comic:
-            embed.set_author(name=f"xkcd comic #{comic}", url=f"https://xkcd.com/{comic}")
-        else:
-            embed.set_author(name=f"the latest xkcd comic", url=f"https://xkcd.com")
-        await ctx.send(embed=embed)
 
     @commands.command(name="8ball", description=_("cmds.8ball.desc"))
     async def random_response_generator(self, ctx):  # i know, lame name

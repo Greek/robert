@@ -10,7 +10,7 @@ cmds:
       res_reason: 'successfully kicked %{member} for "%{reason}"'
     purge:
       desc: 'Mass delete messages at once.'
-      res: 'purged %{amount} message(s)'
+      res: '%{ctx}, purged %{amount} message(s)'
   # "Fun" commands
     who:
       desc: 'Get info about a user.'
