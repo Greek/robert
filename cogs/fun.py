@@ -52,7 +52,7 @@ class Fun(commands.Cog):
         embed.set_footer(text="ID: " + str(member.id))
         await ctx.reply(embed=embed, mention_author=False)
 
-    @commands.command(name="asyncxk", description=_("cmds.xkcd.desc1"))
+    @commands.command(name="xkcd", description=_("cmds.xkcd.desc"))
     async def get_xkcd(self, ctx, *, comic: int = None):
         if comic:
             try:
