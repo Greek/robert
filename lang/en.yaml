@@ -23,10 +23,11 @@ cmds:
 
 events:
   command_error:
-    title: 'something bad happened.. this issue has been reported. join [our server](https://discord.gg/Rhc9mvKVj3) if you need help!'
+    title: 'something bad happened.. this issue has been reported. join [our server](%{discord_invite}) if you need help!'
     footer: 'Reference ID: %{ref_id}'
   missing_permission: "i can't do this, do i have the right perms?"
   missing_args: 'are you missing something?'
+  forbidden_dm: "i can't DM you, turn on your DMs!"
 
 interactives:
   ip:
