@@ -28,6 +28,7 @@ import warnings
 from discord.ext.commands import AutoShardedBot, MinimalHelpCommand
 from dislash import InteractionClient
 from utils import perms, default
+from utils.default import translate as _
 
 do_not_load = (
     'cogs.interactives',
@@ -109,4 +110,4 @@ class HelpFormat(MinimalHelpCommand):
                 await destination.send(page)
         except discord.Forbidden:
             destination = self.get_destination(no_pm=True)
-            await destination.send("events.forbidden_dm")
+            await destination.send(_("events.forbidden_dm"))
