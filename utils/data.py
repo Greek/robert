@@ -109,4 +109,4 @@ class HelpFormat(MinimalHelpCommand):
                 await destination.send(page)
         except discord.Forbidden:
             destination = self.get_destination(no_pm=True)
-            await destination.send("turn on your dms :flushed:")
+            await destination.send("events.forbidden_dm")
