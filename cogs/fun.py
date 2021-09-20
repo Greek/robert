@@ -36,10 +36,6 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="shitty-pun")
-    async def get_shitty_pun(self, ctx, asd: int):
-        await ctx.send("you know what **screams** insecure?\n\n\"http://\"!")
-
     @commands.command(name="who", description=_("cmds.who.desc"))
     async def get_user_info(self, ctx, member: discord.Member = None):
         member = member or ctx.author
@@ -54,6 +50,7 @@ class Fun(commands.Cog):
 
     @commands.command(name="xkcd", description=_("cmds.xkcd.desc"))
     async def get_xkcd(self, ctx, *, comic: int = None):
+        # TODO(flower): rewrite this. too messy?
         if comic:
             try:
                 # r = requests.get(f"https://xkcd.com/{comic}/info.0.json")
