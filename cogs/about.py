@@ -39,28 +39,21 @@ class About(commands.Cog):
     async def about(self, ctx):
         """ About the bot """
         try:
-            ram_usage = self.process.memory_full_info().rss / 1024**2
-            avg_members = sum(g.member_count for g in self.bot.guilds) / len(self.bot.guilds)
+            avg_members = sum(g.member_count for g in self.bot.guilds)
 
-            embed_color = discord.Embed.Empty
+            embed_color = discord.Embed.empty
             if hasattr(ctx, 'guild') and ctx.guild is not None:
                 embed_color = ctx.me.top_role.color
 
             embed = discord.Embed(title=f"about {ctx.bot.user.name}", color=embed_color)
             embed.set_thumbnail(url=ctx.bot.user.avatar)
-            # embed.add_field(name="Last boot", value=default.timeago(
-            #     datetime.now() - self.bot.uptime), inline=True)
             embed.add_field(
                 name=f"Developer{'' if len(self.config.owners) == 1 else 's'}",
                 value=', '.join([str(await self.bot.fetch_user(x))
                                 for x in self.config.owners]),
                 inline=True)
-            embed.add_field(name="Library", value="discord.py", inline=True)
             embed.add_field(
-                name="Servers", value=f"{len(ctx.bot.guilds)} ( averaging: {avg_members} users/server )", inline=True)
-            embed.add_field(name="Commands loaded", value=len(
-                [x.name for x in self.bot.commands]), inline=True)
-            embed.add_field(name="RAM usage", value=f"{ram_usage:.2f} MB", inline=True)
+                name="Servers", value=f"{len(ctx.bot.guilds)} (a total of {avg_members} members)", inline=True)
 
             await ctx.send(content=f"", embed=embed)
         except Exception as e:
