@@ -24,10 +24,13 @@ SOFTWARE.
 
 from discord.ext import commands
 from utils import default, perms, _io
+from utils.default import translate as _
 import discord
 import ast
 import sys
 import time
+
+checkmark = ":ballot_box_with_check:"
 
 class Admin(commands.Cog):
 
@@ -42,7 +45,7 @@ class Admin(commands.Cog):
             self.bot.load_extension(f"cogs.{cog}")
         except Exception as e:
             return await ctx.send(default.traceback_maker(e))
-        await ctx.send(f"loaded `{cog}.py`")
+        await ctx.send(f"{checkmark} Loaded `{cog}.py`.")
 
     @commands.command(name="unload", hidden=True)
     @commands.check(perms.only_owner)
@@ -51,7 +54,7 @@ class Admin(commands.Cog):
             self.bot.unload_extension(f"cogs.{cog}")
         except Exception as e:
             return await ctx.send(default.traceback_maker(e))
-        await ctx.send(f"unloaded `{cog}.py`")
+        await ctx.send(f"{checkmark} Unloaded `{cog}.py`.")
 
     @commands.command(name="reload", hidden=True)
     @commands.check(perms.only_owner)
@@ -60,12 +63,12 @@ class Admin(commands.Cog):
             self.bot.reload_extension(f"cogs.{cog}")
         except Exception as e:
             return await ctx.send(default.traceback_maker(e))
-        await ctx.send(f"reloaded `{cog}.py`")
+        await ctx.send(f"{checkmark} Reloaded `{cog}.py`.")
 
     @commands.command(name="kill", hidden=True)
     @commands.check(perms.only_owner)
     async def kill_bot(self, ctx):
-        await ctx.send("gn")
+        await ctx.send(_("cmds.kill.msg"))
         time.sleep(1)
         sys.exit()
 
@@ -112,7 +115,7 @@ class Admin(commands.Cog):
             status=status,
         )
             _io.change_value("./config.json", "playing", playing)
-            await ctx.send(f"changed playing status to \"{playing}\"")
+            await ctx.send(f"{checkmark} Changed playing status to \"{playing}\".")
         except discord.InvalidArgument as err:
             await ctx.send(err)
         except Exception as e:
