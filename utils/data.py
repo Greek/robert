@@ -31,8 +31,8 @@ from utils import perms, default
 from utils.default import translate as _
 
 do_not_load = (
-    'cogs.interactives',
-    'cogs.fun_slash'
+    # 'cogs.interactives',
+    # 'cogs.fun_slash'
 )
 
 class Bot(AutoShardedBot):
@@ -46,7 +46,7 @@ class Bot(AutoShardedBot):
             handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
             logger.addHandler(handler)
 
-            guilds = [880389498570178591]
+            guilds = [896945819121512500]
             inter_client = InteractionClient(self, test_guilds=guilds)
             
             for cog in os.listdir("cogs"):
