@@ -68,12 +68,12 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, err):
         if isinstance(err, errors.CommandInvokeError):
-            log = self.bot.get_channel(882216323042648105)
+            log = self.bot.get_channel(907325520457396294)
             guild = await self.bot.fetch_guild(ctx.guild.id)
             ref_id = uuid.uuid4()
-            embed = default.branded_embed(title="oops!", description=_("events.command_error.title"),
+            embed = default.branded_embed(title="oops!", description=_("events.command_error.title", discord_invite="https://discord.gg/a7TFfYCuFQ"),
                                           footer_text=_("events.command_error.footer", ref_id=ref_id), color="red")
-            await log.send(f"~~———————————————————————————————————————————————————————————————————————————————————~~" +
+            await log.send(f"—————————————————————\n" +
                            f"**[ERROR]**\nOccurred in guild \"{guild}\" ({guild.id})\n" +
                            f"Command invoked: `{ctx.message.content}`\nReference ID: `{ref_id}` " +
                            default.traceback_maker(err=err))
