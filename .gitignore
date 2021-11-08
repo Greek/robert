@@ -30,7 +30,7 @@ config.py
 config.json
 
 # Logging
-*.log
+logs/*.log
 
 # other 
 .idea

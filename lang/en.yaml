@@ -2,12 +2,12 @@ cmds:
   # Moderation commands
     ban:
       desc: 'Ban a user, with an optional reason.'
-      res_noreason: 'successfully banned %{member} for no reason.'
-      res_reason: 'successfully banned %{member} for "%{reason}"'
+      res_noreason: 'Banned %{member} for no reason.'
+      res_reason: 'Banned %{member} for "%{reason}"'
     kick:
       desc: 'Kick a user, with an optional reason.'
-      res_noreason: 'successfully kicked %{member} for no reason.'
-      res_reason: 'successfully kicked %{member} for "%{reason}"'
+      res_noreason: 'Kicked %{member} for no reason.'
+      res_reason: 'Kicked %{member} for "%{reason}"'
     purge:
       desc: 'Mass delete messages at once.'
       res: '%{ctx}, purged %{amount} message(s)'
@@ -19,15 +19,17 @@ cmds:
     xkcd:
       desc: 'Get a comic from xkcd.com!'
       could_not_find_comic: "i couldn't find that comic, try something else?"
-      posted_on: "Posted on %{m}/%{d}/%{y}"
+      posted_on: 'Posted on %{m}/%{d}/%{y}'
+    kill:
+      msg: 'Good night.'
 
 events:
   command_error:
-    title: 'something bad happened.. this issue has been reported. join [our server](%{discord_invite}) if you need help!'
+    title: 'Something bad happened.. This issue has been reported. Join [our server](%{discord_invite}) if you need help!'
     footer: 'Reference ID: %{ref_id}'
-  missing_permission: "i can't do this, do i have the right perms?"
-  missing_args: 'are you missing something?'
-  forbidden_dm: "i can't DM you, turn on your DMs!"
+  missing_permission: "I can't do this, do I have the right perms?"
+  missing_args: 'Are you missing something?'
+  forbidden_dm: "I can't DM you, turn on your DMs!"
 
 interactives:
   ip:
