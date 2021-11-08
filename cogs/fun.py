@@ -73,19 +73,19 @@ class Fun(commands.Cog):
         if comic:
             embed.set_author(name=f"xkcd comic #{comic}", url=f"https://xkcd.com/{comic}")
         else:
-            embed.set_author(name=f"the latest xkcd comic", url=f"https://xkcd.com")
+            embed.set_author(name=f"The latest xkcd comic", url=f"https://xkcd.com")
         await ctx.reply(embed=embed, mention_author=False)
 
     @commands.command(name="8ball", description=_("cmds.8ball.desc"))
     async def random_response_generator(self, ctx):  # i know, lame name
         pass
 
-    # @commands.command(name="avatar")
-    # async def get_user_avatar(self, ctx):
-    #     try:
-    #         await ctx.send(ctx.guild.icon.with_format("png").with_size(2048))
-    #     except Exception as e:
-    #         await ctx.send(default.traceback_maker(err=e))
+    @commands.command(name="avatar")
+    async def get_user_avatar(self, ctx):
+        try:
+            await ctx.send(ctx.guild.icon.with_format("png").with_size(2048))
+        except Exception as e:
+            await ctx.send(default.traceback_maker(err=e))
 
 
 def setup(bot):
