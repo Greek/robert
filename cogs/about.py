@@ -41,15 +41,15 @@ class About(commands.Cog):
         try:
             avg_members = sum(g.member_count for g in self.bot.guilds)
 
-            embed_color = discord.Embed.empty
+            embed_color = discord.Embed.Empty
             if hasattr(ctx, 'guild') and ctx.guild is not None:
                 embed_color = ctx.me.top_role.color
 
-            embed = discord.Embed(title=f"about {ctx.bot.user.name}", color=embed_color)
+            embed = discord.Embed(title=f"About {ctx.bot.user.name}", color=embed_color)
             embed.set_thumbnail(url=ctx.bot.user.avatar)
             embed.add_field(
                 name=f"Developer{'' if len(self.config.owners) == 1 else 's'}",
-                value=', '.join([str(await self.bot.fetch_user(x))
+                value=',\n'.join([str(await self.bot.fetch_user(x))
                                 for x in self.config.owners]),
                 inline=True)
             embed.add_field(
