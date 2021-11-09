@@ -66,7 +66,7 @@ class Admin(commands.Cog):
             return await ctx.send(default.traceback_maker(e))
         await ctx.reply(f"{checkmark} Reloaded `{cog}.py`.", mention_author=False)
 
-    @commands.command(name="reloadall", hidden=True)
+    @commands.command(name="reloadall", aliases=["ra"], hidden=True)
     @commands.check(perms.only_owner)
     async def reload_all_cogs(self, ctx, **kwargs):
         try:
