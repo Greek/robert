@@ -28,6 +28,7 @@ from utils.default import translate as _
 import discord
 import ast
 import sys
+import os
 import time
 
 checkmark = ":ballot_box_with_check:"
@@ -45,7 +46,7 @@ class Admin(commands.Cog):
             self.bot.load_extension(f"cogs.{cog}")
         except Exception as e:
             return await ctx.send(default.traceback_maker(e))
-        await ctx.send(f"{checkmark} Loaded `{cog}.py`.")
+        await ctx.reply(f"{checkmark} Loaded `{cog}.py`.", mention_author=False)
 
     @commands.command(name="unload", hidden=True)
     @commands.check(perms.only_owner)
@@ -54,7 +55,7 @@ class Admin(commands.Cog):
             self.bot.unload_extension(f"cogs.{cog}")
         except Exception as e:
             return await ctx.send(default.traceback_maker(e))
-        await ctx.send(f"{checkmark} Unloaded `{cog}.py`.")
+        await ctx.reply(f"{checkmark} Unloaded `{cog}.py`.", mention_author=False)
 
     @commands.command(name="reload", hidden=True)
     @commands.check(perms.only_owner)
@@ -63,12 +64,25 @@ class Admin(commands.Cog):
             self.bot.reload_extension(f"cogs.{cog}")
         except Exception as e:
             return await ctx.send(default.traceback_maker(e))
-        await ctx.send(f"{checkmark} Reloaded `{cog}.py`.")
+        await ctx.reply(f"{checkmark} Reloaded `{cog}.py`.", mention_author=False)
+
+    @commands.command(name="reloadall", hidden=True)
+    @commands.check(perms.only_owner)
+    async def reload_all_cogs(self, ctx, **kwargs):
+        try:
+            for cog in os.listdir("cogs"):
+                if cog.endswith(".py"):
+                    name = cog[:-3]
+                    self.bot.reload_extension(f"cogs.{name}")
+        except Exception as e:
+            print(e)
+        await ctx.reply(f"{checkmark} Reloaded all cogs.")
+
 
     @commands.command(name="kill", aliases=["die", "kys"], hidden=True)
     @commands.check(perms.only_owner)
     async def kill_bot(self, ctx):
-        await ctx.send(_("cmds.kill.msg"))
+        await ctx.reply(_("cmds.kill.msg"), mention_author=False)
         time.sleep(1)
         sys.exit()
 
