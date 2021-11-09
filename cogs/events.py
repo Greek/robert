@@ -153,8 +153,8 @@ class Events(commands.Cog):
         
         embed.set_author(name=ctx.author, icon_url=ctx.author.avatar)
         embed.set_footer(text=f"Message ID: {ctx.id}" + 
-                        f"\nAuthor ID: {ctx.author.id}")
-
+                        f"\nAuthor ID: {ctx.author.id}\n" +
+                        f"Time: {ctx.created_at.strftime('%m/%d/%Y %I:%M:%S')}")
         self.snipes.update({"message": ctx.content, "author": ctx.author, "author_icon_url": ctx.author.avatar, "date": ctx.created_at.strftime('%m/%d/%Y %I:%M:%S')})
         await log.send(embed=embed)
 
