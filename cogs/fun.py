@@ -25,6 +25,7 @@ import aiohttp
 from discord.ext import commands
 import discord
 import requests
+from cogs import events
 
 from utils import default
 from utils.default import translate as _
@@ -79,6 +80,14 @@ class Fun(commands.Cog):
         except Exception as e:
             await ctx.send(default.traceback_maker(err=e))
 
+    @commands.command(name="snipe")
+    async def get_last_deleted_message(self, ctx):
+        embed = default.branded_embed(description=str(events.Events.snipes["message"]), 
+                                        color="green", inline=True)
+
+        embed.set_author(name=str(events.Events.snipes["author"])  + " said...", icon_url=events.Events.snipes["author_icon_url"])
+        embed.set_footer(text=events.Events.snipes["date"])
+        await ctx.reply(embed=embed, mention_author=False)
 
 def setup(bot):
     bot.add_cog(Fun(bot))
