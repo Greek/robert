@@ -37,7 +37,10 @@ class Events(commands.Cog):
     """Event listeners :Smile:"""
 
     snipes = {
-        "message": None
+        "message": None,
+        "author": None,
+        "author_icon_url": None,
+        "date": None
     }
 
     def __init__(self, bot):
@@ -152,7 +155,7 @@ class Events(commands.Cog):
         embed.set_footer(text=f"Message ID: {ctx.id}" + 
                         f"\nAuthor ID: {ctx.author.id}")
 
-        self.snipes.update({"message": ctx.content})
+        self.snipes.update({"message": ctx.content, "author": ctx.author, "author_icon_url": ctx.author.avatar, "date": ctx.created_at})
         await log.send(embed=embed)
 
     @commands.Cog.listener()
