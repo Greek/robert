@@ -74,6 +74,7 @@ def branded_embed(
     author_image: str = None,
     author_url: str = None,
     title_url: str = None,
+    inline: str = None
 ):
 
     f = open("config.json")
