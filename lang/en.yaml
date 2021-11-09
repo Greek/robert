@@ -27,7 +27,7 @@ events:
   command_error:
     title: 'Something bad happened.. This issue has been reported. Join [our server](%{discord_invite}) if you need help!'
     footer: 'Reference ID: %{ref_id}'
-  missing_permission: "I can't do this, do I have the right perms?"
+  missing_permission: "I can't do that :("
   missing_args: 'Are you missing something?'
   forbidden_dm: "I can't DM you, turn on your DMs!"
 
