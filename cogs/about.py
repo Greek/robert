@@ -50,10 +50,9 @@ class About(commands.Cog):
             embed.add_field(
                 name=f"Developer{'' if len(self.config.owners) == 1 else 's'}",
                 value=',\n'.join([str(await self.bot.fetch_user(x))
-                                for x in self.config.owners]),
-                inline=True)
+                                for x in self.config.owners]))
             embed.add_field(
-                name="Servers", value=f"{len(ctx.bot.guilds)} (a total of {avg_members} members)", inline=True)
+                name="Servers", value=f"{len(ctx.bot.guilds)} (serving {avg_members} members)")
 
             await ctx.send(content=f"", embed=embed)
         except Exception as e:
