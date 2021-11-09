@@ -137,15 +137,23 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self, ctx):
         log = self.bot.get_channel(897149254240436264)
-        embed = default.branded_embed(title=f"Message deleted",
-         description=f"{ctx.content}", color="red", inline=True)
+        
+        if ctx.author.id == self.bot.user.id:
+            return
+        
+        if len(ctx.content) < 1:
+            embed = default.branded_embed(title=f"Message deleted",
+            description=f"***NOTE: Content returned was empty, was this an embed?***", color="red", inline=True)
+        else:
+            embed = default.branded_embed(title=f"Message deleted",
+                description=f"{ctx.content}", color="red", inline=True)
+        
         embed.set_author(name=ctx.author, icon_url=ctx.author.avatar)
         embed.set_footer(text=f"Message ID: {ctx.id}" + 
                         f"\nAuthor ID: {ctx.author.id}")
 
         self.snipes.update({"message": ctx.content})
         await log.send(embed=embed)
-        print(self.snipes["message"])
 
     @commands.Cog.listener()
     @commands.cooldown(1, 30, BucketType.user)
