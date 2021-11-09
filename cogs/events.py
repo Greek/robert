@@ -79,6 +79,8 @@ class Events(commands.Cog):
                            default.traceback_maker(err=err))
 
             await ctx.send(embed=embed)
+            
+            print(err)
 
         if isinstance(err, errors.MissingRequiredArgument):
             await ctx.send(_("events.missing_args") + "\n")
