@@ -32,8 +32,13 @@ from utils import default
 from utils.default import translate as _
 import datetime
 
+
 class Events(commands.Cog):
     """Event listeners :Smile:"""
+
+    snipes = {
+        "message": None
+    }
 
     def __init__(self, bot):
         self.bot = bot
@@ -128,6 +133,19 @@ class Events(commands.Cog):
         embed.add_field(name="Max presences?", value=f"{guild.max_presences}", inline=True)
         embed.set_footer(text=f"Guild ID: {str(guild.id)}")
         await log_channel.send(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_message_delete(self, ctx):
+        log = self.bot.get_channel(897149254240436264)
+        embed = default.branded_embed(title=f"Message deleted",
+         description=f"{ctx.content}", color="red", inline=True)
+        embed.set_author(name=ctx.author, icon_url=ctx.author.avatar)
+        embed.set_footer(text=f"Message ID: {ctx.id}" + 
+                        f"\nAuthor ID: {ctx.author.id}")
+
+        self.snipes.update({"message": ctx.content})
+        await log.send(embed=embed)
+        print(self.snipes["message"])
 
     @commands.Cog.listener()
     @commands.cooldown(1, 30, BucketType.user)
