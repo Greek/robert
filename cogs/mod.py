@@ -61,7 +61,8 @@ class Mod(commands.Cog):
         try:
             await member.ban(reason=default.responsible(ctx.author, reason))
         except discord.errors.HTTPException:
-            return await ctx.reply(_("events.missing_permission"))
+            sent = await ctx.reply(_("events.missing_permission"))
+            return await sent.delete(delay=3)
         sent = await ctx.reply(
             _("cmds.ban.res_noreason", member=str(member))
             if reason is None
@@ -76,7 +77,8 @@ class Mod(commands.Cog):
         try:
             await ctx.channel.purge(limit=amount + 1)
         except discord.HTTPException:
-            return await ctx.reply(_("events.missing_permission"))
+            sent = await ctx.reply(_("events.missing_permission"))
+            return await sent.delete(delay=3)
         sent = await ctx.send(_("cmds.purge.res", ctx=ctx.author.mention, amount=amount))
         await sent.delete(delay=3)
 
