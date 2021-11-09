@@ -50,22 +50,14 @@ class Fun(commands.Cog):
 
     @commands.command(name="xkcd", description=_("cmds.xkcd.desc"))
     async def get_xkcd(self, ctx, *, comic: int = None):
-        # TODO(flower): rewrite this. too messy?
         if comic:
             try:
-                # r = requests.get(f"https://xkcd.com/{comic}/info.0.json")
-                # r.raise_for_status()
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(f"https://xkcd.com/{comic}/info.0.json") as res:
-                        json = await res.json()
-                        res.raise_for_status()
+                json = await default.fetch_xkcd_comic(comic=comic)
             except Exception:
                 await ctx.reply(_("cmds.xkcd.could_not_find_comic"))
                 return
         else:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(f"https://xkcd.com/info.0.json") as res:
-                    json = await res.json()
+            json = await default.fetch_xkcd_comic()
         embed = default.branded_embed(title=f"{json['safe_title']}", description=f"{json['alt']}", color=0x909090,
                                       title_url=f"https://xkcd.com/{json['num']}")
         embed.set_image(url=f"{json['img']}")
