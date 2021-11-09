@@ -136,20 +136,18 @@ def branded_embed(
                 embed.set_author(name=author_text)
     return embed
 
-
-async def fetch_latest_xkcd():
-    async with aiohttp.ClientSession() as session:
-        async with session.get(f"https://xkcd.com/info.0.json") as res:
-            json = await res.json()
-    return json
-
-
-async def fetch_xkcd_comic(comic: int):
-    async with aiohttp.ClientSession() as session:
-        async with session.get(f"https://xkcd.com/{comic}/info.0.json") as res:
-            json = await res.json()
-            res.raise_for_status()
-    return json
+async def fetch_xkcd_comic(comic: int = None, **kwargs):
+    if comic:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"https://xkcd.com/{comic}/info.0.json") as res:
+                json = await res.json()
+                res.raise_for_status()
+        return json
+    else:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"https://xkcd.com/info.0.json") as res:
+                json = await res.json()
+        return json
 
 
 def traceback_maker(err, advance: bool = True):

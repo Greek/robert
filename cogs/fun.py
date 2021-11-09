@@ -50,7 +50,6 @@ class Fun(commands.Cog):
 
     @commands.command(name="xkcd", description=_("cmds.xkcd.desc"))
     async def get_xkcd(self, ctx, *, comic: int = None):
-        # TODO(flower): rewrite this. too messy?
         if comic:
             try:
                 json = await default.fetch_xkcd_comic(comic=comic)
@@ -58,7 +57,7 @@ class Fun(commands.Cog):
                 await ctx.reply(_("cmds.xkcd.could_not_find_comic"))
                 return
         else:
-            json = await default.fetch_latest_xkcd()
+            json = await default.fetch_xkcd_comic()
         embed = default.branded_embed(title=f"{json['safe_title']}", description=f"{json['alt']}", color=0x909090,
                                       title_url=f"https://xkcd.com/{json['num']}")
         embed.set_image(url=f"{json['img']}")
