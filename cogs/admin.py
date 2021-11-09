@@ -65,13 +65,12 @@ class Admin(commands.Cog):
             return await ctx.send(default.traceback_maker(e))
         await ctx.send(f"{checkmark} Reloaded `{cog}.py`.")
 
-    @commands.command(name="kill", hidden=True)
+    @commands.command(name="kill", aliases=["die", "kys"], hidden=True)
     @commands.check(perms.only_owner)
     async def kill_bot(self, ctx):
         await ctx.send(_("cmds.kill.msg"))
         time.sleep(1)
         sys.exit()
-
 
     @commands.command(hidden=True)
     @commands.check(perms.only_owner)
