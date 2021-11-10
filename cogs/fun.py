@@ -82,13 +82,18 @@ class Fun(commands.Cog):
 
     @commands.command(name="snipe")
     async def get_last_deleted_message(self, ctx):
-        if events.Events.snipes["message"] is None:
-            return await ctx.reply("There's nothing to snipe.", mention_author=False)
-        embed = default.branded_embed(description=str(events.Events.snipes["message"]), 
-                                        color="green", inline=True)
+        try:
+            embed = default.branded_embed(description=str(events.Events.snipes["message"]), 
+                                            color="green", inline=True)
 
-        embed.set_author(name=str(events.Events.snipes["author"])  + " said...", icon_url=events.Events.snipes["author_icon_url"])
-        embed.set_footer(text=events.Events.snipes["date"])
+            embed.set_author(name=str(events.Events.snipes["author"])  + " said...", icon_url=events.Events.snipes["author_icon_url"])
+            embed.set_footer(text="Sent at " + str(events.Events.snipes["date"]))
+        except Exception as e:
+            return # This will be logged either way
+
+        if events.Events.snipes["message"] is None:
+            return await ctx.reply(_("cmds.snipe.failed"), mention_author=False)
+
         await ctx.reply(embed=embed, mention_author=False)
 
 def setup(bot):

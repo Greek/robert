@@ -20,6 +20,8 @@ cmds:
       desc: 'Get a comic from xkcd.com!'
       could_not_find_comic: "i couldn't find that comic, try something else?"
       posted_on: 'Posted on %{m}/%{d}/%{y}'
+    snipe:
+      failed: "There's nothing to snipe."
     kill:
       msg: 'Good night.'
 

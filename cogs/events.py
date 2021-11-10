@@ -146,7 +146,7 @@ class Events(commands.Cog):
         
         if len(ctx.content) < 1:
             embed = default.branded_embed(title=f"Message deleted",
-            description=f"***NOTE: Content returned was empty, was this an embed?***", color="red", inline=True)
+            description=f"***No content, may be an file/embed.***", color="red", inline=True)
         else:
             embed = default.branded_embed(title=f"Message deleted",
                 description=f"{ctx.content}", color="red", inline=True)
@@ -154,8 +154,8 @@ class Events(commands.Cog):
         embed.set_author(name=ctx.author, icon_url=ctx.author.avatar)
         embed.set_footer(text=f"Message ID: {ctx.id}" + 
                         f"\nAuthor ID: {ctx.author.id}\n" +
-                        f"Time: {ctx.created_at.strftime('%m/%d/%Y %I:%M:%S')}")
-        self.snipes.update({"message": ctx.content, "author": ctx.author, "author_icon_url": ctx.author.avatar, "date": ctx.created_at.strftime('%m/%d/%Y %I:%M:%S')})
+                        f"Time: {ctx.created_at.strftime('%m/%d/%Y %I:%M %p')}")
+        self.snipes.update({"message": ctx.content, "author": ctx.author, "author_icon_url": ctx.author.avatar, "date": ctx.created_at.strftime('%I:%M %p')})
         await log.send(embed=embed)
 
     @commands.Cog.listener()
