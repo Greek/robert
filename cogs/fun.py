@@ -82,6 +82,8 @@ class Fun(commands.Cog):
 
     @commands.command(name="snipe")
     async def get_last_deleted_message(self, ctx):
+        if events.Events.snipes["message"] is None:
+            return await ctx.reply("There's nothing to snipe.", mention_author=False)
         embed = default.branded_embed(description=str(events.Events.snipes["message"]), 
                                         color="green", inline=True)
 
