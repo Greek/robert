@@ -76,7 +76,7 @@ class Admin(commands.Cog):
                     self.bot.reload_extension(f"cogs.{name}")
         except Exception as e:
             print(e)
-        await ctx.reply(f"{checkmark} Reloaded all cogs.")
+        await ctx.reply(f"{checkmark} Reloaded all cogs.", mention_author=False)
 
 
     @commands.command(name="kill", aliases=["die", "kys"], hidden=True)
@@ -128,7 +128,7 @@ class Admin(commands.Cog):
             status=status,
         )
             _io.change_value("./config.json", "playing", playing)
-            await ctx.send(f"{checkmark} Changed playing status to \"{playing}\".")
+            await ctx.reply(f"{checkmark} Changed playing status to \"{playing}\".", mention_author=False)
         except discord.InvalidArgument as err:
             await ctx.send(err)
         except Exception as e:
