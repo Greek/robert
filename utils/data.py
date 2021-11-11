@@ -83,7 +83,7 @@ class HelpFormat(MinimalHelpCommand):
     def get_ending_note(self):
         command_name = self.invoked_with
         cfg_prefix = default.get("config.json").prefix
-        return "Run `{0}{1} <command name>` to see help for a specific command.".format(cfg_prefix, command_name)
+        return "Run \"{0}{1} <command name>\" to see help for a specific command.".format(cfg_prefix, command_name)
 
     def get_opening_note(self):
         pass
@@ -119,7 +119,16 @@ class HelpFormat(MinimalHelpCommand):
             self.add_bot_commands_formatting(commands, category)
     
         embed.set_footer(text=note)
-        await destination.send(embed=embed)
+
+        try:
+            if perms.can_react(self.context):
+                await self.context.message.add_reaction(chr(0x2709))
+        except discord.Forbidden:
+            pass
+        try:
+            await destination.send(embed=embed)
+        except discord.Forbidden:
+            return await self.get_destination(no_pm=True).send(_("events.forbidden_dm"))
 
     async def send_command_help(self, command):
         self.add_command_formatting(command)
