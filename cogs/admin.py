@@ -183,5 +183,12 @@ class Admin(commands.Cog):
         embed.add_field(name="Owner", value=f"Test", inline=True)
         await ctx.send(embed=embed)
 
+    @commands.command(name="brokenembed", hidden=True)
+    async def embed(self, ctx):
+        embed = default.branded_embed(title=f"Test", description=f"Guild \"Test\"")
+
+        embed.add_field(name="Owner", value=f"Test", inline=True)
+        await ctx.send(embed=embeds)
+
 def setup(bot):
     bot.add_cog(Admin(bot))
