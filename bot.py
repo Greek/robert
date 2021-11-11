@@ -10,7 +10,8 @@ bot = Bot(
     command_prefix=cfg.prefix,
     prefix=cfg.prefix,
     command_attrs=dict(hidden=True),
-    help_command=HelpFormat()
+    help_command=HelpFormat(),
+    case_insensitive=True
 )
 
 bot.run(cfg.token)

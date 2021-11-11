@@ -24,6 +24,7 @@ import discord
 import os
 import logging
 import warnings
+import itertools
 
 from discord.ext.commands import AutoShardedBot, MinimalHelpCommand
 from dislash import InteractionClient
@@ -82,8 +83,7 @@ class HelpFormat(MinimalHelpCommand):
     def get_ending_note(self):
         command_name = self.invoked_with
         cfg_prefix = default.get("config.json").prefix
-        return "You can get help with a specific command with \"{0}{1} <cmd>\"\n" \
-            "It provides more information on what you can do with that command.".format(cfg_prefix, command_name)
+        return "Run `{0}{1} <command name>` to see help for a specific command.".format(cfg_prefix, command_name)
 
     def get_opening_note(self):
         pass
@@ -91,6 +91,35 @@ class HelpFormat(MinimalHelpCommand):
     async def send_error_message(self, error):
         destination = self.get_destination(no_pm=True)
         await destination.send(error)
+
+    async def send_bot_help(self, mapping):
+        # This is derived from the original method, but made as an embed.
+        ctx = self.context
+        bot = ctx.bot
+
+        destination = self.get_destination()
+        note = self.get_ending_note()
+                
+        no_category = f'\u200b{self.no_category}'
+
+        def get_category(command, *, no_category=no_category):
+            cog = command.cog
+            return f"{cog.qualified_name}" if cog is not None else no_category
+
+        filtered = await self.filter_commands(bot.commands, sort=True, key=get_category)
+        to_iterate = itertools.groupby(filtered, key=get_category)
+
+        embed = default.branded_embed(title="Command list", description=f"A list of all the commands the bot has to offer.", color="green", inline=True)
+
+        for category, commands in to_iterate:
+            commands = sorted(commands, key=lambda c: c.name) if self.sort_commands else list(commands)
+            joined = '\u2002'.join(f"`{c.name}`" for c in commands)
+            
+            embed.add_field(name=f"{category}", value=f"{joined}", inline=False)
+            self.add_bot_commands_formatting(commands, category)
+    
+        embed.set_footer(text=note)
+        await destination.send(embed=embed)
 
     async def send_command_help(self, command):
         self.add_command_formatting(command)
@@ -106,8 +135,10 @@ class HelpFormat(MinimalHelpCommand):
 
         try:
             destination = self.get_destination(no_pm=no_pm)
+            embed = default.branded_embed(title="Command guide", description=f"", color="green", inline=True)
             for page in self.paginator.pages:
-                await destination.send(page)
+                embed.description += page
+            await destination.send(embed=embed)
         except discord.Forbidden:
             destination = self.get_destination(no_pm=True)
             await destination.send(_("events.forbidden_dm"))
