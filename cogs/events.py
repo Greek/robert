@@ -32,6 +32,7 @@ from discord.ext.commands.cooldowns import BucketType
 from utils import default
 from utils.default import translate as _
 import datetime
+from pytz import timezone
 
 
 class Events(commands.Cog):
@@ -169,6 +170,8 @@ class Events(commands.Cog):
             return print("[MSG LOG] Tried to log deleted msg, no channel ID found in config")
 
         log = self.bot.get_channel(cid)
+        tz = timezone("EST")
+        localtime = f"{ctx.created_at.now(tz=tz).strftime('%m/%d/%Y %I:%M %p')}"
         
         if ctx.author.id == self.bot.user.id:
             return
@@ -183,8 +186,8 @@ class Events(commands.Cog):
         embed.set_author(name=ctx.author, icon_url=ctx.author.avatar)
         embed.set_footer(text=f"Message ID: {ctx.id}" + 
                         f"\nAuthor ID: {ctx.author.id}\n" +
-                        f"Time: {ctx.created_at.strftime('%m/%d/%Y %I:%M %p')}")
-        self.snipes.update({"message": ctx.content, "author": ctx.author, "author_icon_url": ctx.author.avatar, "date": ctx.created_at.strftime('%I:%M %p')})
+                        f"Time: {localtime}")
+        self.snipes.update({"message": ctx.content, "author": ctx.author, "author_icon_url": ctx.author.avatar, "date": ctx.created_at.now(tz=tz).strftime('%I:%M %p')})
         await log.send(embed=embed)
 
     @commands.Cog.listener()
