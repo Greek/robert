@@ -177,10 +177,10 @@ class Events(commands.Cog):
             return
         
         if len(ctx.content) < 1:
-            embed = default.branded_embed(title=f"Message deleted",
+            embed = default.branded_embed(title=f"Message deleted | {ctx.channel}",
             description=f"***No content, may be an file/embed.***", color="red", inline=True)
         else:
-            embed = default.branded_embed(title=f"Message deleted",
+            embed = default.branded_embed(title=f"Message deleted | {ctx.channel}",
                 description=f"{ctx.content}", color="red", inline=True)
         
         embed.set_author(name=ctx.author, icon_url=ctx.author.avatar)
