@@ -26,7 +26,9 @@ Please make sure you have all these fields in, the bot might break if you don't!
    is in.
 6. `status [online|dnd|idle]` - represents the status of the user.
 7. `accent_color` - an accent color, primarily used in embeds.
-
+8. `error_reporting` - channel ID to report any runtime errors in your code
+9. `guild_log` - channel ID to log any new guilds the bot joins/leaves
+10. `message_logging` - channel ID to log any deleted/edited messages.
 ## credits
 
 I cheated and ~~plagiarized~~ borrowed code from Alex's "discord_bot.py" discord

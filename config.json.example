@@ -5,5 +5,8 @@
     "playing": "ap help",
     "playing_type": "",
     "status": "dnd",
-    "accent_color": "000" (do not remove this!)
+    "accent_color": "000", (do not remove this!)
+    "error_reporting": "",
+    "guild_log": "",
+    "message_logging": ""
 }

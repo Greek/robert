@@ -25,6 +25,7 @@ SOFTWARE.
 import discord
 import dislash
 import uuid
+import json
 from discord.ext import commands
 from discord.ext.commands import errors
 from discord.ext.commands.cooldowns import BucketType
@@ -76,7 +77,16 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, err):
         if isinstance(err, errors.CommandInvokeError):
-            log = self.bot.get_channel(907325520457396294)
+            f = open("config.json")
+            config = json.load(f)
+            try:
+                cid = int(config.get("error_reporting"))
+            except ValueError:
+                embed = default.branded_embed(title="oops!", description=_("events.command_error.title_limited", discord_invite="https://discord.gg/a7TFfYCuFQ"), color="red")
+                await ctx.send(embed=embed)
+                return print(f"[ERROR LOG] Failed to log error, printing...\n\n{err}")
+            
+            log = self.bot.get_channel(cid)
             guild = await self.bot.fetch_guild(ctx.guild.id)
             ref_id = uuid.uuid4()
             embed = default.branded_embed(title="oops!", description=_("events.command_error.title", discord_invite="https://discord.gg/a7TFfYCuFQ"),
@@ -87,8 +97,6 @@ class Events(commands.Cog):
                            default.traceback_maker(err=err))
 
             await ctx.send(embed=embed)
-            
-            print(err)
 
         if isinstance(err, errors.MissingRequiredArgument):
             await ctx.send(_("events.missing_args") + "\n")
@@ -107,9 +115,15 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
-        owner = await self.bot.fetch_user(guild.owner_id)
-        log_channel = self.bot.get_channel(882216228670808074)
+        f = open("config.json")
+        config = json.load(f)
+        try:
+            cid = int(config.get("guild_log"))
+        except ValueError:
+            return print("[GUILD LOG] Tried to log join, no channel ID found in config")
 
+        owner = await self.bot.fetch_user(guild.owner_id)
+        log_channel = self.bot.get_channel(cid)
         embed = default.branded_embed(title=f"New Guild", description=f"Guild \"{guild.name}\"", color="green")
 
         embed.add_field(name="Owner", value=f"{owner.name}#{owner.discriminator}", inline=True)
@@ -127,8 +141,16 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
+        f = open("config.json")
+        config = json.load(f)
+        try:
+            cid = int(config.get("guild_log"))
+        except ValueError:
+            return print("[GUILD LOG] Tried to log leave, no channel ID found in config")
+
+
         owner = await self.bot.fetch_user(guild.owner_id)
-        log_channel = self.bot.get_channel(882216228670808074)
+        log_channel = self.bot.get_channel(cid)
         embed = default.branded_embed(title=f"Left Guild", description=f"Guild \"{guild.name}\"", color="red")
 
         embed.add_field(name="Owner", value=f"{owner.name}#{owner.discriminator}", inline=True)
@@ -139,7 +161,14 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message_delete(self, ctx):
-        log = self.bot.get_channel(897149254240436264)
+        f = open("config.json")
+        config = json.load(f)
+        try:
+            cid = int(config.get("message_logging"))
+        except ValueError:
+            return print("[MSG LOG] Tried to log deleted msg, no channel ID found in config")
+
+        log = self.bot.get_channel(cid)
         
         if ctx.author.id == self.bot.user.id:
             return

@@ -176,5 +176,12 @@ class Admin(commands.Cog):
         except Exception as e:
             await ctx.send(e)
 
+    @commands.command(name="embed", hidden=True)
+    async def embed(self, ctx):
+        embed = default.branded_embed(title=f"Test", description=f"Guild \"Test\"")
+
+        embed.add_field(name="Owner", value=f"Test", inline=True)
+        await ctx.send(embed=embed)
+
 def setup(bot):
     bot.add_cog(Admin(bot))

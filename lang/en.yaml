@@ -28,6 +28,7 @@ cmds:
 events:
   command_error:
     title: 'Something bad happened.. This issue has been reported. Join [our server](%{discord_invite}) if you need help!'
+    title_limited: 'Something bad happened.. This issue has been reported. Join [our server](%{discord_invite}) if you need help! Support may be limited.'
     footer: 'Reference ID: %{ref_id}'
   missing_permission: "I can't do that :("
   missing_args: 'Are you missing something?'
