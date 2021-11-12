@@ -190,27 +190,5 @@ class Events(commands.Cog):
         self.snipes.update({"message": ctx.content, "author": ctx.author, "author_icon_url": ctx.author.avatar, "date": ctx.created_at.now(tz=tz).strftime('%I:%M %p')})
         await log.send(embed=embed)
 
-    @commands.Cog.listener()
-    @commands.cooldown(1, 30, BucketType.user)
-    async def on_message(self, message):
-        time_difference = (datetime.datetime.utcnow() - self.last_timeStamp).total_seconds()
-        if time_difference < 30:
-            return
-        else:
-            if message.content.startswith("grubhub"):
-                await message.channel.send("https://thot.wtf/i/2021/02/13/grubhub.gif")
-
-            if message.content.startswith("fucking sex"):
-                await message.channel.send("https://thot.wtf/i/2021/02/13/fucking%20sex.gif")
-
-            if message.content.startswith("spunch bop"):
-                await message.channel.send(
-                    "https://tenor.com/view/spunch-bop-spongebob-crying-cube-mr-krabs-gif-19973394")
-
-            if message.content.startswith("sex smp"):
-                await message.channel.send(
-                    "https://tenor.com/view/dream-dream-team-sapnap-georgenotfound-technoblade-gif-19248460")
-
-
 def setup(bot):
     bot.add_cog(Events(bot))
