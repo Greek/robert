@@ -85,7 +85,7 @@ class Events(commands.Cog):
             except ValueError:
                 embed = default.branded_embed(title="oops!", description=_("events.command_error.title_limited", discord_invite="https://discord.gg/a7TFfYCuFQ"), color="red")
                 await ctx.send(embed=embed)
-                return print(f"[ERROR LOG] Failed to log error, printing...\n\n{err}")
+                return print(f"[error] :: Failed to log error, printing...\n\n{err}")
             
             log = self.bot.get_channel(cid)
             guild = await self.bot.fetch_guild(ctx.guild.id)
@@ -121,7 +121,7 @@ class Events(commands.Cog):
         try:
             cid = int(config.get("guild_log"))
         except ValueError:
-            return print("[GUILD LOG] Tried to log join, no channel ID found in config")
+            return print("[logger] :: Tried to log join, no channel ID found in config")
 
         owner = await self.bot.fetch_user(guild.owner_id)
         log_channel = self.bot.get_channel(cid)
@@ -147,7 +147,7 @@ class Events(commands.Cog):
         try:
             cid = int(config.get("guild_log"))
         except ValueError:
-            return print("[GUILD LOG] Tried to log leave, no channel ID found in config")
+            return print("[logger] :: Tried to log guild leave, no channel ID found in config")
 
 
         owner = await self.bot.fetch_user(guild.owner_id)
@@ -167,7 +167,7 @@ class Events(commands.Cog):
         try:
             cid = int(config.get("message_logging"))
         except ValueError:
-            return print("[MSG LOG] Tried to log deleted msg, no channel ID found in config")
+            return print("[logger] :: Tried to log deleted msg, no channel ID found in config")
 
         log = self.bot.get_channel(cid)
         tz = timezone("EST")
