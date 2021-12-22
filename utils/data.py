@@ -32,8 +32,11 @@ from utils import perms, default
 from utils.default import translate as _
 
 do_not_load = (
-    # 'cogs.interactives',
-    # 'cogs.fun_slash'
+    'cogs.interactives',
+    'cogs.fun_slash',
+    'cogs.fun',
+    'cogs.mod',
+    'cogs.about'
 )
 
 class Bot(AutoShardedBot):
@@ -60,7 +63,7 @@ class Bot(AutoShardedBot):
                 try:
                     with warnings.catch_warnings():
                         warnings.simplefilter("ignore")  # silencing async warnings here
-                        self.unload_extension(cog)
+                        self.unload_extension(str(cog))
                         inter_client.delete_global_commands()
                 except Exception as e:
                     print(f"Couldn't unload extenstion {cog}\n{e}")
