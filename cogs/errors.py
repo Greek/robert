@@ -24,9 +24,6 @@ class Errors(commands.Cog):
             await ctx.send(_("events.missing_args") + "\n")
             await ctx.send_help(str(ctx.command))
 
-        if isinstance(err, errors.BotMissingPermissions):
-            await ctx.send(_("events.missing_permission"))
-
         if isinstance(err, commands.CommandOnCooldown):
             print(f"[Cooldown] {err}")
 

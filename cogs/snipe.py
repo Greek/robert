@@ -1,8 +1,7 @@
 import nextcord
 
 from nextcord.ext import commands
-from nextcord.ext.commands import Context
-from pytz import timezone
+from nextcord.ext.commands import Context, errors
 from nextcord import Message
 from nextcord.ext import commands
 from utils import default
@@ -10,7 +9,7 @@ from utils.default import translate as _
 
 
 class Snipe(commands.Cog):
-    """The description for Snipe goes here."""
+    """Catch any previously deleted messages. :eyes:"""
 
     def __init__(self, bot):
         self.bot = bot
