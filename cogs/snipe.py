@@ -20,6 +20,8 @@ class Snipe(commands.Cog):
     async def on_message_delete(self, message: Message):
         self.snipe = message
 
+    @commands.command(name="snipe")
+    @commands.cooldown(rate=1, per=4.0)
     async def get_last_deleted_message(self, ctx: nextcord.Interaction):
         try:
             embed = default.branded_embed(

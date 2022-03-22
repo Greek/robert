@@ -32,12 +32,19 @@ import sys
 import os
 import time
 
-from utils.embed import success_embed, success_embed_ephemeral, warn_embed, warn_embed_ephemeral
+from utils.embed import (
+    failed_embed,
+    failed_embed_ephemeral,
+    success_embed,
+    success_embed_ephemeral,
+    warn_embed,
+    warn_embed_ephemeral,
+)
 
 checkmark = ":ballot_box_with_check:"
 
-class Admin(commands.Cog):
 
+class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.config = default.get("./config.json")
@@ -80,7 +87,6 @@ class Admin(commands.Cog):
         except Exception as e:
             print(e)
         await ctx.reply(f"{checkmark} Reloaded all cogs.", mention_author=False)
-
 
     @commands.command(name="kill", aliases=["die", "kys"], hidden=True)
     @commands.check(perms.only_owner)
@@ -127,11 +133,14 @@ class Admin(commands.Cog):
 
         try:
             await self.bot.change_presence(
-            activity=discord.Activity(type=playing_type, name=playing),
-            status=status,
-        )
+                activity=discord.Activity(type=playing_type, name=playing),
+                status=status,
+            )
             _io.change_value("./config.json", "playing", playing)
-            await ctx.reply(f"{checkmark} Changed playing status to \"{playing}\".", mention_author=False)
+            await ctx.reply(
+                f'{checkmark} Changed playing status to "{playing}".',
+                mention_author=False,
+            )
         except discord.InvalidArgument as err:
             await ctx.send(err)
         except Exception as e:
@@ -182,15 +191,17 @@ class Admin(commands.Cog):
     @commands.command(name="embedtest", hidden=True)
     @commands.check(perms.only_owner)
     async def embedtest(self, ctx: Context):
-        embed = await success_embed_ephemeral("Hello")
-        embed2 = await success_embed(ctx.author, "Hello")
-        embed3 = await warn_embed_ephemeral("Hello")
-        embed4 = await warn_embed(ctx.author, "Hello")
+        await ctx.send(
+            embeds=[
+                success_embed_ephemeral("Hello"),
+                success_embed(ctx.author, "Hello"),
+                warn_embed_ephemeral("Hello"),
+                warn_embed(ctx.author, "Hello"),
+                failed_embed_ephemeral("Hello"),
+                failed_embed(ctx.author, "Hello"),
+            ]
+        )
 
-        await ctx.send(embed=embed)
-        await ctx.send(embed=embed2)
-        await ctx.send(embed=embed3)
-        await ctx.send(embed=embed4)
 
 def setup(bot):
     bot.add_cog(Admin(bot))
