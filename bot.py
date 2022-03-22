@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+from discord import AllowedMentions
 import nextcord
 from utils.data import Bot, HelpFormat
 from utils.default import get
@@ -15,7 +16,8 @@ bot = Bot(
     command_attrs=dict(hidden=True),
     help_command=HelpFormat(),
     intents=intents,
-    case_insensitive=True
+    allowed_mentions=AllowedMentions(everyone=False, users=False),
+    case_insensitive=True,
 )
 
 bot.run(cfg.token)

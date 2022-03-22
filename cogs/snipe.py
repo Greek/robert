@@ -20,6 +20,7 @@ class Snipe(commands.Cog):
         self.snipe = message
 
     @commands.command(name="snipe")
+    @commands.cooldown(rate=1, per=4.0)
     async def get_last_deleted_message(self, ctx: Context):
         try:
             embed = default.branded_embed(

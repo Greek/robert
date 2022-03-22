@@ -31,6 +31,7 @@ events:
   missing_permission: "I can't do that :("
   missing_args: 'Are you missing something?'
   forbidden_dm: "I can't DM you, turn on your DMs!"
+  cooldown: "You are on cooldown! Please wait **%{time}%{unit}**."
 
 interactives:
   ip:

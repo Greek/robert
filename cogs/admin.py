@@ -182,13 +182,13 @@ class Admin(commands.Cog):
     @commands.command(name="embedtest", hidden=True)
     @commands.check(perms.only_owner)
     async def embedtest(self, ctx: Context):
-        embed = await success_embed_ephemeral("Hello")
-        embed2 = await success_embed(ctx.author, "Hello")
+        # embed = await 
+        # embed2 = await 
         embed3 = await warn_embed_ephemeral("Hello")
         embed4 = await warn_embed(ctx.author, "Hello")
 
-        await ctx.send(embed=embed)
-        await ctx.send(embed=embed2)
+        await ctx.send(embed=success_embed_ephemeral("Hello"))
+        await ctx.send(embed=success_embed(ctx.author, "Hello"))
         await ctx.send(embed=embed3)
         await ctx.send(embed=embed4)
 
