@@ -1,4 +1,5 @@
 import nextcord
+import os
 
 from nextcord.ext import commands
 from nextcord.ext.commands import Context, errors
@@ -19,8 +20,7 @@ class Snipe(commands.Cog):
     async def on_message_delete(self, message: Message):
         self.snipe = message
 
-    @commands.command(name="snipe")
-    async def get_last_deleted_message(self, ctx: Context):
+    async def get_last_deleted_message(self, ctx: nextcord.Interaction):
         try:
             embed = default.branded_embed(
                 description=str(self.snipe.content),
@@ -38,6 +38,9 @@ class Snipe(commands.Cog):
             return await ctx.reply(embed=embed, mention_author=False)
         except:
             return await ctx.send(_("cmds.snipe.failed"), mention_author=False)
+
+    # @nextcord.slash_command(guild_ids=[932369210611494982], name="snipe", description="Snipe the last deleted message")
+    await get_last_deleted_message(self, ctx)    
 
 
 def setup(bot):

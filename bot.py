@@ -10,6 +10,7 @@ from dotenv import dotenv_values, load_dotenv
 cfg = get("config.json")
 dot_cfg = dotenv_values(".env")
 load_dotenv('.env')
+
 intents = nextcord.Intents(messages=True, guilds=True, members=True)
 
 bot = Bot(
