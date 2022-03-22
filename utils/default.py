@@ -26,7 +26,7 @@ import ast
 import aiohttp
 from collections import namedtuple
 
-import discord
+import nextcord
 import i18n
 
 i18n.set("skip_locale_root_data", True)
@@ -75,7 +75,7 @@ def branded_embed(
     author_url: str = None,
     title_url: str = None,
     inline: str = None
-):
+) -> nextcord.Embed:
 
     f = open("config.json")
     config = json.load(f)
@@ -89,18 +89,18 @@ def branded_embed(
         color = color or int(accent_color, 16)
 
     if title is None:
-        embed = discord.Embed(description=description, color=color)
+        embed = nextcord.Embed(description=description, color=color)
     else:
         if description is None:
             if title_url is None:
-                embed = discord.Embed(title=title, color=color)
+                embed = nextcord.Embed(title=title, color=color)
             else:
-                embed = discord.Embed(title=title, color=color, url=title_url)
+                embed = nextcord.Embed(title=title, color=color, url=title_url)
         else:
             if title_url is None:
-                embed = discord.Embed(title=title, description=description, color=color)
+                embed = nextcord.Embed(title=title, description=description, color=color)
             else:
-                embed = discord.Embed(
+                embed = nextcord.Embed(
                     title=title, description=description, color=color, url=title_url
                 )
     if fields is not None:

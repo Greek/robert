@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from discord.ext import commands
+from nextcord.ext import commands
+from nextcord.ext.commands import Context
 from utils import default, perms, _io
 from utils.default import translate as _
 import discord
@@ -30,6 +31,8 @@ import ast
 import sys
 import os
 import time
+
+from utils.embed import success_embed, success_embed_ephemeral, warn_embed, warn_embed_ephemeral
 
 checkmark = ":ballot_box_with_check:"
 
@@ -176,19 +179,18 @@ class Admin(commands.Cog):
         except Exception as e:
             await ctx.send(e)
 
-    @commands.command(name="embed", hidden=True)
-    async def embed(self, ctx):
-        embed = default.branded_embed(title=f"Test", description=f"Guild \"Test\"")
+    @commands.command(name="embedtest", hidden=True)
+    @commands.check(perms.only_owner)
+    async def embedtest(self, ctx: Context):
+        embed = await success_embed_ephemeral("Hello")
+        embed2 = await success_embed(ctx.author, "Hello")
+        embed3 = await warn_embed_ephemeral("Hello")
+        embed4 = await warn_embed(ctx.author, "Hello")
 
-        embed.add_field(name="Owner", value=f"Test", inline=True)
         await ctx.send(embed=embed)
-
-    @commands.command(name="brokenembed", hidden=True)
-    async def embed(self, ctx):
-        embed = default.branded_embed(title=f"Test", description=f"Guild \"Test\"")
-
-        embed.add_field(name="Owner", value=f"Test", inline=True)
-        await ctx.send(embed=embeds)
+        await ctx.send(embed=embed2)
+        await ctx.send(embed=embed3)
+        await ctx.send(embed=embed4)
 
 def setup(bot):
     bot.add_cog(Admin(bot))

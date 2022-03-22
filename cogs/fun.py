@@ -22,7 +22,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import aiohttp
-from discord.ext import commands
+import nextcord
+from nextcord.ext import commands
+from nextcord.ext.commands import Context
 import discord
 import requests
 from cogs import events
@@ -45,7 +47,11 @@ class Fun(commands.Cog):
         embed.set_thumbnail(url=member.avatar)
         embed.add_field(name="Join date", value=f"{member.joined_at}"[0:10])
         embed.add_field(name="Creation date", value=f"{member.created_at}"[0:10])
-        embed.add_field(name="Roles", value=", ".join([r.mention for r in member.roles[1:]]), inline=False)
+        embed.add_field(
+            name="Roles",
+            value=", ".join([r.mention for r in member.roles[1:]]),
+            inline=False,
+        )
         embed.set_footer(text="ID: " + str(member.id))
         await ctx.reply(embed=embed, mention_author=False)
 
@@ -59,12 +65,22 @@ class Fun(commands.Cog):
                 return
         else:
             json = await default.fetch_xkcd_comic()
-        embed = default.branded_embed(title=f"{json['safe_title']}", description=f"{json['alt']}", color=0x909090,
-                                      title_url=f"https://xkcd.com/{json['num']}")
+        embed = default.branded_embed(
+            title=f"{json['safe_title']}",
+            description=f"{json['alt']}",
+            color=0x909090,
+            title_url=f"https://xkcd.com/{json['num']}",
+        )
         embed.set_image(url=f"{json['img']}")
-        embed.set_footer(text=_("cmds.xkcd.posted_on", m=json['month'], d=json['day'], y=json['year']))
+        embed.set_footer(
+            text=_(
+                "cmds.xkcd.posted_on", m=json["month"], d=json["day"], y=json["year"]
+            )
+        )
         if comic:
-            embed.set_author(name=f"xkcd comic #{comic}", url=f"https://xkcd.com/{comic}")
+            embed.set_author(
+                name=f"xkcd comic #{comic}", url=f"https://xkcd.com/{comic}"
+            )
         else:
             embed.set_author(name=f"The latest xkcd comic", url=f"https://xkcd.com")
         await ctx.reply(embed=embed, mention_author=False)
@@ -81,20 +97,26 @@ class Fun(commands.Cog):
             await ctx.send(default.traceback_maker(err=e))
 
     @commands.command(name="snipe")
-    async def get_last_deleted_message(self, ctx):
-        try:
-            embed = default.branded_embed(description=str(events.Events.snipes["message"]), 
-                                            color="green", inline=True)
-
-            embed.set_author(name=str(events.Events.snipes["author"])  + " said...", icon_url=events.Events.snipes["author_icon_url"])
-            embed.set_footer(text="Sent at " + str(events.Events.snipes["date"]))
-        except Exception as e:
-            return # This will be logged either way
-
-        if events.Events.snipes["message"] is None:
+    async def get_last_deleted_message(self, ctx: Context):
+        if events.Events.message_snipe[f"{ctx.channel.id}"] is None:
             return await ctx.reply(_("cmds.snipe.failed"), mention_author=False)
 
-        await ctx.reply(embed=embed, mention_author=False)
+        embed = default.branded_embed(
+            description=str(events.Events.message_snipe[ctx.channel.id]["message"]),
+            color=nextcord.Embed.Empty,
+            inline=True,
+        )
+
+        embed.set_author(
+            name=str(events.Events.message_snipe[ctx.channel.id]["author"]),
+            icon_url=events.Events.message_snipe[ctx.channel.id]["author_icon_url"],
+        )
+        embed.set_footer(
+            text="Sent at " + str(events.Events.message_snipe[ctx.channel.id]["date"])
+        )
+
+        return await ctx.reply(embed=embed, mention_author=False)
+
 
 def setup(bot):
     bot.add_cog(Fun(bot))

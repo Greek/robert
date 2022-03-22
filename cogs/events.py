@@ -22,14 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import discord
-import dislash
-import uuid
+from nextcord import Guild, TextChannel, User, Message
+import nextcord
 import json
-from discord.ext import commands
-from discord.ext.commands import errors
-from discord.ext.commands.cooldowns import BucketType
+from nextcord.ext import commands
 from utils import default
+from utils import embed as embed2
+from utils.data import create_error_log
 from utils.default import translate as _
 import datetime
 from pytz import timezone
@@ -38,12 +37,7 @@ from pytz import timezone
 class Events(commands.Cog):
     """Event listeners :Smile:"""
 
-    snipes = {
-        "message": None,
-        "author": None,
-        "author_icon_url": None,
-        "date": None
-    }
+    message_snipe = {}
 
     def __init__(self, bot):
         self.bot = bot
@@ -53,15 +47,15 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         print(
-            f"Logged on as {self.bot.user} on {len(self.bot.guilds)} guild(s)\n"
+            f"[Bot] Logged on as {self.bot.user} on {len(self.bot.guilds)} guild(s)\n"
         )
 
         if self.config.status == "idle":
-            status = discord.Status.idle
+            status = nextcord.Status.idle
         elif self.config.status == "dnd":
-            status = discord.Status.dnd
+            status = nextcord.Status.dnd
         else:
-            status = discord.Status.online
+            status = nextcord.Status.online
 
         if self.config.playing_type == "listening":
             playing_type = 2
@@ -71,124 +65,83 @@ class Events(commands.Cog):
             playing_type = 0
 
         await self.bot.change_presence(
-            activity=discord.Activity(type=playing_type, name=self.config.playing),
+            activity=nextcord.Activity(type=playing_type, name=self.config.playing),
             status=status,
         )
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx, err):
-        if isinstance(err, errors.CommandInvokeError):
-            f = open("config.json")
-            config = json.load(f)
-            try:
-                cid = int(config.get("error_reporting"))
-            except ValueError:
-                embed = default.branded_embed(title="oops!", description=_("events.command_error.title_limited", discord_invite="https://discord.gg/a7TFfYCuFQ"), color="red")
-                await ctx.send(embed=embed)
-                return print(f"[error] :: Failed to log error, printing...\n\n{err}")
-            
-            log = self.bot.get_channel(cid)
-            guild = await self.bot.fetch_guild(ctx.guild.id)
-            ref_id = uuid.uuid4()
-            embed = default.branded_embed(title="oops!", description=_("events.command_error.title", discord_invite="https://discord.gg/a7TFfYCuFQ"),
-                                          footer_text=_("events.command_error.footer", ref_id=ref_id), color="red")
-            await log.send(f"—————————————————————\n" +
-                           f"**[ERROR]**\nOccurred in guild \"{guild}\" ({guild.id})\n" +
-                           f"Command invoked: `{ctx.message.content}`\nReference ID: `{ref_id}` " +
-                           default.traceback_maker(err=err))
-
-            await ctx.send(embed=embed)
-
-        if isinstance(err, errors.MissingRequiredArgument):
-            await ctx.send(_("events.missing_args") + "\n")
-            await ctx.send_help(str(ctx.command))
-
-        if isinstance(err, errors.BotMissingPermissions):
-            await ctx.send(_("events.missing_permission"))
-
-        if isinstance(err, commands.CommandOnCooldown):
-            print(f"[COOLDOWN] {err}")
-
-    @commands.Cog.listener()
-    async def on_slash_command_error(self, inter, error):
-        if isinstance(error, dislash.errors.BotMissingPermissions):
-            await inter.reply(_("events.missing_permission"))
-
-    @commands.Cog.listener()
-    async def on_guild_join(self, guild):
+    async def on_guild_join(self, guild: Guild):
         f = open("config.json")
         config = json.load(f)
+        guilds = config.get("allowlistServers")
         try:
             cid = int(config.get("guild_log"))
         except ValueError:
-            return print("[logger] :: Tried to log join, no channel ID found in config")
+            return print("[Guild Log] Tried to log join, no channel ID found in config")
 
-        owner = await self.bot.fetch_user(guild.owner_id)
-        log_channel = self.bot.get_channel(cid)
-        embed = default.branded_embed(title=f"New Guild", description=f"Guild \"{guild.name}\"", color="green")
+        owner: User = await self.bot.fetch_user(guild.owner_id)
+        log_channel: TextChannel = self.bot.get_channel(cid)
+        embed = default.branded_embed(
+            title=f"Guild joined | {guild.name} ({guild.id})",
+            color=embed2.success_embed_color,
+        )
 
-        embed.add_field(name="Owner", value=f"{owner.name}#{owner.discriminator}", inline=True)
+        embed.set_author(name=f"{guild.name}", icon_url=f"{guild.icon}")
+        embed.add_field(name="Owner", value=f"<@{owner.id}>", inline=True)
         embed.add_field(name="Member count", value=f"{guild.member_count}", inline=True)
-        embed.add_field(name="Max presences?", value=f"{guild.max_presences}", inline=True)
+        embed.add_field(
+            name="On Allowlist?",
+            value="true" if guild.id in guilds else "false",
+            inline=True,
+        )
+        embed.set_footer(text=f"Owner ID: {guild.owner_id}")
         try:
-            invites = await guild.invites()
-            stringified = str(invites)
-            embed.add_field(name="Invite", value=f"{stringified[2:25]}", inline=True)
-        except discord.errors.Forbidden:
-            embed.add_field(name="Invite", value=f"Could not fetch invite.", inline=True)
+            embed.add_field(
+                name="Invite code",
+                value=f"{[str(x.code) for x in await guild.invites()]}",
+                inline=True,
+            )
+        except nextcord.errors.Forbidden:
+            embed.add_field(
+                name="Invite code", value=f"Could not fetch invite.", inline=True
+            )
             pass
-        embed.set_footer(text=f"Guild ID: {str(guild.id)}")
+        except:
+            embed.add_field(
+                name="Invite code", value="Failed to print invites", inline=True
+            )
+            pass
         await log_channel.send(embed=embed)
 
     @commands.Cog.listener()
-    async def on_guild_remove(self, guild):
+    async def on_guild_remove(self, guild: Guild):
         f = open("config.json")
         config = json.load(f)
+        guilds = config.get("allowlistServers")
         try:
             cid = int(config.get("guild_log"))
         except ValueError:
-            return print("[logger] :: Tried to log guild leave, no channel ID found in config")
+            return print(
+                "[Guild Log] :: Tried to log guild leave, no channel ID found in config"
+            )
 
+        owner: User = await self.bot.fetch_user(guild.owner_id)
+        log_channel: TextChannel = self.bot.get_channel(cid)
+        embed = default.branded_embed(
+            title=f"Guild left | {guild.name} ({guild.id})",
+            color=embed2.failed_embed_color,
+        )
 
-        owner = await self.bot.fetch_user(guild.owner_id)
-        log_channel = self.bot.get_channel(cid)
-        embed = default.branded_embed(title=f"Left Guild", description=f"Guild \"{guild.name}\"", color="red")
-
-        embed.add_field(name="Owner", value=f"{owner.name}#{owner.discriminator}", inline=True)
+        embed.set_author(name=f"{guild.name}", icon_url=f"{guild.icon}")
+        embed.add_field(name="Owner", value=f"<@{owner.id}>", inline=True)
         embed.add_field(name="Member count", value=f"{guild.member_count}", inline=True)
-        embed.add_field(name="Max presences?", value=f"{guild.max_presences}", inline=True)
-        embed.set_footer(text=f"Guild ID: {str(guild.id)}")
+        embed.add_field(
+            name="On Allowlist?",
+            value="true" if guild.id in guilds else "false",
+            inline=True,
+        )
+        embed.set_footer(text=f"Owner ID: {guild.owner_id}")
         await log_channel.send(embed=embed)
-
-    @commands.Cog.listener()
-    async def on_message_delete(self, ctx):
-        f = open("config.json")
-        config = json.load(f)
-        try:
-            cid = int(config.get("message_logging"))
-        except ValueError:
-            return print("[logger] :: Tried to log deleted msg, no channel ID found in config")
-
-        log = self.bot.get_channel(cid)
-        tz = timezone("EST")
-        localtime = f"{ctx.created_at.now(tz=tz).strftime('%m/%d/%Y %I:%M %p')}"
-        
-        if ctx.author.id == self.bot.user.id:
-            return
-        
-        if len(ctx.content) < 1:
-            embed = default.branded_embed(title=f"Message deleted | {ctx.channel}",
-            description=f"***No content, may be an file/embed.***", color="red", inline=True)
-        else:
-            embed = default.branded_embed(title=f"Message deleted | {ctx.channel}",
-                description=f"{ctx.content}", color="red", inline=True)
-        
-        embed.set_author(name=ctx.author, icon_url=ctx.author.avatar)
-        embed.set_footer(text=f"Message ID: {ctx.id}" + 
-                        f"\nAuthor ID: {ctx.author.id}\n" +
-                        f"Time: {localtime}")
-        self.snipes.update({"message": ctx.content, "author": ctx.author, "author_icon_url": ctx.author.avatar, "date": ctx.created_at.now(tz=tz).strftime('%I:%M %p')})
-        await log.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(Events(bot))

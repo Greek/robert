@@ -1,5 +1,4 @@
-discord.py-papachar==2.0.2
-dislash.py
+nextcord
 python-i18n[yaml]
 requests
 psutil~=5.8.0
