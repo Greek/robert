@@ -7,7 +7,7 @@ from utils import embed as embed2, default
 
 
 class EventsGuild(commands.Cog):
-    """The description for EventsGuild goes here."""
+    """Guild event handlers."""
 
     def __init__(self, bot):
         self.bot = bot

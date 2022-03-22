@@ -32,6 +32,8 @@ from nextcord.ext.commands import AutoShardedBot, MinimalHelpCommand
 from utils import perms, default
 from utils.default import translate as _, traceback_maker
 from utils import embed as uembed
+from dotenv import dotenv_values
+
 
 do_not_load = (
     "cogs.interactives",
