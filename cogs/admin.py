@@ -88,25 +88,12 @@ class Admin(commands.Cog):
             print(e)
         await ctx.reply(f"{checkmark} Reloaded all cogs.", mention_author=False)
 
-    @commands.command(name="kill", aliases=["die", "kys"], hidden=True)
+    @commands.command(name="kill", hidden=True)
     @commands.check(perms.only_owner)
     async def kill_bot(self, ctx):
         await ctx.reply(_("cmds.kill.msg"), mention_author=False)
         time.sleep(1)
         sys.exit()
-
-    @commands.command(hidden=True)
-    @commands.check(perms.only_owner)
-    async def dm(self, ctx, user_id: int, *, message: str):
-        """dm someone for the trollz"""
-        user = self.bot.get_user(user_id)
-        if not user:
-            return await ctx.send(f"can't find mr **{user_id}**")
-        try:
-            await user.send(message)
-            await ctx.send(f"messaged **{user_id}**")
-        except discord.Forbidden:
-            await ctx.send("he don't wanna talk :neutral_face:")
 
     @commands.group(name="change", hidden=True)
     @commands.check(perms.only_owner)
