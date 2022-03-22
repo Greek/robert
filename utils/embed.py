@@ -20,21 +20,17 @@ def success_embed(user: nextcord.User, description: str) -> nextcord.Embed:
     ).set_author(name=user.name, icon_url=user.display_avatar)
 
 
-async def warn_embed_ephemeral(description: str, footer: str = None) -> nextcord.Embed:
-    embed = nextcord.Embed(
+def warn_embed_ephemeral(description: str, footer: str = None) -> nextcord.Embed:
+    return nextcord.Embed(
         color=warn_embed_color,
         description=f"⚠️ {description}",
     )
-    return embed
 
 
 async def warn_embed(
     user: nextcord.User, description: str, footer: str = None
 ) -> nextcord.Embed:
-    embed = nextcord.Embed(
+    return nextcord.Embed(
         color=warn_embed_color,
         description=f"⚠️ {description}",
-    )
-    embed.set_author(name=user.name, icon_url=user.display_avatar)
-
-    return embed
+    ).set_author(name=user.name, icon_url=user.display_avatar)
