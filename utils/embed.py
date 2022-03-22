@@ -27,10 +27,28 @@ def warn_embed_ephemeral(description: str, footer: str = None) -> nextcord.Embed
     )
 
 
-async def warn_embed(
+def warn_embed(
     user: nextcord.User, description: str, footer: str = None
 ) -> nextcord.Embed:
     return nextcord.Embed(
         color=warn_embed_color,
         description=f"⚠️ {description}",
+    ).set_author(name=user.name, icon_url=user.display_avatar)
+
+
+def failed_embed_ephemeral(
+    description: str, footer: str = None
+) -> nextcord.Embed:
+    return nextcord.Embed(
+        color=failed_embed_color,
+        description=f"<:red_tick:954499768124583947> {description}",
+    )
+
+
+def failed_embed(
+    user: nextcord.User, description: str, footer: str = None
+) -> nextcord.Embed:
+    return nextcord.Embed(
+        color=failed_embed_color,
+        description=f"<:red_tick:954499768124583947> {description}",
     ).set_author(name=user.name, icon_url=user.display_avatar)
