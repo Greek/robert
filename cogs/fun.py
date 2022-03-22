@@ -21,14 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-import aiohttp
-import nextcord
-from nextcord.ext import commands
-from nextcord.ext.commands import Context
-import discord
-import requests
-from cogs import events
 
+import nextcord
+import discord
+
+from nextcord.ext import commands
 from utils import default
 from utils.default import translate as _
 
@@ -95,28 +92,6 @@ class Fun(commands.Cog):
             await ctx.send(ctx.guild.icon.with_format("png").with_size(2048))
         except Exception as e:
             await ctx.send(default.traceback_maker(err=e))
-
-    @commands.command(name="snipe")
-    async def get_last_deleted_message(self, ctx: Context):
-        if events.Events.message_snipe[f"{ctx.channel.id}"] is None:
-            return await ctx.reply(_("cmds.snipe.failed"), mention_author=False)
-
-        embed = default.branded_embed(
-            description=str(events.Events.message_snipe[ctx.channel.id]["message"]),
-            color=nextcord.Embed.Empty,
-            inline=True,
-        )
-
-        embed.set_author(
-            name=str(events.Events.message_snipe[ctx.channel.id]["author"]),
-            icon_url=events.Events.message_snipe[ctx.channel.id]["author_icon_url"],
-        )
-        embed.set_footer(
-            text="Sent at " + str(events.Events.message_snipe[ctx.channel.id]["date"])
-        )
-
-        return await ctx.reply(embed=embed, mention_author=False)
-
 
 def setup(bot):
     bot.add_cog(Fun(bot))

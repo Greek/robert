@@ -37,12 +37,6 @@ class Messages(commands.Cog):
             text=f"Message ID: {message.id}" + f"\nAuthor ID: {message.author.id}\n"
         )
 
-        self.message_snipe[message.channel.id] = {
-            "message": message.content,
-            "author": message.author,
-            "author_icon_url": message.author.avatar,
-            "date": message.created_at.now(tz=tz).strftime("%I:%M %p"),
-        }
         await log.send(embed=embed)
 
 
