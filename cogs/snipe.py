@@ -20,9 +20,9 @@ class Snipe(commands.Cog):
     async def on_message_delete(self, message: Message):
         self.snipe = message
 
-    @commands.command(name="snipe")
+    @commands.command(name="snipe", description=_("cmds.snipe.desc"))
     @commands.cooldown(rate=1, per=4.0)
-    async def get_last_deleted_message(self, ctx: nextcord.Interaction):
+    async def get_last_deleted_message(self, ctx: Context):
         try:
             embed = default.branded_embed(
                 description=str(self.snipe.content),
@@ -37,12 +37,18 @@ class Snipe(commands.Cog):
             embed.set_footer(text=f"#{str(self.snipe.channel.name)}")
             embed.timestamp = self.snipe.created_at
 
-            return await ctx.reply(embed=embed, mention_author=False)
+            return await ctx.send(embed=embed)
         except:
-            return await ctx.send(_("cmds.snipe.failed"), mention_author=False)
+            return await ctx.send(_('cmds.snipe.failed'))
 
-    # @nextcord.slash_command(guild_ids=[932369210611494982], name="snipe", description="Snipe the last deleted message")
-    await get_last_deleted_message(self, ctx)    
+    @nextcord.slash_command(
+        guild_ids=[932369210611494982],
+        name="snipe",
+        description=_("cmds.snipe.desc"),
+    )
+    async def get_last_deleted_message_slashimpl(self, ctx: nextcord.Interaction):
+        await self.get_last_deleted_message(ctx)
+
 
 
 def setup(bot):

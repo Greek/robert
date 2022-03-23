@@ -49,7 +49,7 @@ class Admin(commands.Cog):
         self.bot = bot
         self.config = default.get("./config.json")
 
-    @commands.command(name="load", hidden=True)
+    @commands.command(name="load", aliases=["l"], hidden=True)
     @commands.check(perms.only_owner)
     async def load_cog(self, ctx, cog):
         try:
@@ -58,7 +58,7 @@ class Admin(commands.Cog):
             return await ctx.send(default.traceback_maker(e))
         await ctx.reply(f"{checkmark} Loaded `{cog}.py`.", mention_author=False)
 
-    @commands.command(name="unload", hidden=True)
+    @commands.command(name="unload", aliases=["u"], hidden=True)
     @commands.check(perms.only_owner)
     async def unload_cog(self, ctx, cog):
         try:
@@ -67,7 +67,7 @@ class Admin(commands.Cog):
             return await ctx.send(default.traceback_maker(e))
         await ctx.reply(f"{checkmark} Unloaded `{cog}.py`.", mention_author=False)
 
-    @commands.command(name="reload", hidden=True)
+    @commands.command(name="reload", aliases=["r"], hidden=True)
     @commands.check(perms.only_owner)
     async def reload_cog(self, ctx, cog):
         try:

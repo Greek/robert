@@ -10,7 +10,7 @@ cmds:
       res_reason: '👍'
     purge:
       desc: 'Mass delete messages at once.'
-      res: '%{ctx}, purged %{amount} message(s)'
+      res: 'Deleted %{amount} message(s)'
   # "Fun" commands
     who:
       desc: 'Get info about a user.'
@@ -21,6 +21,7 @@ cmds:
       could_not_find_comic: "i couldn't find that comic, try something else?"
       posted_on: 'Posted on %{m}/%{d}/%{y}'
     snipe:
+      desc: 'Snipe the last deleted message.'
       failed: "There's nothing to snipe."
     kill:
       msg: 'Good night.'
