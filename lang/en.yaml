@@ -1,13 +1,13 @@
 cmds:
   # Moderation commands
     ban:
-      desc: 'Ban a user, with an optional reason.'
-      res_noreason: 'Banned %{member} for no reason.'
-      res_reason: 'Banned %{member} for "%{reason}"'
+      desc: 'Ban a user.'
+      res_noreason: '<:smoke:953134627608993842>'
+      res_reason: '<:smoke:953134627608993842>'
     kick:
-      desc: 'Kick a user, with an optional reason.'
-      res_noreason: 'Kicked %{member} for no reason.'
-      res_reason: 'Kicked %{member} for "%{reason}"'
+      desc: 'Kick a user.'
+      res_noreason: '👍'
+      res_reason: '👍'
     purge:
       desc: 'Mass delete messages at once.'
       res: '%{ctx}, purged %{amount} message(s)'
@@ -31,6 +31,10 @@ events:
   missing_permission: "I can't do that :("
   missing_args: 'Are you missing something?'
   forbidden_dm: "I can't DM you, turn on your DMs!"
+  priv_checks:
+    self: "You can't %{action} yourself!"
+    me: "You can't %{action} me!"
+
   cooldown: "You are on cooldown! Please wait **%{time}%{unit}**."
 
 interactives:

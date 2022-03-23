@@ -121,7 +121,7 @@ class HelpFormat(MinimalHelpCommand):
         to_iterate = itertools.groupby(filtered, key=get_category)
 
         embed = default.branded_embed(
-            title="Command list",
+            title="Help guide",
             description=f"A list of all the commands the bot has to offer.",
             color="green",
             inline=True,
@@ -151,6 +151,8 @@ class HelpFormat(MinimalHelpCommand):
             return await self.get_destination(no_pm=True).send(_("events.forbidden_dm"))
 
     async def send_command_help(self, command):
+        global cmd
+        cmd = command
         self.add_command_formatting(command)
         self.paginator.close_page()
         await self.send_pages(no_pm=True)
@@ -165,7 +167,7 @@ class HelpFormat(MinimalHelpCommand):
         try:
             destination = self.get_destination(no_pm=no_pm)
             embed = default.branded_embed(
-                title="Command guide", description=f"", color="green", inline=True
+                title=f"Help: {cmd}", description=f"", color="green", inline=True
             )
             for page in self.paginator.pages:
                 embed.description += page

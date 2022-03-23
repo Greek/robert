@@ -18,8 +18,8 @@ class Errors(commands.Cog):
             await create_error_log(self, ctx, err)
 
         if isinstance(err, errors.MissingRequiredArgument):
-            await ctx.send(_("events.missing_args") + "\n")
             await ctx.send_help(str(ctx.command))
+            # await ctx.send_help(str(ctx.command))
 
         if isinstance(err, commands.CommandOnCooldown):
             embed = await warn_embed_ephemeral(

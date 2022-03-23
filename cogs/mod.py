@@ -23,9 +23,11 @@ SOFTWARE.
 """
 
 import discord
+from discord.ext.commands import errors
 from discord.ext import commands
 from utils import default, perms
 from utils.default import translate as _
+from utils.embed import self_missing_permissions
 
 
 class Mod(commands.Cog):
@@ -36,39 +38,45 @@ class Mod(commands.Cog):
 
     @commands.command(name="kick", description=_("cmds.kick.desc"))
     @commands.has_guild_permissions(kick_members=True)
+    @commands.bot_has_guild_permissions(kick_members=True)
     @commands.guild_only()
     async def kick_user(self, ctx, member: discord.Member, *, reason=None) -> None:
-            if await perms.check_priv(ctx, member=member):
-                return
-            try:
-                await member.kick(reason=default.responsible(ctx.author, reason))
-            except discord.HTTPException:
-                return await ctx.reply(_("events.missing_permission"))
-            sent = await ctx.reply(
-                _("cmds.kick.res_noreason", member=str(member))
-                if reason is None
-                else _("cmds.kick.res_reason", member=str(member), reason=reason)
-            )
-            await sent.delete(delay=3)
-
+        if await perms.check_priv(ctx, member=member):
+            return
+        await member.kick(reason=default.responsible(ctx.author, reason))
+        await ctx.reply(
+            _("cmds.kick.res_noreason")
+            if reason is None
+            else _("cmds.kick.res_reason")
+        )
 
     @commands.command(name="ban", description=_("cmds.ban.desc"))
     @commands.has_guild_permissions(ban_members=True)
+    @commands.bot_has_guild_permissions(ban_members=True)
     @commands.guild_only()
     async def ban_user(self, ctx, member: discord.Member, *, reason=None) -> None:
         if await perms.check_priv(ctx, member=member):
             return
-        try:
-            await member.ban(reason=default.responsible(ctx.author, reason))
-        except discord.errors.HTTPException:
-            sent = await ctx.reply(_("events.missing_permission"))
-            return await sent.delete(delay=3)
-        sent = await ctx.reply(
-            _("cmds.ban.res_noreason", member=str(member))
+        await member.ban(reason=default.responsible(ctx.author, reason))
+        await ctx.reply(
+            _("cmds.ban.res_noreason")
             if reason is None
-            else _("cmds.ban.res_reason", member=str(member), reason=reason)
+            else _("cmds.ban.res_reason")
         )
-        await sent.delete(delay=3)
+
+    @kick_user.error
+    async def kick_user_errors(self, ctx, err):
+        if isinstance(err, errors.BotMissingPermissions):
+            return await ctx.reply(
+                embed=self_missing_permissions(ctx.author, "kick_members")
+            )
+
+    @ban_user.error
+    async def ban_user_errors(self, ctx, err):
+        if isinstance(err, errors.BotMissingPermissions):
+            return await ctx.reply(
+                embed=self_missing_permissions(ctx.author, "ban_members")
+            )
 
     @commands.command(name="purge", description=_("cmds.purge.desc"))
     @commands.has_guild_permissions(manage_messages=True)
@@ -79,8 +87,11 @@ class Mod(commands.Cog):
         except discord.HTTPException:
             sent = await ctx.reply(_("events.missing_permission"))
             return await sent.delete(delay=3)
-        sent = await ctx.send(_("cmds.purge.res", ctx=ctx.author.mention, amount=amount))
+        sent = await ctx.send(
+            _("cmds.purge.res", ctx=ctx.author.mention, amount=amount)
+        )
         await sent.delete(delay=3)
+
 
 def setup(bot):
     bot.add_cog(Mod(bot))
