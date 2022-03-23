@@ -42,7 +42,7 @@ class Snipe(commands.Cog):
             return await ctx.send(_('cmds.snipe.failed'))
 
     @nextcord.slash_command(
-        guild_ids=[932369210611494982],
+        guild_ids=[os.environ.get('DISCORD_GUILDID')],
         name="snipe",
         description=_("cmds.snipe.desc"),
     )

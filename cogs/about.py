@@ -22,41 +22,54 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from discord.ext import commands
+from nextcord.ext import commands
 from utils import default
-import discord
+from utils.default import translate as _
+import nextcord
 import psutil
 import os
 
-class About(commands.Cog):
 
+class About(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.process = psutil.Process(os.getpid())
         self.config = default.get("config.json")
 
-    @commands.command(name="about", aliases=['info', 'stats', 'status'])
+    @commands.command(name="about", description=_('cmds.about'),  aliases=["info", "stats", "status"])
     async def about(self, ctx):
-        """ About the bot """
         try:
             avg_members = sum(g.member_count for g in self.bot.guilds)
 
-            embed_color = discord.Embed.Empty
-            if hasattr(ctx, 'guild') and ctx.guild is not None:
+            embed_color = nextcord.Embed.Empty
+            if hasattr(ctx, "guild") and ctx.guild is not None:
                 embed_color = ctx.me.top_role.color
 
-            embed = discord.Embed(title=f"About {ctx.bot.user.name}", color=embed_color)
-            embed.set_thumbnail(url=ctx.bot.user.avatar)
-            embed.add_field(
-                name=f"Developer{'' if len(self.config.owners) == 1 else 's'}",
-                value=',\n'.join([str(await self.bot.fetch_user(x))
-                                for x in self.config.owners]))
-            embed.add_field(
-                name="Servers", value=f"{len(ctx.bot.guilds)} (serving {avg_members} members)")
+                embed = nextcord.Embed(title=f"About {ctx.bot.user.name}", color=embed_color)
+                embed.set_thumbnail(url=ctx.bot.user.avatar)
+                embed.add_field(
+                    name=f"Developer{'' if len(self.config.owners) == 1 else 's'}",
+                    value=",\n".join(
+                        [str(await self.bot.fetch_user(x)) for x in self.config.owners]
+                    ),
+                )
+                embed.add_field(
+                    name="Servers",
+                    value=f"{len(ctx.bot.guilds)} (serving {avg_members} members)",
+                )
 
-            await ctx.send(content=f"", embed=embed)
+                await ctx.send(content=f"", embed=embed)
         except Exception as e:
-            await ctx.send(default.traceback_maker(e))
+            print(e)
+
+    @nextcord.slash_command(
+        guild_ids=[932369210611494982],
+        name="about",
+        description=_('cmds.about')
+    )
+    async def about_slash(self, ctx):
+        await self.about(ctx)
+
 
 def setup(bot):
     bot.add_cog(About(bot))
