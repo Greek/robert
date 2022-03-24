@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from discord.ext import commands
+from nextcord.ext import commands
+from nextcord.ext.commands import Context
 from utils import default, perms, _io
 from utils.default import translate as _
 import discord
@@ -31,15 +32,24 @@ import sys
 import os
 import time
 
+from utils.embed import (
+    failed_embed,
+    failed_embed_ephemeral,
+    success_embed,
+    success_embed_ephemeral,
+    warn_embed,
+    warn_embed_ephemeral,
+)
+
 checkmark = ":ballot_box_with_check:"
 
-class Admin(commands.Cog):
 
+class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.config = default.get("./config.json")
 
-    @commands.command(name="load", hidden=True)
+    @commands.command(name="load", aliases=["l"], hidden=True)
     @commands.check(perms.only_owner)
     async def load_cog(self, ctx, cog):
         try:
@@ -48,7 +58,7 @@ class Admin(commands.Cog):
             return await ctx.send(default.traceback_maker(e))
         await ctx.reply(f"{checkmark} Loaded `{cog}.py`.", mention_author=False)
 
-    @commands.command(name="unload", hidden=True)
+    @commands.command(name="unload", aliases=["u"], hidden=True)
     @commands.check(perms.only_owner)
     async def unload_cog(self, ctx, cog):
         try:
@@ -57,7 +67,7 @@ class Admin(commands.Cog):
             return await ctx.send(default.traceback_maker(e))
         await ctx.reply(f"{checkmark} Unloaded `{cog}.py`.", mention_author=False)
 
-    @commands.command(name="reload", hidden=True)
+    @commands.command(name="reload", aliases=["r"], hidden=True)
     @commands.check(perms.only_owner)
     async def reload_cog(self, ctx, cog):
         try:
@@ -78,26 +88,12 @@ class Admin(commands.Cog):
             print(e)
         await ctx.reply(f"{checkmark} Reloaded all cogs.", mention_author=False)
 
-
-    @commands.command(name="kill", aliases=["die", "kys"], hidden=True)
+    @commands.command(name="kill", hidden=True)
     @commands.check(perms.only_owner)
     async def kill_bot(self, ctx):
         await ctx.reply(_("cmds.kill.msg"), mention_author=False)
         time.sleep(1)
         sys.exit()
-
-    @commands.command(hidden=True)
-    @commands.check(perms.only_owner)
-    async def dm(self, ctx, user_id: int, *, message: str):
-        """dm someone for the trollz"""
-        user = self.bot.get_user(user_id)
-        if not user:
-            return await ctx.send(f"can't find mr **{user_id}**")
-        try:
-            await user.send(message)
-            await ctx.send(f"messaged **{user_id}**")
-        except discord.Forbidden:
-            await ctx.send("he don't wanna talk :neutral_face:")
 
     @commands.group(name="change", hidden=True)
     @commands.check(perms.only_owner)
@@ -124,11 +120,14 @@ class Admin(commands.Cog):
 
         try:
             await self.bot.change_presence(
-            activity=discord.Activity(type=playing_type, name=playing),
-            status=status,
-        )
+                activity=discord.Activity(type=playing_type, name=playing),
+                status=status,
+            )
             _io.change_value("./config.json", "playing", playing)
-            await ctx.reply(f"{checkmark} Changed playing status to \"{playing}\".", mention_author=False)
+            await ctx.reply(
+                f'{checkmark} Changed playing status to "{playing}".',
+                mention_author=False,
+            )
         except discord.InvalidArgument as err:
             await ctx.send(err)
         except Exception as e:
@@ -176,19 +175,20 @@ class Admin(commands.Cog):
         except Exception as e:
             await ctx.send(e)
 
-    @commands.command(name="embed", hidden=True)
-    async def embed(self, ctx):
-        embed = default.branded_embed(title=f"Test", description=f"Guild \"Test\"")
+    @commands.command(name="embedtest", hidden=True)
+    @commands.check(perms.only_owner)
+    async def embedtest(self, ctx: Context):
+        await ctx.send(
+            embeds=[
+                success_embed_ephemeral("Hello"),
+                success_embed(ctx.author, "Hello"),
+                warn_embed_ephemeral("Hello"),
+                warn_embed(ctx.author, "Hello"),
+                failed_embed_ephemeral("Hello"),
+                failed_embed(ctx.author, "Hello"),
+            ]
+        )
 
-        embed.add_field(name="Owner", value=f"Test", inline=True)
-        await ctx.send(embed=embed)
-
-    @commands.command(name="brokenembed", hidden=True)
-    async def embed(self, ctx):
-        embed = default.branded_embed(title=f"Test", description=f"Guild \"Test\"")
-
-        embed.add_field(name="Owner", value=f"Test", inline=True)
-        await ctx.send(embed=embeds)
 
 def setup(bot):
     bot.add_cog(Admin(bot))

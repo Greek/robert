@@ -1,40 +1,45 @@
 cmds:
+  about: "About the bot"
   # Moderation commands
-    ban:
-      desc: 'Ban a user, with an optional reason.'
-      res_noreason: 'Banned %{member} for no reason.'
-      res_reason: 'Banned %{member} for "%{reason}"'
-    kick:
-      desc: 'Kick a user, with an optional reason.'
-      res_noreason: 'Kicked %{member} for no reason.'
-      res_reason: 'Kicked %{member} for "%{reason}"'
-    purge:
-      desc: 'Mass delete messages at once.'
-      res: '%{ctx}, purged %{amount} message(s)'
+  ban:
+    desc: "Ban a user."
+    res_noreason: "<:smoke:953134627608993842>"
+    res_reason: "<:smoke:953134627608993842>"
+  kick:
+    desc: "Kick a user."
+    res_noreason: "👍"
+    res_reason: "👍"
+  purge:
+    desc: "Mass delete messages at once."
+    res: "Deleted %{amount} message(s)"
   # "Fun" commands
-    who:
-      desc: 'Get info about a user.'
-      options:
-        member: 'The user you want.'
-    xkcd:
-      desc: 'Get a comic from xkcd.com!'
-      could_not_find_comic: "i couldn't find that comic, try something else?"
-      posted_on: 'Posted on %{m}/%{d}/%{y}'
-    snipe:
-      failed: "There's nothing to snipe."
-    kill:
-      msg: 'Good night.'
+  who:
+    desc: "Get info about a user."
+    options:
+      member: "The user you want."
+  xkcd:
+    desc: "Get a comic from xkcd.com!"
+    could_not_find_comic: "i couldn't find that comic, try something else?"
+    posted_on: "Posted on %{m}/%{d}/%{y}"
+  snipe:
+    desc: "Snipe the last deleted message."
+    failed: "There's nothing to snipe."
+  kill:
+    msg: "Good night."
 
 events:
   command_error:
-    title: 'Something bad happened.. This issue has been reported. Join [our server](%{discord_invite}) if you need help!'
-    title_limited: 'Something bad happened.. This issue has been reported. Join [our server](%{discord_invite}) if you need help! Support may be limited.'
-    footer: 'Reference ID: %{ref_id}'
+    title: "An error occurred trying to run this command."
   missing_permission: "I can't do that :("
-  missing_args: 'Are you missing something?'
+  missing_args: "Are you missing something?"
   forbidden_dm: "I can't DM you, turn on your DMs!"
+  priv_checks:
+    self: "You can't %{action} yourself!"
+    me: "You can't %{action} me!"
+
+  cooldown: "You are on cooldown! Please wait **%{time}%{unit}**."
 
 interactives:
   ip:
     desc: "What's the IP?"
-    res: 'Pyrelic is currently under development, a release date will be announced in #announcements, so keep an eye out!'
+    res: "Pyrelic is currently under development, a release date will be announced in #announcements, so keep an eye out!"

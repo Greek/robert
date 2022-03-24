@@ -1,6 +1,6 @@
-discord.py-papachar==2.0.2
-dislash.py
+nextcord
 python-i18n[yaml]
+python-dotenv
 requests
 psutil~=5.8.0
 aiohttp==3.7.4.post0
