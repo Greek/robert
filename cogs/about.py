@@ -31,6 +31,7 @@ from utils.default import translate as _
 import nextcord
 import psutil
 import os
+import time
 
 
 class About(commands.Cog):
@@ -68,6 +69,11 @@ class About(commands.Cog):
             )
 
             await ctx.send(content=f"", embed=embed)
+
+    @commands.command(name="ping")
+    async def ping(self, ctx: Context):
+        msg = await ctx.send("Pinging...")
+        await msg.edit(f"Pinged random funny thing, took {self.bot.latency:.2f} ({ ctx.message.created_at })")
 
     @nextcord.slash_command(
         guild_ids=[932369210611494982], name="about", description=_("cmds.about")
