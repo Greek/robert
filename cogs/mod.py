@@ -25,12 +25,35 @@ SOFTWARE.
 import nextcord
 import os
 from nextcord import slash_command, Interaction, SlashOption
-from nextcord.ext.commands import errors
+from nextcord.ext.commands import errors, Context
 from nextcord.ext import commands
 from utils import default, perms
 from utils.default import translate as _
 from utils.embed import self_missing_permissions
 
+
+# Source: https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/mod.py
+class MemberID(commands.Converter):
+    async def convert(self, ctx, argument):
+        try:
+            m = await commands.MemberConverter().convert(ctx, argument)
+        except commands.BadArgument:
+            try:
+                return int(argument, base=10)
+            except ValueError:
+                raise commands.BadArgument(f"{argument} is not a valid member or member ID.") from None
+        else:
+            return m.id
+
+
+class ActionReason(commands.Converter):
+    async def convert(self, ctx, argument):
+        ret = argument
+
+        if len(ret) > 512:
+            reason_max = 512 - len(ret) - len(argument)
+            raise commands.BadArgument(f"reason is too long ({len(argument)}/{reason_max})")
+        return ret
 
 class Mod(commands.Cog):
     """Commands for moderators"""
@@ -54,13 +77,20 @@ class Mod(commands.Cog):
     @commands.has_guild_permissions(ban_members=True)
     @commands.bot_has_guild_permissions(ban_members=True)
     @commands.guild_only()
-    async def ban_user(self, ctx, member: nextcord.Member, *, reason=None) -> None:
-        if await perms.check_priv(ctx, member=member):
+    async def ban_user(self, ctx, member: MemberID, *, reason=None) -> None:
+        caller = ctx.author if isinstance(ctx, Context) else ctx.user
+        m = ctx.guild.get_member(member)
+        if m is not None and await perms.check_priv(ctx, m):
             return
-        await member.ban(reason=default.responsible(ctx.author, reason))
-        await ctx.reply(
+
+        try:
+            await ctx.guild.ban(nextcord.Object(id=member), reason=default.responsible(caller, reason))
+            await ctx.reply(
             _("cmds.ban.res_noreason") if reason is None else _("cmds.ban.res_reason")
-        )
+            )
+
+        except Exception as e:
+            await ctx.send(e)
 
     @slash_command(
         name="ban",
