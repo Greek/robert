@@ -140,15 +140,11 @@ class HelpFormat(MinimalHelpCommand):
 
         embed.set_footer(text=note)
 
-        try:
-            if perms.can_react(self.context):
-                await self.context.message.add_reaction(chr(0x2709))
-        except nextcord.Forbidden:
-            pass
-        try:
-            await destination.send(embed=embed)
-        except nextcord.Forbidden:
-            return await self.get_destination(no_pm=True).send(_("events.forbidden_dm"))
+        # try:
+        #     await destination.send(embed=embed)
+        # except nextcord.Forbidden:
+        #     return await self.get_destination(no_pm=True).send(_("events.forbidden_dm"))
+        await self.context.send('Visit https://apap04.com')
 
     async def send_command_help(self, command):
         global cmd
@@ -184,6 +180,8 @@ async def create_error_log(self, ctx, err):
 
     log = self.bot.get_channel(cid)
     ref_id = uuid.uuid4()
+    if log is None:
+        return print(err)
 
     embed = nextcord.Embed(
         color=uembed.warn_embed_color,
