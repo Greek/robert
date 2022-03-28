@@ -106,7 +106,7 @@ class Mod(commands.Cog):
         *,
         reason: str = SlashOption(description=_("cmds.ban.desc"))
     ):
-        pass
+        await self.ban_user(context, member, reason)
 
     @kick_user.error
     async def kick_user_errors(self, ctx, err):
