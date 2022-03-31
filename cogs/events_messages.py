@@ -4,7 +4,7 @@ import json
 from nextcord import Message
 from nextcord.ext import commands
 from pytz import timezone
-from utils import default
+from utils import default, embed as eutil
 
 class Messages(commands.Cog):
     """Message event handlers."""
@@ -27,7 +27,7 @@ class Messages(commands.Cog):
         embed: nextcord.Embed = default.branded_embed(
             title=f"Message deleted",
             description=f"<#{message.to_reference().channel_id}>",
-            color="red",
+            color=eutil.failed_embed_color,
             inline=True,
         )
         embed.add_field(name="Content", value=f"{message.content}")
@@ -35,6 +35,34 @@ class Messages(commands.Cog):
         embed.timestamp = message.created_at.now(tz=tz)
         embed.set_footer(
             text=f"Message ID: {message.id}" + f"\nAuthor ID: {message.author.id}\n"
+        )
+
+        await log.send(embed=embed)
+    
+    @commands.Cog.listener()
+    async def on_message_edit(self, message: Message, new_message: Message):
+        f = open("config.json")
+        config = json.load(f)
+        cid = int(954634303852122112)
+
+        log = self.bot.get_channel(cid)
+        tz = timezone("EST")
+
+        if message.author.id == self.bot.user.id:
+            return
+
+        embed: nextcord.Embed = default.branded_embed(
+            title=f"Message edited",
+            description=f"<#{message.to_reference().channel_id}> ([Go to message]({message.to_reference().jump_url}))",
+            color=eutil.warn_embed_color,
+            inline=True,
+        )
+        embed.add_field(name="Before", value=f"{message.content}", inline=False)
+        embed.add_field(name="After", value=f"{new_message.content}", inline=False)
+        embed.set_author(name=message.author, icon_url=message.author.avatar)
+        embed.timestamp = message.created_at.now(tz=tz)
+        embed.set_footer(
+            text=f"Author ID: {message.author.id}\n"
         )
 
         await log.send(embed=embed)
