@@ -76,7 +76,7 @@ class About(commands.Cog):
         await msg.edit(f"Pinged random funny thing, took {self.bot.latency:.2f} ({ ctx.message.created_at })")
 
     @nextcord.slash_command(
-        guild_ids=[932369210611494982], name="about", description=_("cmds.about")
+        name="about", description=_("cmds.about")
     )
     async def about_slash(self, ctx: nextcord.Interaction):
         await self.about(ctx)
