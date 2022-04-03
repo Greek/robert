@@ -155,12 +155,6 @@ class HelpFormat(MinimalHelpCommand):
 
     async def send_pages(self, no_pm: bool = False):
         try:
-            if perms.can_react(self.context):
-                await self.context.message.add_reaction(chr(0x2709))
-        except nextcord.Forbidden:
-            pass
-
-        try:
             destination = self.get_destination(no_pm=no_pm)
             embed = default.branded_embed(
                 title=f"Help: {cmd}", description=f"", color="green", inline=True

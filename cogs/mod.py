@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from discord import Member
 import nextcord
 import os
 from nextcord import slash_command, Interaction, SlashOption
@@ -60,6 +61,7 @@ class Mod(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.guild_id = 932369210611494982
 
     @commands.command(name="kick", description=_("cmds.kick.desc"))
     @commands.has_guild_permissions(kick_members=True)
@@ -95,7 +97,6 @@ class Mod(commands.Cog):
     @slash_command(
         name="ban",
         description=_("cmds.ban.desc"),
-        guild_ids=[os.environ.get("DISCORD_GUILDID")],
     )
     async def ban_user_slash(
         self,
@@ -106,7 +107,7 @@ class Mod(commands.Cog):
         *,
         reason: str = SlashOption(description=_("cmds.ban.desc"))
     ):
-        await self.ban_user(context, member, reason)
+        await self.ban_user(member, reason)
 
     @kick_user.error
     async def kick_user_errors(self, ctx, err):
