@@ -66,7 +66,5 @@ class Events(commands.Cog):
             status=status,
         )
 
-        print(self.db)
-
 def setup(bot):
     bot.add_cog(Events(bot))
