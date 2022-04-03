@@ -24,6 +24,8 @@ SOFTWARE.
 
 import nextcord
 import datetime
+import os
+import pymongo
 
 from nextcord.ext import commands
 from utils import default
@@ -36,6 +38,8 @@ class Events(commands.Cog):
         self.bot = bot
         self.last_timeStamp = datetime.datetime.utcfromtimestamp(0)
         self.config = default.get("config.json")
+        self.db = pymongo.MongoClient(os.environ.get("MONGO_DB"))
+
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -61,6 +65,8 @@ class Events(commands.Cog):
             activity=nextcord.Activity(type=playing_type, name=self.config.playing),
             status=status,
         )
+
+        print(self.db)
 
 def setup(bot):
     bot.add_cog(Events(bot))
