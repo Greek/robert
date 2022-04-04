@@ -81,6 +81,7 @@ class Bot(AutoShardedBot):
                     cog, exc
                 )  # ignore this pylance err
             )
+            raise exc
 
 
 class HelpFormat(MinimalHelpCommand):
