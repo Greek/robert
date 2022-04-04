@@ -63,7 +63,7 @@ class Fun(commands.Cog):
         await ctx.send(embed=embed)
 
     @nextcord.slash_command(
-        name="who", description=("cmds.who.desc"), guild_ids=[932369210611494982]
+        name="who", description=("cmds.who.desc")
     )
     async def get_user_info_slash(
         self,
@@ -105,7 +105,7 @@ class Fun(commands.Cog):
         await ctx.send(embed=embed)
 
     @nextcord.slash_command(
-        name="xkcd", description=_("cmds.xkcd.desc"), guild_ids=[932369210611494982]
+        name="xkcd", description=_("cmds.xkcd.desc")
     )
     async def get_xkcd_slash(
         self,
@@ -128,7 +128,7 @@ class Fun(commands.Cog):
         except Exception as e:
             await create_error_log(self, ctx, e)
 
-    @nextcord.slash_command(name="avatar", description=_("cmds.avatar.desc"), guild_ids=[932369210611494982])
+    @nextcord.slash_command(name="avatar", description=_("cmds.avatar.desc"))
     async def get_user_avatar_slash(
         self,
         ctx,
