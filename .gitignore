@@ -27,7 +27,7 @@ var/
 
 # Our configuration files
 config.py
-config.json
+# config.json
 
 # Logging
 logs/*.log
