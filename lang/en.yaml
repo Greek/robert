@@ -40,6 +40,9 @@ events:
   priv_checks:
     self: "You can't %{action} yourself!"
     me: "You can't %{action} me!"
+    owner: "I can't %{action} the owner!"
+    same_perms: "You can't %{action} someone with the same role/perms."
+    higher_than_self: "That person has more power than you."
 
   cooldown: "You are on cooldown! Please wait **%{time}%{unit}**."
 

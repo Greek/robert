@@ -20,9 +20,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from utils.default import get, translate as _
-import discord
-from utils import default
+import nextcord
+
+from utils.default import translate as _
+from utils import default, embed
 
 owners = default.get("config.json").owners
 
@@ -32,27 +33,56 @@ def only_owner(ctx):
 
 
 async def check_priv(ctx, member):
+    """Custom (weird) way to check permissions when handling moderation commands"""
     try:
         # Self checks
-        if member == ctx.author:
+        if member.id == ctx.author.id:
             return await ctx.send(
-                embed=_("events.priv_checks.self", action=ctx.command.name)
+                embed=embed.failed_embed_ephemeral(
+                    _("events.priv_checks.self", action=ctx.command.name)
+                )
             )
         if member.id == ctx.bot.user.id:
-            return await ctx.send(_("events.priv_checks.me", action=ctx.command.name))
+            return await ctx.send(
+                embed=embed.failed_embed_ephemeral(
+                    _("events.priv_checks.me", action=ctx.command.name)
+                )
+            )
 
         # Check if user bypasses
         if ctx.author.id == ctx.guild.owner.id:
             return False
 
+        # Now permission check
+        # if member.id in owners:
+        #     if ctx.author.id not in owners:
+        #         return await ctx.send(f"I can't {ctx.command.name} my creator ;-;")
+        #     else:
+        #         pass
+        if member.id == ctx.guild.owner.id:
+            return await ctx.send(
+                embed=embed.failed_embed_ephemeral(
+                    _("events.priv_checks.owner", action=ctx.command.name)
+                )
+            )
+        if ctx.author.top_role == member.top_role:
+            return await ctx.send(
+                embed=embed.failed_embed_ephemeral(
+                    _("events.priv_checks.same_perms", action=ctx.command.name)
+                )
+            )
         if ctx.author.top_role < member.top_role:
-            return
+            return await ctx.send(
+                embed=embed.failed_embed_ephemeral(
+                    _("events.priv_checks.higher_than_self")
+                )
+            )
     except Exception:
         pass
 
 
 def can_react(ctx):
     return (
-        isinstance(ctx.channel, discord.DMChannel)
+        isinstance(ctx.channel, nextcord.DMChannel)
         or ctx.channel.permissions_for(ctx.guild.me).add_reactions
     )

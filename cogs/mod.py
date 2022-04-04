@@ -30,7 +30,6 @@ from nextcord.ext.commands import errors, Context
 from nextcord.ext import commands
 from utils import default, perms
 from utils.default import translate as _
-from utils.embed import self_missing_permissions
 
 
 # Source: https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/mod.py
@@ -42,7 +41,9 @@ class MemberID(commands.Converter):
             try:
                 return int(argument, base=10)
             except ValueError:
-                raise commands.BadArgument(f"{argument} is not a valid member or member ID.") from None
+                raise commands.BadArgument(
+                    f"{argument} is not a valid member or member ID."
+                ) from None
         else:
             return m.id
 
@@ -53,8 +54,11 @@ class ActionReason(commands.Converter):
 
         if len(ret) > 512:
             reason_max = 512 - len(ret) - len(argument)
-            raise commands.BadArgument(f"reason is too long ({len(argument)}/{reason_max})")
+            raise commands.BadArgument(
+                f"reason is too long ({len(argument)}/{reason_max})"
+            )
         return ret
+
 
 class Mod(commands.Cog):
     """Commands for moderators"""
@@ -86,42 +90,17 @@ class Mod(commands.Cog):
             return
 
         try:
-            await ctx.guild.ban(nextcord.Object(id=member), reason=default.responsible(caller, reason))
+            await ctx.guild.ban(
+                nextcord.Object(id=member), reason=default.responsible(caller, reason)
+            )
             await ctx.reply(
-            _("cmds.ban.res_noreason") if reason is None else _("cmds.ban.res_reason")
+                _("cmds.ban.res_noreason")
+                if reason is None
+                else _("cmds.ban.res_reason")
             )
 
         except Exception as e:
             await ctx.send(e)
-
-    @slash_command(
-        name="ban",
-        description=_("cmds.ban.desc"),
-    )
-    async def ban_user_slash(
-        self,
-        ctx: nextcord.Interaction,
-        member: nextcord.Member = SlashOption(
-            description=_("cmds.ban.option_member"), required="true"
-        ),
-        *,
-        reason: str = SlashOption(description=_("cmds.ban.desc"))
-    ):
-        await self.ban_user(member, reason)
-
-    @kick_user.error
-    async def kick_user_errors(self, ctx, err):
-        if isinstance(err, errors.BotMissingPermissions):
-            return await ctx.reply(
-                embed=self_missing_permissions(ctx.author, "kick_members")
-            )
-
-    @ban_user.error
-    async def ban_user_errors(self, ctx, err):
-        if isinstance(err, errors.BotMissingPermissions):
-            return await ctx.reply(
-                embed=self_missing_permissions(ctx.author, "ban_members")
-            )
 
     @commands.command(name="purge", description=_("cmds.purge.desc"))
     @commands.has_guild_permissions(manage_messages=True)
@@ -129,7 +108,7 @@ class Mod(commands.Cog):
     async def mass_delete(self, ctx, amount: int):
         try:
             await ctx.channel.purge(limit=amount + 1)
-        except discord.HTTPException:
+        except nextcord.HTTPException:
             sent = await ctx.reply(_("events.missing_permission"))
             return await sent.delete(delay=3)
         sent = await ctx.send(
