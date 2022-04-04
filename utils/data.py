@@ -60,6 +60,7 @@ class Bot(AutoShardedBot):
             )
             logger.addHandler(handler)
 
+            self.load_extension('jishaku')
             for cog in os.listdir("cogs"):
                 if cog.endswith(".py"):
                     name = cog[:-3]
