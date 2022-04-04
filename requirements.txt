@@ -1,7 +1,10 @@
 nextcord
 python-i18n[yaml]
 python-dotenv
+pymongo
+pymongo[srv]
 requests
 psutil~=5.8.0
 aiohttp==3.8.1
 pytz
+jishaku

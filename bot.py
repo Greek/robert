@@ -9,10 +9,9 @@ from dotenv import dotenv_values, load_dotenv
 
 cfg = get("config.json")
 dot_cfg = dotenv_values(".env")
-load_dotenv('.env')
+load_dotenv(".env")
 
 intents = nextcord.Intents(messages=True, guilds=True, members=True)
-allowed_mentions = nextcord.AllowedMentions(users=False)
 
 bot = Bot(
     command_prefix=cfg.prefix,
@@ -20,8 +19,7 @@ bot = Bot(
     command_attrs=dict(hidden=True),
     help_command=HelpFormat(),
     intents=intents,
-    allowed_mentions=allowed_mentions,
     case_insensitive=True,
 )
 
-bot.run(os.environ.get('DISCORD_TOKEN'))
+bot.run(os.environ.get("DISCORD_TOKEN"))

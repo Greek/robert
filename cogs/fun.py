@@ -22,12 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from discord import Interaction, SlashOption
 import nextcord
-import discord
 
 from nextcord.ext import commands
 from utils import default
 from utils.default import translate as _
+from utils.data import create_error_log
 
 
 class Fun(commands.Cog):
@@ -36,21 +37,42 @@ class Fun(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="who", description=_("cmds.who.desc"))
-    async def get_user_info(self, ctx, member: discord.Member = None):
-        member = member or ctx.author
-        embed = discord.Embed(colour=member.color, description=f"{member.mention}")
+    @commands.command(
+        name="who", aliases=["userinfo", "w", "ui"], description=_("cmds.who.desc")
+    )
+    async def get_user_info(self, ctx, member: nextcord.Member = None):
+
+        if isinstance(ctx, Interaction):
+            member = member or ctx.user
+        else:
+            member = member or ctx.author
+        embed = nextcord.Embed(colour=member.color, description=f"{member.mention}")
         embed.set_author(name=str(member), icon_url=member.avatar)
         embed.set_thumbnail(url=member.avatar)
-        embed.add_field(name="Join date", value=f"{member.joined_at}"[0:10])
-        embed.add_field(name="Creation date", value=f"{member.created_at}"[0:10])
+        embed.add_field(
+            name="Dates",
+            value=f":door: **Joined**: <t:{int(member.joined_at.timestamp())}>\n"
+            + f":hammer_pick: **Created**: <t:{int(member.created_at.timestamp())}>",
+        )
         embed.add_field(
             name="Roles",
-            value=", ".join([r.mention for r in member.roles[1:]]),
+            value=f", ".join([r.mention for r in member.roles[::-1]]),
             inline=False,
         )
         embed.set_footer(text="ID: " + str(member.id))
-        await ctx.reply(embed=embed, mention_author=False)
+        await ctx.send(embed=embed)
+
+    @nextcord.slash_command(
+        name="who", description=("cmds.who.desc"), guild_ids=[932369210611494982]
+    )
+    async def get_user_info_slash(
+        self,
+        ctx,
+        member: nextcord.Member = nextcord.SlashOption(
+            "user", description="The user you want to get", required=False
+        ),
+    ):
+        await self.get_user_info(ctx, member=member)
 
     @commands.command(name="xkcd", description=_("cmds.xkcd.desc"))
     async def get_xkcd(self, ctx, *, comic: int = None):
@@ -80,18 +102,43 @@ class Fun(commands.Cog):
             )
         else:
             embed.set_author(name=f"The latest xkcd comic", url=f"https://xkcd.com")
-        await ctx.reply(embed=embed, mention_author=False)
+        await ctx.send(embed=embed)
 
-    @commands.command(name="8ball", description=_("cmds.8ball.desc"))
-    async def random_response_generator(self, ctx):  # i know, lame name
-        pass
+    @nextcord.slash_command(
+        name="xkcd", description=_("cmds.xkcd.desc"), guild_ids=[932369210611494982]
+    )
+    async def get_xkcd_slash(
+        self,
+        ctx,
+        *,
+        comic: int = SlashOption(
+            "id", description=_("cmds.xkcd.options.id"), required=False
+        ),
+    ):
+        await self.get_xkcd(ctx, comic=comic)
 
     @commands.command(name="avatar")
-    async def get_user_avatar(self, ctx):
+    async def get_user_avatar(self, ctx, *, member: nextcord.Member = None):
         try:
-            await ctx.send(ctx.guild.icon.with_format("png").with_size(2048))
+            if isinstance(ctx, Interaction):
+                member = member or ctx.user
+            else:
+                member = member or ctx.author
+            await ctx.send(member.avatar.with_format("webp").with_size(2048))
         except Exception as e:
-            await ctx.send(default.traceback_maker(err=e))
+            await create_error_log(self, ctx, e)
+
+    @nextcord.slash_command(name="avatar", description=_("cmds.avatar.desc"), guild_ids=[932369210611494982])
+    async def get_user_avatar_slash(
+        self,
+        ctx,
+        *,
+        member: nextcord.Member = SlashOption(
+            name="member", description=_("cmds.avatar.options.user"), required=False
+        ),
+    ):
+        await self.get_user_avatar(ctx, member=member)
+
 
 def setup(bot):
     bot.add_cog(Fun(bot))

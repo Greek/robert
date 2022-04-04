@@ -60,6 +60,7 @@ class Bot(AutoShardedBot):
             )
             logger.addHandler(handler)
 
+            self.load_extension('jishaku')
             for cog in os.listdir("cogs"):
                 if cog.endswith(".py"):
                     name = cog[:-3]
@@ -154,12 +155,6 @@ class HelpFormat(MinimalHelpCommand):
         await self.send_pages(no_pm=True)
 
     async def send_pages(self, no_pm: bool = False):
-        try:
-            if perms.can_react(self.context):
-                await self.context.message.add_reaction(chr(0x2709))
-        except nextcord.Forbidden:
-            pass
-
         try:
             destination = self.get_destination(no_pm=no_pm)
             embed = default.branded_embed(
