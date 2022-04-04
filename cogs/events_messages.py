@@ -49,6 +49,9 @@ class Messages(commands.Cog):
     @commands.Cog.listener()
     async def on_message_edit(self, message: Message, new_message: Message):
         try:
+            if message.content == new_message.content:
+                return
+
             res = self.message_log_coll.find_one({"_id": f"{message.guild.id}"})
             cid = int(res["channelId"])
             log = self.bot.get_channel(cid)
