@@ -1,5 +1,9 @@
 cmds:
   about: "About the bot"
+  avatar:
+    desc: "Get a person's avatar"
+    options:
+      user: "The person's avatar you want to get"
   # Moderation commands
   ban:
     desc: "Ban a user."
@@ -18,11 +22,13 @@ cmds:
     res: "Deleted %{amount} message(s)"
   # "Fun" commands
   who:
-    desc: "Get info about a user."
+    desc: "Get info about a person."
     options:
-      member: "The user you want."
+      member: "The person you want."
   xkcd:
     desc: "Get a comic from xkcd.com!"
+    options:
+      id: "The comic number you'd like"
     could_not_find_comic: "i couldn't find that comic, try something else?"
     posted_on: "Posted on %{m}/%{d}/%{y}"
   snipe:
