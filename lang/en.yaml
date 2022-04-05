@@ -4,6 +4,10 @@ cmds:
     desc: "Get a person's avatar"
     options:
       user: "The person's avatar you want to get"
+  config:
+    welcome:
+      desc: "Set a welcoming channel and message."
+      success: "Set the welcome message to \"%{message}\" in %{channel}."
   # Moderation commands
   ban:
     desc: "Ban a user."
