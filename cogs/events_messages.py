@@ -31,6 +31,9 @@ class Messages(commands.Cog):
         if message.author.id == self.bot.user.id:
             return
 
+        if message.author.bot:
+            return
+
         embed: nextcord.Embed = default.branded_embed(
             title=f"Message deleted",
             description=f"<#{message.to_reference().channel_id}>",
@@ -59,6 +62,9 @@ class Messages(commands.Cog):
             tz = timezone("EST")
 
             if message.author.id == self.bot.user.id:
+                return
+
+            if message.author.bot:
                 return
 
             embed: nextcord.Embed = default.branded_embed(

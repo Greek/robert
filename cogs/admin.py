@@ -22,15 +22,17 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from nextcord.ext import commands
-from nextcord.ext.commands import Context
-from utils import default, perms, _io
-from utils.default import translate as _
 import discord
 import ast
 import sys
 import os
 import time
+
+from nextcord.ext import commands
+from nextcord.ext.commands import Context
+from pymongo import MongoClient
+from utils import default, perms, _io
+from utils.default import translate as _
 
 from utils.embed import (
     failed_embed,
@@ -48,6 +50,9 @@ class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.config = default.get("./config.json")
+        self.cluster = MongoClient(os.environ.get("MONGO_DB"))
+        self.db = self.cluster[os.environ.get("MONGO_NAME")]
+        self.collection = self.db["test12"]
 
     @commands.command(name="load", aliases=["l"], hidden=True)
     @commands.check(perms.only_owner)
@@ -188,6 +193,14 @@ class Admin(commands.Cog):
                 failed_embed(ctx.author, "Hello"),
             ]
         )
+
+    @commands.command(name="test_coll")
+    @commands.check(perms.is_owner)
+    async def create_coll_with_content(self, ctx):
+        try:
+            self.collection.find_one_and_update({}, { "$set": { "_id": 1 } }, upsert=True)
+        except Exception as e:
+            await ctx.send(e)
 
 
 def setup(bot):

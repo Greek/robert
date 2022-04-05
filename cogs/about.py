@@ -31,8 +31,6 @@ from utils.default import translate as _
 import nextcord
 import psutil
 import os
-import time
-
 
 class About(commands.Cog):
     def __init__(self, bot):
@@ -75,7 +73,6 @@ class About(commands.Cog):
     )
     async def about_slash(self, ctx: nextcord.Interaction):
         await self.about(ctx)
-
 
 def setup(bot):
     bot.add_cog(About(bot))
