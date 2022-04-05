@@ -26,7 +26,6 @@ var/
 *.egg
 
 # Our configuration files
-config.py
 # config.json
 
 # Logging
