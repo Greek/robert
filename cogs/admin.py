@@ -195,7 +195,7 @@ class Admin(commands.Cog):
         )
 
     @commands.command(name="test_coll")
-    @commands.check(perms.is_owner)
+    @commands.check(perms.only_owner)
     async def create_coll_with_content(self, ctx):
         try:
             self.collection.find_one_and_update({}, { "$set": { "_id": 1 } }, upsert=True)
