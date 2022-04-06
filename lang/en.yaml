@@ -7,7 +7,14 @@ cmds:
   config:
     welcome:
       desc: "Set a welcoming channel and message."
+      desc_clear: "Clear the welcome message."
       success: "Set the welcome message to \"%{message}\" in %{channel}."
+      removal_success: "Removed the welcome message configuration."
+    logs:
+      message:
+        desc: "Set a message logging channel to monitor edited and deleted messages."
+        desc_clear: "Remove the logging channel."
+        success: "Set the logging channel to %{channel}."
   # Moderation commands
   ban:
     desc: "Ban a user."

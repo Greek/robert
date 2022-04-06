@@ -15,13 +15,13 @@ class Messages(commands.Cog):
         self.bot = bot
         self.cluster = pymongo.MongoClient(os.environ.get("MONGO_DB"))
         self.db = self.cluster[os.environ.get("MONGO_NAME")]
-        self.message_log_coll = self.db["message-log-channels"]
+        self.message_log_coll = self.db["guild-configs"]
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: Message):
         try:
             res = self.message_log_coll.find_one({"_id": f"{message.guild.id}"})
-            cid = int(res["channelId"])
+            cid = int(res["messageLog"])
         except:
             return
 
@@ -56,7 +56,7 @@ class Messages(commands.Cog):
                 return
 
             res = self.message_log_coll.find_one({"_id": f"{message.guild.id}"})
-            cid = int(res["channelId"])
+            cid = int(res["messageLog"])
             log = self.bot.get_channel(cid)
         
             tz = timezone("EST")
