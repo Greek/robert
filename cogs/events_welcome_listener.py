@@ -21,12 +21,13 @@ class EventsWelcomeListener(commands.Cog):
     async def on_member_join(self, member: Member):
         try:
             res = self.config_coll.find_one({"_id": f"{member.guild.id}"})
-            print(res)
             parsed_message = (
                 str(res["welcomeGreeting"])
                 .replace("@everyone", "everyone")
                 .replace("@here", "here")
                 .replace("{user.mention}", f"{member.mention}")
+                .replace("{user.name}", f"{member.name}")
+                .replace("{user.tag}", f"{member.name}#{member.discriminator}")
             )
             channel = self.bot.get_channel(int(res["welcomeChannel"]))
 
