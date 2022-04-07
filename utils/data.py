@@ -20,6 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import cmd
 import nextcord
 import os
 import logging
@@ -85,6 +86,8 @@ class Bot(AutoShardedBot):
 
 
 class HelpFormat(MinimalHelpCommand):
+    
+
     def get_destination(self, no_pm: bool = False):
         if no_pm:
             return self.context.channel
@@ -93,7 +96,7 @@ class HelpFormat(MinimalHelpCommand):
 
     def get_ending_note(self):
         command_name = self.invoked_with
-        cfg_prefix = default.get("config.json").prefix
+        cfg_prefix = os.environ.get('DISCORD_PREFIX')
         return 'Run "{0}{1} <command name>" to see help for a specific command.'.format(
             cfg_prefix, command_name
         )
@@ -148,18 +151,18 @@ class HelpFormat(MinimalHelpCommand):
         #     return await self.get_destination(no_pm=True).send(_("events.forbidden_dm"))
         await self.context.send('Visit https://apap04.com')
 
-    async def send_command_help(self, command):
-        global cmd
-        cmd = command
+    async def send_command_help(self, command): 
+        global _cmd
+        _cmd = command
         self.add_command_formatting(command)
         self.paginator.close_page()
         await self.send_pages(no_pm=True)
 
     async def send_pages(self, no_pm: bool = False):
         try:
-            destination = self.get_destination(no_pm=no_pm)
+            destination = self.get_destination(no_pm=True)
             embed = default.branded_embed(
-                title=f"Help: {cmd}", description=f"", color="green", inline=True
+                title=f"Help guide", description=f"", color="green", inline=True
             )
             for page in self.paginator.pages:
                 embed.description += page
