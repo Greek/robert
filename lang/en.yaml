@@ -15,6 +15,7 @@ cmds:
         desc: "Set a message logging channel to monitor edited and deleted messages."
         desc_clear: "Remove the logging channel."
         success: "Set the logging channel to %{channel}."
+        success_clear: "Cleared the logging channel."
   # Moderation commands
   ban:
     desc: "Ban a user."

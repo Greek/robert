@@ -19,7 +19,7 @@ class Config(commands.Cog):
         self.db = self.cluster[os.environ.get("MONGO_NAME")]
         self.config_coll = self.db["guild-configs"]
 
-    @commands.group(name="config", aliases=["c", "z", "zen"])
+    @commands.group(name="config", aliases=["z", "zen"])
     async def config(self, ctx):
         if ctx.invoked_subcommand is None:
             await ctx.send_help(str(ctx.command))
@@ -60,18 +60,17 @@ class Config(commands.Cog):
             print(e)
 
     @messages.command(name="clear", description=_("cmds.config.logs.message.desc_clear"))
-    async def set_message_logs(self, ctx, channel: TextChannel):
+    async def clear_message_logs(self, ctx):
         try:
             self.config_coll.find_one_and_update(
                 {"_id": f"{ctx.guild.id}"},
-                {"$unset": {"messageLog": f"{channel.id}"}},
+                {"$unset": {"messageLog": ""}},
                 upsert=True,
             )
             await ctx.send(
                 embed=embed.success_embed_ephemeral(
                     _(
-                        "cmds.config.logs.message.success",
-                        channel=channel.mention,
+                        "cmds.config.logs.message.success_clear",
                     )
                     # f'Set welcome message to "{message}" in {channel.mention}.'
                 )
@@ -81,7 +80,7 @@ class Config(commands.Cog):
 
     @welcome.command(name="set", description=_("cmds.config.welcome.desc"))
     async def change_welcome_message(
-        self, ctx: Context, channel: TextChannel, *, message: str
+        self, ctx, channel: TextChannel, *, message: str
     ):
         try:
             self.config_coll.find_one_and_update(
