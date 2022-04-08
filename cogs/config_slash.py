@@ -1,3 +1,4 @@
+from email import message
 import nextcord
 import os
 
@@ -20,7 +21,6 @@ class ConfigSlash(commands.Cog):
     @nextcord.slash_command(
         name="config",
         description="Configure the bot for your server's needs",
-        guild_ids=[932369210611494982],
     )
     async def config_slash(interaction: Interaction):
         pass
@@ -37,7 +37,7 @@ class ConfigSlash(commands.Cog):
     async def logs_slash(interaction: Interaction):
         pass
 
-    @config_slash.subcommand
+
     @welcome_slash.subcommand(name="set", description=_("cmds.config.welcome.desc"))
     async def change_welcome_message_slash(
         self,
@@ -61,6 +61,31 @@ class ConfigSlash(commands.Cog):
     )
     async def clear_welcome_message_slash(self, ctx: Interaction):
         return await Config.clear_welcome_message(context=self, ctx=ctx)
+
+
+    @logs_slash.subcommand(
+        name="messages-set", description="Configure the bot for your server's needs"
+    )
+    async def set_message_logs(
+        self,
+        interaction: Interaction,
+        channel: nextcord.abc.GuildChannel = SlashOption(
+            name="channel",
+            channel_types=[ChannelType.text],
+            description=_("cmds.config.welcome.desc"),
+            required=True,
+        ),
+    ):
+        return await Config.set_message_logs(self, interaction, channel=channel)
+
+    @logs_slash.subcommand(
+        name="messages-clear", description="Configure the bot for your server's needs"
+    )
+    async def clear_message_log(
+        self,
+        interaction: Interaction,
+    ):
+        return await Config.clear_message_logs(self, interaction)
 
 
 def setup(bot):
