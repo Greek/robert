@@ -20,6 +20,7 @@ class ConfigSlash(commands.Cog):
     @nextcord.slash_command(
         name="config",
         description="Configure the bot for your server's needs",
+        default_permission=False
     )
     async def config_slash(interaction: Interaction):
         pass
@@ -38,6 +39,8 @@ class ConfigSlash(commands.Cog):
 
 
     @welcome_slash.subcommand(name="set", description=_("cmds.config.welcome.desc"))
+    @commands.has_guild_permissions(manage_channels=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
     async def change_welcome_message_slash(
         self,
         ctx: Interaction,
@@ -58,6 +61,7 @@ class ConfigSlash(commands.Cog):
     @welcome_slash.subcommand(
         name="clear", description=_("cmds.config.welcome.desc_clear")
     )
+    
     async def clear_welcome_message_slash(self, ctx: Interaction):
         return await Config.clear_welcome_message(context=self, ctx=ctx)
 
@@ -65,6 +69,8 @@ class ConfigSlash(commands.Cog):
     @logs_slash.subcommand(
         name="messages-set", description="Configure the bot for your server's needs"
     )
+    @commands.has_guild_permissions(manage_channels=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs(
         self,
         interaction: Interaction,
@@ -80,6 +86,8 @@ class ConfigSlash(commands.Cog):
     @logs_slash.subcommand(
         name="messages-clear", description="Configure the bot for your server's needs"
     )
+    @commands.has_guild_permissions(manage_channels=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
     async def clear_message_log(
         self,
         interaction: Interaction,
