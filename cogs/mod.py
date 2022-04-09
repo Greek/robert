@@ -89,28 +89,21 @@ class Mod(commands.Cog):
         if m is not None and await perms.check_priv(ctx, m):
             return
 
-        try:
-            await ctx.guild.ban(
-                nextcord.Object(id=member), reason=default.responsible(caller, reason)
-            )
-            await ctx.reply(
-                _("cmds.ban.res_noreason")
-                if reason is None
-                else _("cmds.ban.res_reason")
-            )
+        await ctx.guild.ban(
+            nextcord.Object(id=member), reason=default.responsible(caller, reason)
+        )
+        await ctx.reply(
+            _("cmds.ban.res_noreason") if reason is None else _("cmds.ban.res_reason")
+        )
 
-        except Exception as e:
-            await ctx.send(e)
-
-    @commands.command(name="purge", description=_("cmds.purge.desc"))
+    @commands.command(
+        name="purge", aliases=["clear", "c"], description=_("cmds.purge.desc")
+    )
     @commands.has_guild_permissions(manage_messages=True)
+    @commands.bot_has_guild_permissions(manage_messages=True)
     @commands.guild_only()
     async def mass_delete(self, ctx, amount: int):
-        try:
-            await ctx.channel.purge(limit=amount + 1)
-        except nextcord.HTTPException:
-            sent = await ctx.reply(_("events.missing_permission"))
-            return await sent.delete(delay=3)
+        await ctx.channel.purge(limit=amount + 1)
         sent = await ctx.send(
             _("cmds.purge.res", ctx=ctx.author.mention, amount=amount)
         )
