@@ -53,18 +53,18 @@ def failed_embed(
 
 
 def missing_permissions(
-    user: nextcord.User, description: str, footer: str = None
+    description: str, footer: str = None
 ) -> nextcord.Embed:
     return nextcord.Embed(
         color=failed_embed_color,
         description=f"<:red_tick:954499768124583947> You're missing the `{description.lower()}` permission.",
-    ).set_author(name=user.name, icon_url=user.display_avatar)
+    )
 
 
 def self_missing_permissions(
-    user: nextcord.User, description: str, footer: str = None
+    description: str, footer: str = None
 ) -> nextcord.Embed:
     return nextcord.Embed(
         color=failed_embed_color,
         description=f"<:red_tick:954499768124583947> I don't have the `{description.lower()}` permission.",
-    ).set_author(name=user.name, icon_url=user.display_avatar)
+    )

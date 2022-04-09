@@ -40,6 +40,8 @@ class Config(commands.Cog):
             await ctx.send_help(str(ctx.command))
 
     @messages.command(name="set", description=_("cmds.config.logs.message.desc"))
+    @commands.has_guild_permissions(manage_channels=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs(self, ctx, channel: TextChannel):
         try:
             self.config_coll.find_one_and_update(
@@ -56,10 +58,12 @@ class Config(commands.Cog):
                     # f'Set welcome message to "{message}" in {channel.mention}.'
                 )
             )
-        except Exception as e:
-            print(e)
+        except:
+            await ctx.send(embed=embed.failed_embed_ephemeral("Could not change logging channel."))
 
     @messages.command(name="clear", description=_("cmds.config.logs.message.desc_clear"))
+    @commands.has_guild_permissions(manage_channels=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
     async def clear_message_logs(self, ctx):
         try:
             self.config_coll.find_one_and_update(
@@ -79,6 +83,8 @@ class Config(commands.Cog):
             print(e)
 
     @welcome.command(name="set", description=_("cmds.config.welcome.desc"))
+    @commands.has_guild_permissions(manage_channels=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
     async def change_welcome_message(
         self, ctx, channel: TextChannel, *, message: str
     ):
@@ -107,6 +113,8 @@ class Config(commands.Cog):
             await ctx.send(e)
 
     @welcome.command(name="clear", description=_("cmds.config.welcome.desc"))
+    @commands.has_guild_permissions(manage_channels=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
     async def clear_welcome_message(self, ctx: Context):
         try:
             self.config_coll.find_one_and_update(
