@@ -12,7 +12,7 @@ class CavernTask(commands.Cog):
     def cog_unload(self):
         self.printer.cancel()
 
-    @tasks.loop(minutes=3)
+    @tasks.loop(hours=12)
     async def printer(self):
         try:
             channel = self.bot.get_channel(960209486319079455)
