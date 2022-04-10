@@ -40,8 +40,9 @@ class Messages(commands.Cog):
             color=eutil.failed_embed_color,
             inline=True,
         )
-        embed.add_field(name="Content", value=f"{message.content}")
+        embed.add_field(name="Content", value=f"{message.content}") if message.content else None
         embed.set_author(name=message.author, icon_url=message.author.avatar)
+        embed.set_image(url=message.attachments[0].proxy_url) if message.attachments else None
         embed.timestamp = message.created_at.now(tz=tz)
         embed.set_footer(
             text=f"Message ID: {message.id}" + f"\nAuthor ID: {message.author.id}\n"
