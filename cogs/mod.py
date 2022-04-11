@@ -31,7 +31,7 @@ from nextcord.ext.commands import Context
 from nextcord.utils import get
 from redis.asyncio import Redis
 from utils import default, perms
-from utils.embed import success_embed_ephemeral
+from utils.embed import failed_embed_ephemeral, success_embed_ephemeral
 from utils.default import translate as _
 
 from dotenv import dotenv_values, load_dotenv
@@ -130,7 +130,7 @@ class Mod(commands.Cog):
                 _("cmds.kick.res_noreason") if reason is None else _("cmds.kick.res_reason")
             )
         except Exception as e:
-            print(e)
+            await ctx.send(embed=failed_embed_ephemeral(e))
 
     @commands.command(name="ban", description=_("cmds.ban.desc"))
     @commands.has_guild_permissions(ban_members=True)
@@ -150,7 +150,7 @@ class Mod(commands.Cog):
                 _("cmds.ban.res_noreason") if reason is None else _("cmds.ban.res_reason")
             )
         except Exception as e:
-            print(e)
+            await ctx.send(embed=failed_embed_ephemeral(e))
 
     @commands.command(
         name="purge", aliases=["clear", "c"], description=_("cmds.purge.desc")
