@@ -36,11 +36,11 @@ class Errors(commands.Cog):
             # await ctx.send_help(str(ctx.command))
 
         if isinstance(err, commands.CommandOnCooldown):
-            embed = await warn_embed_ephemeral(
+            embed = warn_embed_ephemeral(
                 _("events.cooldown", time="{0}", unit="s").format(int(err.retry_after))
             )
 
-            await ctx.reply(embed=embed)
+            await ctx.send(embed=embed)
 
 
 def setup(bot):
