@@ -31,7 +31,8 @@ cmds:
     res_reason: "👍"
   purge:
     desc: "Mass delete messages at once."
-    res: "Deleted %{amount} message(s)"
+    res: "Deleted %{amount} messages."
+    res_singular: "Deleted %{amount} message."
   # "Fun" commands
   who:
     desc: "Get info about a person."

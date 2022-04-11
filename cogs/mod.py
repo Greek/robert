@@ -22,13 +22,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from discord import Member
 import nextcord
-import os
-from nextcord import slash_command, Interaction, SlashOption
-from nextcord.ext.commands import errors, Context
+from nextcord.ext.commands import Context
 from nextcord.ext import commands
 from utils import default, perms
+from utils.embed import success_embed_ephemeral
 from utils.default import translate as _
 
 
@@ -105,7 +103,11 @@ class Mod(commands.Cog):
     async def mass_delete(self, ctx, amount: int):
         await ctx.channel.purge(limit=amount + 1)
         sent = await ctx.send(
-            _("cmds.purge.res", ctx=ctx.author.mention, amount=amount)
+            embed=success_embed_ephemeral(
+                _("cmds.purge.res", ctx=ctx.author.mention, amount=amount)
+                if amount > 1
+                else _("cmds.purge.res_singular", ctx=ctx.author.mention, amount=amount)
+            )
         )
         await sent.delete(delay=3)
 
