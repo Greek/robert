@@ -122,12 +122,15 @@ class Mod(commands.Cog):
     @commands.bot_has_guild_permissions(kick_members=True)
     @commands.guild_only()
     async def kick_user(self, ctx, member: nextcord.Member, *, reason=None) -> None:
-        if await perms.check_priv(ctx, member=member):
-            return
-        await member.kick(reason=default.responsible(ctx.author, reason))
-        await ctx.reply(
-            _("cmds.kick.res_noreason") if reason is None else _("cmds.kick.res_reason")
-        )
+        try:
+            if await perms.check_priv(ctx, member=member):
+                return
+            await member.kick(reason=default.responsible(ctx.author, reason))
+            await ctx.reply(
+                _("cmds.kick.res_noreason") if reason is None else _("cmds.kick.res_reason")
+            )
+        except Exception as e:
+            print(e)
 
     @commands.command(name="ban", description=_("cmds.ban.desc"))
     @commands.has_guild_permissions(ban_members=True)
@@ -136,15 +139,18 @@ class Mod(commands.Cog):
     async def ban_user(self, ctx, member: MemberID, *, reason=None) -> None:
         caller = ctx.author if isinstance(ctx, Context) else ctx.user
         m = ctx.guild.get_member(member)
-        if m is not None and await perms.check_priv(ctx, m):
-            return
+        try:
+            if m is not None and await perms.check_priv(ctx, m):
+                return
 
-        await ctx.guild.ban(
-            nextcord.Object(id=member), reason=default.responsible(caller, reason)
-        )
-        await ctx.reply(
-            _("cmds.ban.res_noreason") if reason is None else _("cmds.ban.res_reason")
-        )
+            await ctx.guild.ban(
+                nextcord.Object(id=member), reason=default.responsible(caller, reason)
+            )
+            await ctx.reply(
+                _("cmds.ban.res_noreason") if reason is None else _("cmds.ban.res_reason")
+            )
+        except Exception as e:
+            print(e)
 
     @commands.command(
         name="purge", aliases=["clear", "c"], description=_("cmds.purge.desc")
