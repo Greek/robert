@@ -46,6 +46,7 @@ cmds:
     posted_on: "Posted on %{m}/%{d}/%{y}"
   snipe:
     desc: "Snipe the last deleted message."
+    desc_edit: "Snipe the last edited message."
     failed: "There's nothing to snipe."
   kill:
     msg: "Good night."

@@ -85,6 +85,13 @@ class Snipe(commands.Cog):
     async def get_last_deleted_message_slashimpl(self, ctx: nextcord.Interaction):
         await self.get_last_deleted_message(ctx)
 
+    @nextcord.slash_command(
+        name="editsnipe",
+        description=_("cmds.snipe.desc_edit"),
+    )
+    async def get_last_edited_message_slashimpl(self, ctx: nextcord.Interaction):
+        await self.get_last_edited_message(ctx)
+
 
 def setup(bot):
     bot.add_cog(Snipe(bot))
