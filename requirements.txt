@@ -3,6 +3,7 @@ python-i18n[yaml]
 python-dotenv
 pymongo
 pymongo[srv]
+redis>=4.2.0rc1
 requests
 psutil~=5.8.0
 aiohttp==3.8.1

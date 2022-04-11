@@ -23,12 +23,21 @@ SOFTWARE.
 """
 
 import nextcord
+import os
+
+from nextcord import Client
+from nextcord.ext import commands, tasks
 from nextcord.ext.commands import Context
-from nextcord.ext import commands
+from nextcord.utils import get
+from redis.asyncio import Redis
 from utils import default, perms
 from utils.embed import success_embed_ephemeral
 from utils.default import translate as _
 
+from dotenv import dotenv_values, load_dotenv
+
+dot_cfg = dotenv_values(".env")
+load_dotenv(".env")
 
 # Source: https://github.com/Rapptz/RoboDanny/blob/rewrite/cogs/mod.py
 class MemberID(commands.Converter):
@@ -61,9 +70,52 @@ class ActionReason(commands.Converter):
 class Mod(commands.Cog):
     """Commands for moderators"""
 
-    def __init__(self, bot):
+    def __init__(self, bot: Client):
+
         self.bot = bot
         self.guild_id = 932369210611494982
+        self.redis = Redis.from_url(
+            url=os.environ.get('REDIS_URL')
+        )
+        self.pubsub = self.redis.pubsub()
+
+        self.subscribe_expiry_handler.start()
+        # self.listen_messages.start()
+
+    def cog_unload(self):
+        self.subscribe_expiry_handler.cancel()
+        # self.listen_messages.cancel()
+
+    async def expiry_handler(self, msg) -> None:
+        decoded = msg["data"].decode("utf-8")
+        split = decoded.split("-")
+        guild = self.bot.get_guild(int(split[2]))
+        member = guild.get_member(int(split[1]))
+        role = get(guild.roles, name='ban perms')
+
+        await member.remove_roles(role, reason="Mute expired. Un-muting.")
+
+    @tasks.loop(count=1)
+    async def subscribe_expiry_handler(self):
+        # Subscribe to all "expired" keyevents thru pubsub and handle them.
+        await self.pubsub.psubscribe(**{"__keyevent@0__:expired": self.expiry_handler})
+
+    @tasks.loop(seconds=0.01)
+    async def listen_messages(self):
+        message = await self.pubsub.get_message()
+        if message:
+            print(message)
+        else:
+            pass
+
+    @subscribe_expiry_handler.before_loop
+    async def subscribe_redis_before(self):
+        await self.bot.wait_until_ready()
+
+    @listen_messages.before_loop
+    async def listen_messages_before(self):
+        await self.bot.wait_until_ready()
+        await self.subscribe_expiry_handler()
 
     @commands.command(name="kick", description=_("cmds.kick.desc"))
     @commands.has_guild_permissions(kick_members=True)
@@ -110,6 +162,22 @@ class Mod(commands.Cog):
             )
         )
         await sent.delete(delay=3)
+
+    @commands.command(name="mute", aliases=["m"], description="No description.")
+    @commands.has_guild_permissions(manage_messages=True)
+    @commands.bot_has_guild_permissions(manage_messages=True)
+    @commands.guild_only()
+    @commands.check(perms.only_owner)
+    async def mute_member(
+        self,
+        ctx: Context,
+        member: nextcord.Member,
+        *,
+        duration: int = None,
+        reason: str = None,
+    ):
+        await self.redis.setex(f"mute-{member.id}-{ctx.guild.id}", duration, reason)
+        await ctx.send("Sent")
 
 
 def setup(bot):

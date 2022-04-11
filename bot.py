@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import time
 import nextcord
 import os
+import redis
 
 from utils.data import Bot, HelpFormat
 from utils.default import get
