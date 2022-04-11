@@ -22,18 +22,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from discord import ClientUser, Color, Colour
+from datetime import datetime
+import nextcord
+import psutil
+import time
+import os
+
+from random import choice
+from nextcord import Client
 from nextcord.ext import commands
 from nextcord.ext.commands import Context
 from utils import default
-from utils.data import create_error_log
 from utils.default import translate as _
-import nextcord
-import psutil
-import os
+
 
 class About(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: Client):
         self.bot = bot
         self.process = psutil.Process(os.getpid())
         self.config = default.get("config.json")
@@ -68,11 +72,26 @@ class About(commands.Cog):
 
             await ctx.send(content=f"", embed=embed)
 
-    @nextcord.slash_command(
-        name="about", description=_("cmds.about")
-    )
+    @commands.command(name="ping", descriptions="Pong!")
+    async def ping(self, ctx: Context):
+        quotes = [
+            "the cavern",
+            "andreas' iphone 13 pro max",
+            "my tonka",
+            "cloud based septic tank",
+        ]
+        
+        sent = await ctx.send("Pinging...")
+        await sent.edit(
+            f"pinged **{choice(quotes)}**, it took {self.bot.latency * 1000:.0f}ms"
+        )
+        # (edit {datetime.now().timestamp() - sent.created_at.timestamp():.0f}ms)
+        
+
+    @nextcord.slash_command(name="about", description=_("cmds.about"))
     async def about_slash(self, ctx: nextcord.Interaction):
         await self.about(ctx)
+
 
 def setup(bot):
     bot.add_cog(About(bot))
