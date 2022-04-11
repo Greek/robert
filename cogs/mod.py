@@ -29,7 +29,11 @@ from nextcord import Client
 from nextcord.ext import commands, tasks
 from nextcord.ext.commands import Context
 from nextcord.utils import get
+
 from redis.asyncio import Redis
+
+from pymongo import MongoClient
+
 from utils import default, perms
 from utils.embed import failed_embed_ephemeral, success_embed_ephemeral
 from utils.default import translate as _
@@ -74,26 +78,31 @@ class Mod(commands.Cog):
 
         self.bot = bot
         self.guild_id = 932369210611494982
-        self.redis = Redis.from_url(
-            url=os.environ.get('REDIS_URL')
+        self.redis: Redis = Redis.from_url(
+            url=os.environ.get('REDIS_URL'),
+            decode_responses=True
         )
         self.pubsub = self.redis.pubsub()
 
+        self.cluster = MongoClient(os.environ.get("MONGO_DB"))
+        self.db = self.cluster[os.environ.get("MONGO_NAME")]
+        self.config_coll = self.db["guild-configs"]
+
         self.subscribe_expiry_handler.start()
-        # self.listen_messages.start()
+        self.listen_messages.start()
 
     def cog_unload(self):
         self.subscribe_expiry_handler.cancel()
-        # self.listen_messages.cancel()
+        self.listen_messages.cancel()
+
 
     async def expiry_handler(self, msg) -> None:
-        decoded = msg["data"].decode("utf-8")
-        split = decoded.split("-")
-        guild = self.bot.get_guild(int(split[2]))
-        member = guild.get_member(int(split[1]))
+        data = msg["data"].split("-")
+        guild = self.bot.get_guild(int(data[2]))
+        member = guild.get_member(int(data[1]))
         role = get(guild.roles, name='ban perms')
 
-        await member.remove_roles(role, reason="Mute expired. Un-muting.")
+        await member.remove_roles(role, reason="Mute expired.")
 
     @tasks.loop(count=1)
     async def subscribe_expiry_handler(self):
@@ -179,11 +188,20 @@ class Mod(commands.Cog):
         ctx: Context,
         member: nextcord.Member,
         *,
-        duration: int = None,
         reason: str = None,
+        duration: int = None,
     ):
-        await self.redis.setex(f"mute-{member.id}-{ctx.guild.id}", duration, reason)
-        await ctx.send("Sent")
+        self.config_coll.find_one({'_id': f"{ctx.guild.id}"}, {"muteRole"})
+        role: nextcord.Role = get(ctx.guild.roles, name='ban perms')
+
+        print()
+            # if await perms.check_priv(ctx, member=member):
+            #     return
+        await member.add_roles(role, reason="Muted")
+        await self.redis.setex(f"mute-{member.id}-{ctx.guild.id}", 3, reason if reason else 'No reason.')
+            
+        await ctx.send(embed=success_embed_ephemeral(f"{member.mention} has been muted."))
+        
 
 
 def setup(bot):

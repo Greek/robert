@@ -180,7 +180,7 @@ async def create_error_log(self, ctx, err):
     log = self.bot.get_channel(cid)
     ref_id = uuid.uuid4()
     if log is None:
-        return print(err)
+        return print("[Error] Couldn't find log channel. Printing:\n", err)
 
     embed = nextcord.Embed(
         color=uembed.warn_embed_color,
