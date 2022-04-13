@@ -166,7 +166,7 @@ class Mod(commands.Cog):
                 else _("cmds.kick.res_reason")
             )
         except Exception as e:
-            await ctx.send(embed=failed_embed_ephemeral(e))
+            await ctx.send(embed=failed_embed_ephemeral("I can't kick that person."))
 
     @commands.command(name="ban", description=_("cmds.ban.desc"))
     @commands.has_guild_permissions(ban_members=True)
@@ -190,7 +190,7 @@ class Mod(commands.Cog):
                 else _("cmds.ban.res_reason")
             )
         except Exception as e:
-            await ctx.send(embed=failed_embed_ephemeral(e))
+            await ctx.send(embed=failed_embed_ephemeral("I can't ban that person."))
 
     @commands.command(
         name="purge", aliases=["clear", "c"], description=_("cmds.purge.desc")
