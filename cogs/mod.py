@@ -93,11 +93,11 @@ class Mod(commands.Cog):
         self.config_coll = self.db["guild-configs"]
 
         self.subscribe_expiry_handler.start()
-        # self.listen_messages.start()
+        self.listen_messages.start()
 
     def cog_unload(self):
         self.subscribe_expiry_handler.cancel()
-        # self.listen_messages.cancel()
+        self.listen_messages.cancel()
 
     async def expiry_handler(self, msg) -> None:
         if msg["data"].startswith("mute"):
@@ -122,7 +122,7 @@ class Mod(commands.Cog):
     async def listen_messages(self):
         message = await self.pubsub.get_message()
         if message:
-            print(message)
+            print(f"[Redis] message")
         else:
             pass
 
