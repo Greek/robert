@@ -36,7 +36,11 @@ from pymongo import MongoClient
 
 from utils import default, perms
 from utils.data import create_error_log
-from utils.embed import failed_embed_ephemeral, success_embed_ephemeral
+from utils.embed import (
+    failed_embed_ephemeral,
+    success_embed_ephemeral,
+    warn_embed_ephemeral,
+)
 from utils.default import translate as _
 
 from dotenv import dotenv_values, load_dotenv
@@ -193,24 +197,36 @@ class Mod(commands.Cog):
     @commands.guild_only()
     @commands.check(perms.only_owner)
     async def mute_member(
-        self,
-        ctx: Context,
-        member: nextcord.Member,
-        *,
-        duration: int
+        self, ctx: Context, member: nextcord.Member, *, duration: int = None
     ):
-        try:            
+        try:
+            existing_mute = await self.redis.get(f"mute-{member.id}-{ctx.guild.id}")
             res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
-            role = ctx.guild.get_role(int(res["muteRole"]))
-
-            if role is None:
+            try:
+                role = ctx.guild.get_role(int(res["muteRole"]))
+            except KeyError:
                 role = await ctx.guild.create_role(name="Muted")
                 role.permissions.send_messages = False
+                await ctx.channel.set_permissions(role, send_messages=False)
                 self.config_coll.find_one_and_update(
                     {"_id": f"{ctx.guild.id}"}, {"$set": {f"muteRole": f"{role.id}"}}
                 )
 
-            await member.add_roles(role, reason="Muted")
+            role = ctx.guild.get_role(int(res["muteRole"]))
+            if role is None:
+                role = await ctx.guild.create_role(name="Muted")
+                role.permissions.send_messages = False
+                await ctx.channel.set_permissions(role, send_messages=False)
+                self.config_coll.find_one_and_update(
+                    {"_id": f"{ctx.guild.id}"}, {"$set": {f"muteRole": f"{role.id}"}}
+                ),
+
+            if existing_mute:
+                return await ctx.send(
+                    embed=warn_embed_ephemeral(f"{member.mention} is already muted.")
+                )
+
+            await member.add_roles(role, reason=f"Muted by {ctx.author}")
 
             if duration is None:
                 await self.redis.set(f"mute-{member.id}-{ctx.guild.id}", "Muted")
@@ -232,17 +248,34 @@ class Mod(commands.Cog):
     @commands.bot_has_guild_permissions(manage_messages=True)
     @commands.guild_only()
     @commands.check(perms.only_owner)
-    async def mute_member(
+    async def unmute_member(
         self,
         ctx: Context,
         member: nextcord.Member,
     ):
-        res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
-        role = ctx.guild.get_role(int(res["muteRole"]))
+        try:
+            mute = await self.redis.get(f"mute-{member.id}-{ctx.guild.id}")
+            if mute is None:
+                return await ctx.send(
+                    embed=warn_embed_ephemeral(f"{member.mention} isn't muted.")
+                )
 
-        await self.redis.delete(f"mute-{member.id}-{ctx.guild.id}")
-        await member.remove_roles(role, reason=f"Mute removed by {ctx.author}"if isinstance(ctx, Context) else f"Mute removed by {ctx.user}") 
-        await ctx.send("Unmuted")
+            res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
+            role = ctx.guild.get_role(int(res["muteRole"]))
+
+            await self.redis.delete(f"mute-{member.id}-{ctx.guild.id}")
+            await member.remove_roles(
+                role,
+                reason=f"Mute removed by {ctx.author}"
+                if isinstance(ctx, Context)
+                else f"Mute removed by {ctx.user}",
+            )
+            await ctx.send(
+                embed=success_embed_ephemeral(f"{member.mention} has been un-muted.")
+            )
+        except Exception as e:
+            await create_error_log(self, ctx, e)
+
 
 def setup(bot):
     bot.add_cog(Mod(bot))
