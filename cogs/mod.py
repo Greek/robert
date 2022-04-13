@@ -22,16 +22,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from discord import SlashOption, TextChannel
+from discord import Interaction
 import nextcord
 import os
 
-from nextcord import Client
+from nextcord import Client, TextChannel
 from nextcord.ext import commands, tasks
-from nextcord.ext.commands import Context, Greedy
+from nextcord.ext.commands import Context
 
 from redis.asyncio import Redis
-
 from pymongo import MongoClient
 
 from utils import default, perms
@@ -156,7 +155,11 @@ class Mod(commands.Cog):
         try:
             if await perms.check_priv(ctx, member=member):
                 return
-            await member.kick(reason=default.responsible(ctx.author, reason))
+            await member.kick(
+                reason=default.responsible(
+                    ctx.author if isinstance(ctx, Context) else ctx.user, reason
+                )
+            )
             await ctx.send(
                 _("cmds.kick.res_noreason")
                 if reason is None
@@ -177,7 +180,9 @@ class Mod(commands.Cog):
                 return
 
             await ctx.guild.ban(
-                nextcord.Object(id=member), reason=default.responsible(caller, reason), delete_message_days=0
+                nextcord.Object(id=member),
+                reason=default.responsible(caller, reason),
+                delete_message_days=0,
             )
             await ctx.send(
                 _("cmds.ban.res_noreason")
@@ -212,6 +217,9 @@ class Mod(commands.Cog):
         self, ctx: Context, member: nextcord.Member, *, duration_in_seconds: int = None
     ):
         try:
+            if await perms.check_priv(ctx, member=member):
+                return
+
             existing_mute = await self.redis.get(f"mute-{member.id}-{ctx.guild.id}")
             res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
 
@@ -241,7 +249,9 @@ class Mod(commands.Cog):
 
             if existing_mute:
                 return await ctx.send(
-                    embed=warn_embed_ephemeral(f"{member.mention} is already muted.")
+                    embed=warn_embed_ephemeral(
+                        _("cmds.mute.res_existing_mute", person=member.mention)
+                    )
                 )
 
             await member.add_roles(
@@ -261,27 +271,10 @@ class Mod(commands.Cog):
                 )
 
             await ctx.send(
-                embed=success_embed_ephemeral(f"{member.mention} has been muted.")
+                embed=success_embed_ephemeral(_("cmds.mute.res", person=member.mention))
             )
         except Exception as e:
             await create_error_log(self, ctx, e)
-
-    @nextcord.slash_command(name="mute", description="Mute a person.")
-    async def mute_member_slash(
-        self,
-        ctx,
-        member: nextcord.Member = SlashOption(
-            name="person", description="Person to mute", required=True
-        ),
-        duration_in_seconds: int = SlashOption(
-            name="duration_in_seconds",
-            description="The amount of time to mute the person (must be in seconds)",
-            required=False,
-        ),
-    ):
-        return await self.mute_member(
-            ctx, member=member, duration_in_seconds=duration_in_seconds
-        )
 
     @commands.command(name="unmute", aliases=["um"], description="Un-mute a person.")
     @commands.has_guild_permissions(manage_messages=True)
@@ -293,10 +286,15 @@ class Mod(commands.Cog):
         member: nextcord.Member,
     ):
         try:
+            if await perms.check_priv(ctx, member=member):
+                return
+
             mute = await self.redis.get(f"mute-{member.id}-{ctx.guild.id}")
             if mute is None:
                 return await ctx.send(
-                    embed=warn_embed_ephemeral(f"{member.mention} isn't muted.")
+                    embed=warn_embed_ephemeral(
+                        _("cmds.unmute.res_not_muted", person=member.mention)
+                    )
                 )
 
             res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
@@ -305,7 +303,7 @@ class Mod(commands.Cog):
             except KeyError:
                 await ctx.send(
                     embed=success_embed_ephemeral(
-                        f"{member.mention} has been un-muted."
+                        _("cmds.unmute.res", person=member.mention)
                     )
                 ),
                 return await self.redis.delete(
@@ -315,7 +313,7 @@ class Mod(commands.Cog):
             if role is None:
                 await ctx.send(
                     embed=success_embed_ephemeral(
-                        f"{member.mention} has been un-muted."
+                        _("cmds.unmute.res", person=member.mention)
                     )
                 ),
                 return await self.redis.delete(f"mute-{member.id}-{ctx.guild.id}")
@@ -328,20 +326,10 @@ class Mod(commands.Cog):
                 else f"Mute removed by {ctx.user}",
             )
             await ctx.send(
-                embed=success_embed_ephemeral(f"{member.mention} has been un-muted.")
+                embed=success_embed_ephemeral(_("cmds.unmute.res", person=member.mention))
             )
         except Exception as e:
             await create_error_log(self, ctx, e)
-
-    @nextcord.slash_command(name="unmute", description="Un-mute a person.")
-    async def unmute_member_slash(
-        self,
-        ctx,
-        member: nextcord.Member = SlashOption(
-            name="person", description="Person to un-mute", required=True
-        ),
-    ):
-        return await self.unmute_member(ctx, member=member)
 
 
 def setup(bot):

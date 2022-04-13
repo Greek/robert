@@ -20,19 +20,32 @@ cmds:
   ban:
     desc: "Ban a person."
     option_member: 'The person you want to ban'
+    option_reason: 'Reason to ban a person.'
     reason: 'Your reason'
     res_noreason: "<:smoke:953134627608993842>"
     res_reason: "<:smoke:953134627608993842>"
   kick:
     desc: "Kick a person."
     option_member: 'The person you want to kick'
+    option_reason: 'Reason to kick a person.'
     reason: 'Your reason'
     res_noreason: "👍"
     res_reason: "👍"
   purge:
     desc: "Mass delete messages at once."
+    option_amount: "Amount of messages you want to clear."
     res: "Deleted %{amount} messages."
     res_singular: "Deleted %{amount} message."
+
+  mute:
+    desc: "Mute a person."
+    res_existing_mute: "%{person} is already muted."
+    res: "%{person} has been muted."
+  unmute:
+    desc: "Un-mute a person."
+    res_not_muted: "%{person} isn't muted."
+    res: "%{person} has been un-muted."
+
   # "Fun" commands
   who:
     desc: "Get info about a person."
@@ -59,9 +72,13 @@ events:
   forbidden_dm: "I can't DM you, turn on your DMs!"
   priv_checks:
     self: "You can't %{action} yourself!"
+    self_interaction: "You can't do that to yourself."
     me: "You can't %{action} me!"
+    me_interaction: "You can't do that to me!"
     owner: "I can't %{action} the owner!"
+    owner_interaction: "I can't do that to the owner!"
     same_perms: "You can't %{action} someone with the same role/perms."
+    same_perms_interaction: "You can't do that to someone with the same role/perms."
     higher_than_self: "That person has more power than you."
 
   cooldown: "You are on cooldown! Please wait **%{time}%{unit}**."

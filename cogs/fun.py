@@ -65,7 +65,7 @@ class Fun(commands.Cog):
         await ctx.send(embed=embed)
 
     @nextcord.slash_command(
-        name="who", description=("cmds.who.desc")
+        name="who", description=_("cmds.who.desc")
     )
     async def get_user_info_slash(
         self,

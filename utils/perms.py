@@ -20,6 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from discord import Interaction
 import nextcord
 
 from utils.default import translate as _
@@ -42,6 +43,7 @@ async def check_priv(ctx, member):
                     _("events.priv_checks.self", action=ctx.command.name)
                 )
             )
+    
         if member.id == ctx.bot.user.id:
             return await ctx.send(
                 embed=embed.failed_embed_ephemeral(
@@ -72,6 +74,49 @@ async def check_priv(ctx, member):
                 )
             )
         if ctx.author.top_role < member.top_role:
+            return await ctx.send(
+                embed=embed.failed_embed_ephemeral(
+                    _("events.priv_checks.higher_than_self")
+                )
+            )
+    except Exception:
+        pass
+
+async def check_priv_interaction(ctx: Interaction, member):
+    """Custom (weird) way to check permissions when handling moderation commands"""
+    try:
+        # Self checks
+        if member.id == ctx.user.id:
+            return await ctx.send(
+                embed=embed.failed_embed_ephemeral(
+                    _("events.priv_checks.self_interaction")
+                )
+            )
+
+        # Check if user bypasses
+        if ctx.user.id == ctx.guild.owner.id:
+            return False
+
+        # Now permission check
+        # if member.id in owners:
+        #     if ctx.author.id not in owners:
+        #         return await ctx.send(f"I can't {ctx.command.name} my creator ;-;")
+        #     else:
+        #         pass
+
+        if member.id == ctx.guild.owner.id:
+            return await ctx.send(
+                embed=embed.failed_embed_ephemeral(
+                    _("events.priv_checks.owner_interaction")
+                )
+            )
+        if ctx.user.top_role == member.top_role:
+            return await ctx.send(
+                embed=embed.failed_embed_ephemeral(
+                    _("events.priv_checks.same_perms_interaction")
+                )
+            )
+        if ctx.user.top_role < member.top_role:
             return await ctx.send(
                 embed=embed.failed_embed_ephemeral(
                     _("events.priv_checks.higher_than_self")
