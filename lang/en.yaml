@@ -18,14 +18,14 @@ cmds:
         success_clear: "Cleared the logging channel."
   # Moderation commands
   ban:
-    desc: "Ban a user."
-    option_member: 'The user you want to ban'
+    desc: "Ban a person."
+    option_member: 'The person you want to ban'
     reason: 'Your reason'
     res_noreason: "<:smoke:953134627608993842>"
     res_reason: "<:smoke:953134627608993842>"
   kick:
-    desc: "Kick a user."
-    option_member: 'The user you want to ban'
+    desc: "Kick a person."
+    option_member: 'The person you want to kick'
     reason: 'Your reason'
     res_noreason: "👍"
     res_reason: "👍"

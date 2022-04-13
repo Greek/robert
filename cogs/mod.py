@@ -22,19 +22,20 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from discord import Permissions
 import nextcord
 import os
 
 from nextcord import Client
 from nextcord.ext import commands, tasks
-from nextcord.ext.commands import Context
-from nextcord.utils import get
+from nextcord.ext.commands import Context, Greedy
 
 from redis.asyncio import Redis
 
 from pymongo import MongoClient
 
 from utils import default, perms
+from utils.data import create_error_log
 from utils.embed import failed_embed_ephemeral, success_embed_ephemeral
 from utils.default import translate as _
 
@@ -79,8 +80,7 @@ class Mod(commands.Cog):
         self.bot = bot
         self.guild_id = 932369210611494982
         self.redis: Redis = Redis.from_url(
-            url=os.environ.get('REDIS_URL'),
-            decode_responses=True
+            url=os.environ.get("REDIS_URL"), decode_responses=True
         )
         self.pubsub = self.redis.pubsub()
 
@@ -95,14 +95,19 @@ class Mod(commands.Cog):
         self.subscribe_expiry_handler.cancel()
         self.listen_messages.cancel()
 
-
     async def expiry_handler(self, msg) -> None:
-        data = msg["data"].split("-")
-        guild = self.bot.get_guild(int(data[2]))
-        member = guild.get_member(int(data[1]))
-        role = get(guild.roles, name='ban perms')
+        if msg["data"].startswith("mute"):
+            data = msg["data"].split("-")
+            guild = self.bot.get_guild(int(data[2]))
+            member = guild.get_member(int(data[1]))
 
-        await member.remove_roles(role, reason="Mute expired.")
+            try:
+                res = self.config_coll.find_one({"_id": f"{guild.id}"})
+                role = guild.get_role(int(res["muteRole"]))
+            except:
+                return
+
+            await member.remove_roles(role, reason="Mute expired.")
 
     @tasks.loop(count=1)
     async def subscribe_expiry_handler(self):
@@ -136,7 +141,9 @@ class Mod(commands.Cog):
                 return
             await member.kick(reason=default.responsible(ctx.author, reason))
             await ctx.reply(
-                _("cmds.kick.res_noreason") if reason is None else _("cmds.kick.res_reason")
+                _("cmds.kick.res_noreason")
+                if reason is None
+                else _("cmds.kick.res_reason")
             )
         except Exception as e:
             await ctx.send(embed=failed_embed_ephemeral(e))
@@ -156,7 +163,9 @@ class Mod(commands.Cog):
                 nextcord.Object(id=member), reason=default.responsible(caller, reason)
             )
             await ctx.reply(
-                _("cmds.ban.res_noreason") if reason is None else _("cmds.ban.res_reason")
+                _("cmds.ban.res_noreason")
+                if reason is None
+                else _("cmds.ban.res_reason")
             )
         except Exception as e:
             await ctx.send(embed=failed_embed_ephemeral(e))
@@ -178,7 +187,7 @@ class Mod(commands.Cog):
         )
         await sent.delete(delay=3)
 
-    @commands.command(name="mute", aliases=["m"], description="No description.")
+    @commands.command(name="mute", aliases=["m"], description="Mute a person.")
     @commands.has_guild_permissions(manage_messages=True)
     @commands.bot_has_guild_permissions(manage_messages=True)
     @commands.guild_only()
@@ -188,21 +197,52 @@ class Mod(commands.Cog):
         ctx: Context,
         member: nextcord.Member,
         *,
-        reason: str = None,
-        duration: int = None,
+        duration: int
     ):
-        self.config_coll.find_one({'_id': f"{ctx.guild.id}"}, {"muteRole"})
-        role: nextcord.Role = get(ctx.guild.roles, name='ban perms')
+        try:            
+            res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
+            role = ctx.guild.get_role(int(res["muteRole"]))
 
-        print()
-            # if await perms.check_priv(ctx, member=member):
-            #     return
-        await member.add_roles(role, reason="Muted")
-        await self.redis.setex(f"mute-{member.id}-{ctx.guild.id}", 3, reason if reason else 'No reason.')
-            
-        await ctx.send(embed=success_embed_ephemeral(f"{member.mention} has been muted."))
-        
+            if role is None:
+                role = await ctx.guild.create_role(name="Muted")
+                role.permissions.send_messages = False
+                self.config_coll.find_one_and_update(
+                    {"_id": f"{ctx.guild.id}"}, {"$set": {f"muteRole": f"{role.id}"}}
+                )
 
+            await member.add_roles(role, reason="Muted")
+
+            if duration is None:
+                await self.redis.set(f"mute-{member.id}-{ctx.guild.id}", "Muted")
+            else:
+                await self.redis.setex(
+                    f"mute-{member.id}-{ctx.guild.id}",
+                    duration,
+                    "Muted",
+                )
+
+            await ctx.send(
+                embed=success_embed_ephemeral(f"{member.mention} has been muted.")
+            )
+        except Exception as e:
+            await create_error_log(self, ctx, e)
+
+    @commands.command(name="unmute", aliases=["um"], description="Un-mute a person.")
+    @commands.has_guild_permissions(manage_messages=True)
+    @commands.bot_has_guild_permissions(manage_messages=True)
+    @commands.guild_only()
+    @commands.check(perms.only_owner)
+    async def mute_member(
+        self,
+        ctx: Context,
+        member: nextcord.Member,
+    ):
+        res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
+        role = ctx.guild.get_role(int(res["muteRole"]))
+
+        await self.redis.delete(f"mute-{member.id}-{ctx.guild.id}")
+        await member.remove_roles(role, reason=f"Mute removed by {ctx.author}"if isinstance(ctx, Context) else f"Mute removed by {ctx.user}") 
+        await ctx.send("Unmuted")
 
 def setup(bot):
     bot.add_cog(Mod(bot))
