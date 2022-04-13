@@ -22,10 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from discord import Interaction, SlashOption
+
 import nextcord
 
+from nextcord import Interaction, SlashOption
 from nextcord.ext import commands
+from nextcord.ext.commands import Context
 from utils import default
 from utils.default import translate as _
 from utils.data import create_error_log
@@ -138,6 +140,14 @@ class Fun(commands.Cog):
         ),
     ):
         await self.get_user_avatar(ctx, member=member)
+
+    @commands.command(name="im", hidden=True)
+    async def _im(self, ctx: Context, *, u: nextcord.Member = None):
+        if u is None:
+            return await ctx.send("Huh?")
+        if u is ctx.author:
+            return await ctx.send("Yes, we know.")
+        await ctx.send(f"No, you're {ctx.author.name}!")
 
 
 def setup(bot):
