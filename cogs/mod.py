@@ -157,7 +157,7 @@ class Mod(commands.Cog):
             if await perms.check_priv(ctx, member=member):
                 return
             await member.kick(reason=default.responsible(ctx.author, reason))
-            await ctx.reply(
+            await ctx.send(
                 _("cmds.kick.res_noreason")
                 if reason is None
                 else _("cmds.kick.res_reason")
@@ -177,9 +177,9 @@ class Mod(commands.Cog):
                 return
 
             await ctx.guild.ban(
-                nextcord.Object(id=member), reason=default.responsible(caller, reason)
+                nextcord.Object(id=member), reason=default.responsible(caller, reason), delete_message_days=0
             )
-            await ctx.reply(
+            await ctx.send(
                 _("cmds.ban.res_noreason")
                 if reason is None
                 else _("cmds.ban.res_reason")
