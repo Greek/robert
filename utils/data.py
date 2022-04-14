@@ -109,7 +109,7 @@ class HelpFormat(MinimalHelpCommand):
         ctx = self.context
         bot = ctx.bot
 
-        destination = self.get_destination()
+        destination = self.get_destination(no_pm=True)
         note = self.get_ending_note()
 
         no_category = f"\u200b{self.no_category}"
@@ -141,11 +141,11 @@ class HelpFormat(MinimalHelpCommand):
 
         embed.set_footer(text=note)
 
-        # try:
-        #     await destination.send(embed=embed)
-        # except nextcord.Forbidden:
-        #     return await self.get_destination(no_pm=True).send(_("events.forbidden_dm"))
-        await self.context.send("Visit https://apap04.com")
+        try:
+            await destination.send(embed=embed)
+        except nextcord.Forbidden:
+            return await self.get_destination(no_pm=True).send(_("events.forbidden_dm"))
+        # await self.context.send("Visit https://apap04.com")
 
     async def send_command_help(self, command):
         global _cmd
