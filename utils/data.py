@@ -141,11 +141,11 @@ class HelpFormat(MinimalHelpCommand):
 
         embed.set_footer(text=note)
 
-        try:
-            await destination.send(embed=embed)
-        except nextcord.Forbidden:
-            return await self.get_destination(no_pm=True).send(_("events.forbidden_dm"))
-        # await self.context.send("Visit https://apap04.com")
+        # try:
+        #     await destination.send(embed=embed)
+        # except nextcord.Forbidden:
+        #     return await self.get_destination(no_pm=True).send(_("events.forbidden_dm"))
+        await self.context.send("Check out the help guide here: https://github.com/Greek/toilet/blob/master/help.lua")
 
     async def send_command_help(self, command):
         global _cmd
