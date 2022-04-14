@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from discord import Interaction
+from discord import Interaction, SlashOption
 import nextcord
 import os
 
@@ -100,17 +100,21 @@ class Mod(commands.Cog):
 
     async def expiry_handler(self, msg) -> None:
         if msg["data"].startswith("mute"):
-            data = msg["data"].split("-")
-            guild = self.bot.get_guild(int(data[2]))
-            member = guild.get_member(int(data[1]))
-
             try:
-                res = self.config_coll.find_one({"_id": f"{guild.id}"})
-                role = guild.get_role(int(res["muteRole"]))
-            except:
-                return
+                data = msg["data"].split("-")
+                guild = self.bot.get_guild(int(data[2]))
+                member = guild.get_member(int(data[1]))
 
-            await member.remove_roles(role, reason="Mute expired.")
+                try:
+                    res = self.config_coll.find_one({"_id": f"{guild.id}"})
+                    role = guild.get_role(int(res["muteRole"]))
+                except:
+                    return
+
+                await member.remove_roles(role, reason="Mute expired.")
+            except Exception as e:
+                ctx = self.bot
+                await create_error_log(self, ctx, e)
 
     @tasks.loop(count=1)
     async def subscribe_expiry_handler(self):
@@ -153,6 +157,9 @@ class Mod(commands.Cog):
     @commands.guild_only()
     async def kick_user(self, ctx, member: nextcord.Member, *, reason=None) -> None:
         try:
+            if isinstance(ctx, Interaction):
+                if await perms.check_priv_interaction(ctx, member=member):
+                    return
             if await perms.check_priv(ctx, member=member):
                 return
             await member.kick(
@@ -217,6 +224,9 @@ class Mod(commands.Cog):
         self, ctx: Context, member: nextcord.Member, *, duration_in_seconds: int = None
     ):
         try:
+            if isinstance(ctx, Interaction):
+                if await perms.check_priv_interaction(ctx, member=member):
+                    return
             if await perms.check_priv(ctx, member=member):
                 return
 
@@ -254,12 +264,15 @@ class Mod(commands.Cog):
                     )
                 )
 
-            await member.add_roles(
-                role,
-                reason=f"Muted by {ctx.author}"
-                if isinstance(ctx, Context)
-                else f"Muted by {ctx.user}",
-            )
+            try:
+                await member.add_roles(
+                    role,
+                    reason=f"Muted by {ctx.author}"
+                    if isinstance(ctx, Context)
+                    else f"Muted by {ctx.user}",
+                )
+            except nextcord.errors.Forbidden:
+                return
 
             if duration_in_seconds is None:
                 await self.redis.set(f"mute-{member.id}-{ctx.guild.id}", "Muted")
@@ -326,7 +339,9 @@ class Mod(commands.Cog):
                 else f"Mute removed by {ctx.user}",
             )
             await ctx.send(
-                embed=success_embed_ephemeral(_("cmds.unmute.res", person=member.mention))
+                embed=success_embed_ephemeral(
+                    _("cmds.unmute.res", person=member.mention)
+                )
             )
         except Exception as e:
             await create_error_log(self, ctx, e)

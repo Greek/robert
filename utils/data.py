@@ -29,7 +29,8 @@ import itertools
 import json
 import uuid
 
-from nextcord.ext.commands import AutoShardedBot, MinimalHelpCommand
+from nextcord import Interaction
+from nextcord.ext.commands import AutoShardedBot, MinimalHelpCommand, Context
 from utils import perms, default
 from utils.default import translate as _, traceback_maker
 from utils import embed as uembed
@@ -61,7 +62,7 @@ class Bot(AutoShardedBot):
             )
             logger.addHandler(handler)
 
-            self.load_extension('jishaku')
+            self.load_extension("jishaku")
             for cog in os.listdir("cogs"):
                 if cog.endswith(".py"):
                     name = cog[:-3]
@@ -86,8 +87,6 @@ class Bot(AutoShardedBot):
 
 
 class HelpFormat(MinimalHelpCommand):
-    
-
     def get_destination(self, no_pm: bool = False):
         if no_pm:
             return self.context.channel
@@ -96,7 +95,7 @@ class HelpFormat(MinimalHelpCommand):
 
     def get_ending_note(self):
         command_name = self.invoked_with
-        cfg_prefix = os.environ.get('DISCORD_PREFIX')
+        cfg_prefix = os.environ.get("DISCORD_PREFIX")
         return 'Run "{0}{1} <command name>" to see help for a specific command.'.format(
             cfg_prefix, command_name
         )
@@ -149,9 +148,9 @@ class HelpFormat(MinimalHelpCommand):
         #     await destination.send(embed=embed)
         # except nextcord.Forbidden:
         #     return await self.get_destination(no_pm=True).send(_("events.forbidden_dm"))
-        await self.context.send('Visit https://apap04.com')
+        await self.context.send("Visit https://apap04.com")
 
-    async def send_command_help(self, command): 
+    async def send_command_help(self, command):
         global _cmd
         _cmd = command
         self.add_command_formatting(command)
@@ -172,7 +171,7 @@ class HelpFormat(MinimalHelpCommand):
             await destination.send(_("events.forbidden_dm"))
 
 
-async def create_error_log(self, ctx, err):
+async def create_error_log(self, ctx: Interaction, err):
     f = open("config.json")
     config = json.load(f)
     cid = int(config.get("error_reporting"))
@@ -191,8 +190,8 @@ async def create_error_log(self, ctx, err):
     embed_error = nextcord.Embed(
         color=uembed.failed_embed_color,
         title="Error",
-        description=f"**Information**\nInvoked command: `{ctx.message.content}`\n"
-        + f"Invoked by: `{str(ctx.author)} ({ctx.author.id})`"
+        description=f"**Information**\nInvoked command: `{ctx.message.content if isinstance(ctx, Context) else ctx.application_command}`\n"
+        + f"Invoked by: `{str(ctx.author if isinstance(ctx, Context) else ctx.user)} ({ctx.author.id if isinstance(ctx, Context) else ctx.user.id})`"
         + f"\nGuild Name & ID: `{str(ctx.guild)} ({ctx.guild.id})`"
         + f"\n\nTrace: {traceback_maker(err, advance=True)}",
     )

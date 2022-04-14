@@ -39,6 +39,7 @@ cmds:
 
   mute:
     desc: "Mute a person."
+    no_permission: "I can't mute this person."
     res_existing_mute: "%{person} is already muted."
     res: "%{person} has been muted."
   unmute:

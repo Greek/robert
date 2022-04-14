@@ -89,7 +89,7 @@ async def check_priv_interaction(ctx: Interaction, member):
         if member.id == ctx.user.id:
             return await ctx.send(
                 embed=embed.failed_embed_ephemeral(
-                    _("events.priv_checks.self_interaction")
+                    _("events.priv_checks.self", action=ctx.application_command.name)
                 )
             )
 
@@ -107,13 +107,13 @@ async def check_priv_interaction(ctx: Interaction, member):
         if member.id == ctx.guild.owner.id:
             return await ctx.send(
                 embed=embed.failed_embed_ephemeral(
-                    _("events.priv_checks.owner_interaction")
+                    _("events.priv_checks.owner", action=ctx.application_command.name)
                 )
             )
         if ctx.user.top_role == member.top_role:
             return await ctx.send(
                 embed=embed.failed_embed_ephemeral(
-                    _("events.priv_checks.same_perms_interaction")
+                    _("events.priv_checks.same_perms", action=ctx.application_command.name)
                 )
             )
         if ctx.user.top_role < member.top_role:
@@ -122,7 +122,7 @@ async def check_priv_interaction(ctx: Interaction, member):
                     _("events.priv_checks.higher_than_self")
                 )
             )
-    except Exception:
+    except Exception as e:
         pass
 
 
