@@ -39,10 +39,7 @@ from dotenv import dotenv_values
 
 do_not_load = (
     "cogs.interactives",
-    "cogs.fun_slash",
-    "cogs.fun",
-    "cogs.mod",
-    "cogs.about",
+    "cogs.mod_slash",
 )
 
 
@@ -69,13 +66,13 @@ class Bot(AutoShardedBot):
                     self.load_extension(f"cogs.{name}")
 
             # Do not load following cogs
-            # for cog in do_not_load:
-            #     try:
-            #         with warnings.catch_warnings():
-            #             warnings.simplefilter("ignore")  # silencing async warnings here
-            #             self.unload_extension(str(cog))
-            #     except Exception as e:
-            #         print(f"Couldn't unload extenstion {cog}\n{e}")
+            for cog in do_not_load:
+                try:
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore")  # silencing async warnings here
+                        self.unload_extension(str(cog))
+                except Exception as e:
+                    print(f"Couldn't unload extenstion {cog}\n{e}")
 
         except Exception as exc:
             print(

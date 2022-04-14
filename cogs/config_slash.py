@@ -54,6 +54,8 @@ class ConfigSlash(commands.Cog):
             name="greeting", description=_("cmds.config.welcome.desc")
         ),
     ):
+        if not ctx.permissions.manage_channels:
+            return
         return await Config.change_welcome_message(
             context=self, ctx=ctx, channel=channel, message=message
         )
@@ -63,6 +65,8 @@ class ConfigSlash(commands.Cog):
     )
     
     async def clear_welcome_message_slash(self, ctx: Interaction):
+        if not ctx.permissions.manage_channels:
+            return
         return await Config.clear_welcome_message(context=self, ctx=ctx)
 
 
@@ -81,6 +85,8 @@ class ConfigSlash(commands.Cog):
             required=True,
         ),
     ):
+        if not interaction.permissions.manage_channels:
+            return
         return await Config.set_message_logs(self, interaction, channel=channel)
 
     @logs_slash.subcommand(
@@ -92,6 +98,8 @@ class ConfigSlash(commands.Cog):
         self,
         interaction: Interaction,
     ):
+        if not interaction.permissions.manage_channels:
+            return
         return await Config.clear_message_logs(self, interaction)
 
 
