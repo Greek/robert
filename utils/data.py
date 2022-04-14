@@ -72,7 +72,7 @@ class Bot(AutoShardedBot):
                         warnings.simplefilter("ignore")  # silencing async warnings here
                         self.unload_extension(str(cog))
                 except Exception as e:
-                    print(f"Couldn't unload extenstion {cog}\n{e}")
+                    print(f"{cog} was never loaded.")
 
         except Exception as exc:
             print(
