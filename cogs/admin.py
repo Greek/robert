@@ -70,7 +70,10 @@ class Admin(commands.Cog):
             self.bot.unload_extension(f"cogs.{cog}")
         except Exception as e:
             return await ctx.send(default.traceback_maker(e))
-        await ctx.reply(f"{checkmark} Unloaded `{cog}.py`.", mention_author=False)
+        await ctx.reply(
+            embed=success_embed_ephemeral(f"Unloaded `{cog}.py`."),
+            mention_author=False,
+        )
 
     @commands.command(name="reload", aliases=["r"], hidden=True)
     @commands.check(perms.only_owner)
@@ -79,7 +82,10 @@ class Admin(commands.Cog):
             self.bot.reload_extension(f"cogs.{cog}")
         except Exception as e:
             return await ctx.send(default.traceback_maker(e))
-        await ctx.reply(f"{checkmark} Reloaded `{cog}.py`.", mention_author=False)
+        await ctx.reply(
+            embed=success_embed_ephemeral(f"Reloaded `{cog}.py`."),
+            mention_author=False,
+        )
 
     @commands.command(name="reloadall", aliases=["ra"], hidden=True)
     @commands.check(perms.only_owner)
@@ -91,7 +97,10 @@ class Admin(commands.Cog):
                     self.bot.reload_extension(f"cogs.{name}")
         except Exception as e:
             print(e)
-        await ctx.reply(f"{checkmark} Reloaded all cogs.", mention_author=False)
+        await ctx.reply(
+            embed=success_embed_ephemeral(f"Reloaded all cogs."),
+            mention_author=False,
+        )
 
     @commands.command(name="kill", hidden=True)
     @commands.check(perms.only_owner)
@@ -130,55 +139,15 @@ class Admin(commands.Cog):
             )
             _io.change_value("./config.json", "playing", playing)
             await ctx.reply(
-                f'{checkmark} Changed playing status to "{playing}".',
+                embed=success_embed_ephemeral(
+                    f'Changed playing status to "{playing}".'
+                ),
                 mention_author=False,
             )
         except discord.InvalidArgument as err:
             await ctx.send(err)
         except Exception as e:
             await ctx.send(default.traceback_maker(e))
-
-    @commands.command(name="eval", hidden="True")
-    @commands.check(perms.only_owner)
-    async def eval_fn(self, ctx, *, cmd):
-        """
-        Execute code. Supports codeblocks.
-        Environment-specific variables
-        bot: ctx.bot
-        discord: discord
-        commands: commands
-        ctx: ctx.
-        """
-        fn_name = "_eval_expr"
-
-        cmd = cmd.strip("` ")
-
-        # add a layer of indentation
-        cmd = "\n".join(f"    {i}" for i in cmd.splitlines())
-
-        # wrap in async def body
-        body = f"async def {fn_name}():\n{cmd}"
-
-        parsed = ast.parse(body)
-        body = parsed.body[0].body
-
-        default.insert_returns(body)
-
-        env = {
-            "bot": ctx.bot,
-            "discord": discord,
-            "commands": commands,
-            "ctx": ctx,
-            "__import__": __import__,
-        }
-
-        try:
-            exec(compile(parsed, filename="<ast>", mode="exec"), env)
-
-            result = await eval(f"{fn_name}()", env)
-            await ctx.send(f"{result}")
-        except Exception as e:
-            await ctx.send(e)
 
     @commands.command(name="embedtest", hidden=True)
     @commands.check(perms.only_owner)
@@ -193,15 +162,6 @@ class Admin(commands.Cog):
                 failed_embed(ctx.author, "Hello"),
             ]
         )
-
-    @commands.command(name="test_coll")
-    @commands.check(perms.only_owner)
-    async def create_coll_with_content(self, ctx):
-        try:
-            self.collection.find_one_and_update({}, { "$set": { "_id": 1 } }, upsert=True)
-        except Exception as e:
-            await ctx.send(e)
-
 
 def setup(bot):
     bot.add_cog(Admin(bot))
