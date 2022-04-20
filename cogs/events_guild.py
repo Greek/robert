@@ -32,11 +32,11 @@ class EventsGuild(commands.Cog):
         embed.set_author(name=f"{guild.name}", icon_url=f"{guild.icon}")
         embed.add_field(name="Owner", value=f"<@{owner.id}>", inline=True)
         embed.add_field(name="Member count", value=f"{guild.member_count}", inline=True)
-        embed.add_field(
-            name="On Allowlist?",
-            value="true" if guild.id in guilds else "false",
-            inline=True,
-        )
+        # embed.add_field(
+        #     name="On Allowlist?",
+        #     value="true" if guild.id in guilds else "false",
+        #     inline=True,
+        # )
         embed.set_footer(text=f"Owner ID: {guild.owner_id}")
         try:
             embed.add_field(
@@ -78,11 +78,11 @@ class EventsGuild(commands.Cog):
         embed.set_author(name=f"{guild.name}", icon_url=f"{guild.icon}")
         embed.add_field(name="Owner", value=f"<@{owner.id}>", inline=True)
         embed.add_field(name="Member count", value=f"{guild.member_count}", inline=True)
-        embed.add_field(
-            name="On Allowlist?",
-            value="true" if guild.id in guilds else "false",
-            inline=True,
-        )
+        # embed.add_field(
+        #     name="On Allowlist?",
+        #     value="true" if guild.id in guilds else "false",
+        #     inline=True,
+        # )
         embed.set_footer(text=f"Owner ID: {guild.owner_id}")
         await log_channel.send(embed=embed)
 
