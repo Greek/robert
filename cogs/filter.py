@@ -38,12 +38,12 @@ class Filter(commands.Cog):
             try:
                 delete_list = filtered_words["deleteWordList"]
             except:
-                pass
+                delete_list = None
 
             try:
                 ban_list = filtered_words["banWordList"]
             except:
-                pass
+                ban_list = None
 
             try:
                 exemption_list = filtered_words["exemptionFilterList"]
