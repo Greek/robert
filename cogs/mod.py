@@ -22,11 +22,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from discord import Interaction, SlashOption
 import nextcord
 import os
 
-from nextcord import Client, TextChannel
+from nextcord import Client, TextChannel, Interaction
 from nextcord.ext import commands, tasks
 from nextcord.ext.commands import Context
 
@@ -345,6 +344,18 @@ class Mod(commands.Cog):
             )
         except Exception as e:
             await create_error_log(self, ctx, e)
+
+    @commands.command(
+        name="servermute", aliases=["sm"], description="Server mute a person."
+    )
+    async def _sm(self, ctx: Context, member: nextcord.Member):
+        if await perms.check_priv(ctx, member=member):
+            return
+
+        await member.edit(mute=False)
+        return await ctx.send(
+                embed=success_embed_ephemeral(f"Server muted {member.mention}")
+            )
 
 
 def setup(bot):

@@ -14,36 +14,6 @@ from utils import perms, embed as eutil
 from utils.default import translate as _
 
 
-class Pet(nextcord.ui.Modal):
-    def __init__(self):
-        super().__init__(
-            "Your pet",
-            timeout=5 * 60,  # 5 minutes
-        )
-
-        self.name = nextcord.ui.TextInput(
-            label="Your pet's name",
-            min_length=2,
-            max_length=50,
-        )
-        self.add_item(self.name)
-
-        self.description = nextcord.ui.TextInput(
-            label="Description",
-            style=nextcord.TextInputStyle.paragraph,
-            placeholder="Information that can help us recognise your pet",
-            required=False,
-            max_length=1800,
-        )
-        self.add_item(self.description)
-
-    async def callback(self, interaction: nextcord.Interaction) -> None:
-        response = f"{interaction.user.mention}'s favourite pet's name is {self.name.value}."
-        if self.description.value != "":
-            response += f"\nTheir pet can be recognized by this information:\n{self.description.value}"
-        await interaction.send(response)
-
-
 class ModSlash(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
