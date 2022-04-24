@@ -57,20 +57,23 @@ class Filter(commands.Cog):
             #     return
 
             for word in msg_split:
-                if word in ban_list:
-                    try:
-                        await message.delete()
-                        await message.author.ban(
-                            reason=f"Detected disallowed phrase: {word}",
-                            delete_message_days=0,
-                        )
-                    except Exception as e:
-                        pass
-                if word in delete_list:
-                    try:
-                        await message.delete()
-                    except:
-                        pass
+                if ban_list:
+                    if word in ban_list:
+                        try:
+                            await message.delete()
+                            await message.author.ban(
+                                reason=f"Detected disallowed phrase: {word}",
+                                delete_message_days=0,
+                            )
+                        except Exception as e:
+                            print(e)
+                
+                elif delete_list:
+                    if word in delete_list:
+                        try:
+                            await message.delete()
+                        except:
+                            pass
 
         except Exception as e:
             print(e)
@@ -89,7 +92,7 @@ class Filter(commands.Cog):
         pass
 
     @_filter_add.command(name="delete", description=_("cmds.filter.desc"))
-    async def _filter_add_delete(self, ctx: commands.Context, word: str):
+    async def _filter_add_delete(self, ctx: commands.Context, *, word: str):
         word_list = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
 
         try:
@@ -111,7 +114,7 @@ class Filter(commands.Cog):
         )
 
     @_filter_add.command(name="ban", description=_("cmds.filter.desc_ban"))
-    async def _filter_add_ban(self, ctx: commands.Context, word: str):
+    async def _filter_add_ban(self, ctx: commands.Context, *, word: str):
         word_list = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
 
         try:
