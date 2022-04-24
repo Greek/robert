@@ -76,7 +76,7 @@ class Filter(commands.Cog):
             print(e)
 
     @commands.group(name="filter")
-    @commands.has_permissions(manage_server=True)
+    @commands.has_permissions(manage_guild=True)
     async def _filter(self, ctx: commands.Context):
         if ctx.invoked_subcommand is None:
             return await ctx.send_help(str(ctx.command))
