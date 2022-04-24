@@ -124,7 +124,7 @@ class Mod(commands.Cog):
     async def listen_messages(self):
         message = await self.pubsub.get_message()
         if message:
-            print(f"[Redis] message")
+            print(f"[Mute] Listening to expired keys through Pub/Sub")
         else:
             pass
 
@@ -149,6 +149,18 @@ class Mod(commands.Cog):
             )
         except:
             return
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member: nextcord.Member):
+        mute_key = await self.redis.get(f'mute-{member.id}-{member.guild.id}')
+        if mute_key is not None:
+            try:
+                res = self.config_coll.find_one({"_id": f"{member.guild.id}"})
+                role = member.guild.get_role(int(res["muteRole"]))
+            except:
+                return
+            
+            return await member.add_roles(role, reason="Muted person re-joined the server. Muting again.")
 
     @commands.command(name="kick", description=_("cmds.kick.desc"))
     @commands.has_guild_permissions(kick_members=True)

@@ -33,8 +33,7 @@ class EventsWelcomeListener(commands.Cog):
 
             await channel.send(parsed_message)
         except Exception as e:
-            print(e)
-
+            return
 
 def setup(bot):
     bot.add_cog(EventsWelcomeListener(bot))
