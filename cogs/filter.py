@@ -53,8 +53,8 @@ class Filter(commands.Cog):
             if message.author.id == message.guild.owner_id:
                 return
 
-            if message.author.top_role > message.guild.me.top_role:
-                return
+            # if message.author.top_role > message.guild.me.top_role:
+            #     return
 
             for word in msg_split:
                 if word in ban_list:
