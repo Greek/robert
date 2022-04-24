@@ -37,6 +37,13 @@ cmds:
     res: "Deleted %{amount} messages."
     res_singular: "Deleted %{amount} message."
 
+  filter:
+    desc: "Filter out words you don't want people to send."
+    desc_ban: "Filter out words that are bannable."
+    desc_exempt: "Add a role that is can bypass this filter."
+    desc_remove: "Remove a phrase from the filter."
+    desc_reset: "Reset the filter."
+
   mute:
     desc: "Mute a person."
     no_permission: "I can't mute this person."
