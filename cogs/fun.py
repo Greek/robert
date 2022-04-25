@@ -23,6 +23,7 @@ SOFTWARE.
 """
 
 
+import string
 import nextcord
 
 from nextcord import Interaction, SlashOption
@@ -34,8 +35,6 @@ from utils.data import create_error_log
 
 
 class Fun(commands.Cog):
-    """The description for Fun goes here."""
-
     def __init__(self, bot):
         self.bot = bot
 
@@ -64,9 +63,7 @@ class Fun(commands.Cog):
         embed.set_footer(text="ID: " + str(member.id))
         await ctx.send(embed=embed)
 
-    @nextcord.slash_command(
-        name="who", description=_("cmds.who.desc")
-    )
+    @nextcord.slash_command(name="who", description=_("cmds.who.desc"))
     async def get_user_info_slash(
         self,
         ctx,
@@ -106,9 +103,7 @@ class Fun(commands.Cog):
             embed.set_author(name=f"The latest xkcd comic", url=f"https://xkcd.com")
         await ctx.send(embed=embed)
 
-    @nextcord.slash_command(
-        name="xkcd", description=_("cmds.xkcd.desc")
-    )
+    @nextcord.slash_command(name="xkcd", description=_("cmds.xkcd.desc"))
     async def get_xkcd_slash(
         self,
         ctx,
@@ -148,6 +143,12 @@ class Fun(commands.Cog):
         if u is ctx.author:
             return await ctx.send("Yes, we know.")
         await ctx.send(f"No, you're {ctx.author.name}!")
+
+    @commands.command(name="emoji", aliases=["e", "emote", "jumbo"])
+    async def _enlarge_emoji(
+        self, ctx: commands.Context, emoji: nextcord.PartialEmoji | nextcord.Emoji
+    ):
+        return await ctx.send(emoji.url)
 
 
 def setup(bot):
