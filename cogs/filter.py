@@ -28,7 +28,7 @@ class Filter(commands.Cog):
                 )
             except:
                 return
-            msg_split = message.content.split()
+            msg_split = message.content.lower().split()
 
             try:
                 mute_list = filtered_words["muteWordList"]
