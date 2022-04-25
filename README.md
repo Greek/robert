@@ -13,22 +13,21 @@ Steps:
 2. (Unix only) Run `sudo apt install gcc python3-dev`
 3. Install requirements: `python -m pip install -r requirements.txt`
 4. Copy `config.json.example` to `config.json` and change [appropriate values][values].
-5. Run `python bot.py`
+5. Copy `.env.example` to `.env` and change the values.
+6. Run `python bot.py`
 
 ## config settings
 Please make sure you have all these fields in, the bot might break if you don't!
 
-1. `prefix` - the prefix used for running commands
-2. `token` - login token
-3. `owners` - an array for user IDs, used to represent the owners of the bot.
-4. `playing` - playing status shown when bot is online
-5. `playing_type [listening|watching]` - represents what playing state the bot
+1. `owners` - an array for user IDs, used to represent the owners of the bot.
+2. `playing` - playing status shown when bot is online
+3. `playing_type [listening|watching]` - represents what playing state the bot
    is in.
-6. `status [online|dnd|idle]` - represents the status of the user.
-7. `accent_color` - an accent color, primarily used in embeds.
-8. `error_reporting` - channel ID to report any runtime errors in your code
-9. `guild_log` - channel ID to log any new guilds the bot joins/leaves
-10. `message_logging` - channel ID to log any deleted/edited messages.
+4. `status [online|dnd|idle]` - represents the status of the user.
+5. `accent_color` - an accent color, primarily used in embeds.
+6. `error_reporting` - channel ID to report any runtime errors in your code
+7. `guild_log` - channel ID to log any new guilds the bot joins/leaves
+
 ## credits
 
 I cheated and ~~plagiarized~~ borrowed code from Alex's "discord_bot.py" discord
