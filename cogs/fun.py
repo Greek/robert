@@ -48,8 +48,17 @@ class Fun(commands.Cog):
         else:
             member = member or ctx.author
         embed = nextcord.Embed(colour=member.color, description=f"{member.mention}")
-        embed.set_author(name=str(member), icon_url=member.avatar)
-        embed.set_thumbnail(url=member.avatar)
+        embed.set_author(
+            name=str(member),
+            icon_url=member.avatar
+            if member.avatar
+            else "https://canary.discord.com/assets/c09a43a372ba81e3018c3151d4ed4773.png",
+        )
+        embed.set_thumbnail(
+            url=member.avatar
+            if member.avatar
+            else "https://canary.discord.com/assets/c09a43a372ba81e3018c3151d4ed4773.png"
+        )
         embed.add_field(
             name="Dates",
             value=f":door: **Joined**: <t:{int(member.joined_at.timestamp())}>\n"
