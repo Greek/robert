@@ -68,7 +68,7 @@ class Filter(commands.Cog):
                         except Exception as e:
                             print(e)
                 
-                elif delete_list:
+                if delete_list:
                     if word in delete_list:
                         try:
                             await message.delete()
