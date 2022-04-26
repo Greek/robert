@@ -40,8 +40,15 @@ class Messages(commands.Cog):
             color=eutil.failed_embed_color,
             inline=True,
         )
-        embed.add_field(name="Content", value=f"{message.content}") if message.content else None
-        embed.set_author(name=message.author, icon_url=message.author.avatar)
+        embed.add_field(
+            name="Content", value=f"{message.content}"
+        ) if message.content else None
+        embed.set_author(
+            name=message.author,
+            icon_url=message.author.avatar
+            if message.author.avatar
+            else "https://canary.discord.com/assets/c09a43a372ba81e3018c3151d4ed4773.png",
+        )
         # embed.set_image(url=message.attachments[0].proxy_url) if message.attachments else None
         embed.timestamp = message.created_at.now(tz=tz)
         embed.set_footer(
@@ -59,7 +66,7 @@ class Messages(commands.Cog):
             res = self.message_log_coll.find_one({"_id": f"{message.guild.id}"})
             cid = int(res["messageLog"])
             log = self.bot.get_channel(cid)
-        
+
             tz = timezone("EST")
 
             if message.author.id == self.bot.user.id:
@@ -76,7 +83,12 @@ class Messages(commands.Cog):
             )
             embed.add_field(name="Before", value=f"{message.content}", inline=False)
             embed.add_field(name="After", value=f"{new_message.content}", inline=False)
-            embed.set_author(name=message.author, icon_url=message.author.avatar)
+            embed.set_author(
+                name=message.author,
+                icon_url=message.author.avatar
+                if message.author.avatar
+                else "https://canary.discord.com/assets/c09a43a372ba81e3018c3151d4ed4773.png",
+            )
             embed.timestamp = message.created_at.now(tz=tz)
             embed.set_footer(text=f"Author ID: {message.author.id}\n")
 
