@@ -2,7 +2,7 @@ import nextcord
 import os
 
 from nextcord import ChannelType, Interaction, SlashOption
-from nextcord.ext import commands
+from nextcord.ext import commands, application_checks
 from cogs.config import Config
 from utils.default import translate as _
 from pymongo import MongoClient
@@ -39,8 +39,8 @@ class ConfigSlash(commands.Cog):
 
 
     @welcome_slash.subcommand(name="set", description=_("cmds.config.welcome.desc"))
-    @commands.has_guild_permissions(manage_channels=True)
-    @commands.bot_has_guild_permissions(manage_channels=True)
+    @application_checks.has_guild_permissions(manage_channels=True)
+    @application_checks.bot_has_guild_permissions(manage_channels=True)
     async def change_welcome_message_slash(
         self,
         ctx: Interaction,
@@ -54,8 +54,6 @@ class ConfigSlash(commands.Cog):
             name="greeting", description=_("cmds.config.welcome.desc")
         ),
     ):
-        if not ctx.permissions.manage_channels:
-            return
         return await Config.change_welcome_message(
             context=self, ctx=ctx, channel=channel, message=message
         )
@@ -63,18 +61,17 @@ class ConfigSlash(commands.Cog):
     @welcome_slash.subcommand(
         name="clear", description=_("cmds.config.welcome.desc_clear")
     )
-    
+    @application_checks.has_guild_permissions(manage_channels=True)
+    @application_checks.bot_has_guild_permissions(manage_channels=True)
     async def clear_welcome_message_slash(self, ctx: Interaction):
-        if not ctx.permissions.manage_channels:
-            return
         return await Config.clear_welcome_message(context=self, ctx=ctx)
 
 
     @logs_slash.subcommand(
         name="messages-set", description="Configure the bot for your server's needs"
     )
-    @commands.has_guild_permissions(manage_channels=True)
-    @commands.bot_has_guild_permissions(manage_channels=True)
+    @application_checks.has_guild_permissions(manage_channels=True)
+    @application_checks.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs(
         self,
         interaction: Interaction,
@@ -85,21 +82,17 @@ class ConfigSlash(commands.Cog):
             required=True,
         ),
     ):
-        if not interaction.permissions.manage_channels:
-            return
         return await Config.set_message_logs(self, interaction, channel=channel)
 
     @logs_slash.subcommand(
         name="messages-clear", description="Configure the bot for your server's needs"
     )
-    @commands.has_guild_permissions(manage_channels=True)
-    @commands.bot_has_guild_permissions(manage_channels=True)
+    @application_checks.has_guild_permissions(manage_channels=True)
+    @application_checks.bot_has_guild_permissions(manage_channels=True)
     async def clear_message_log(
         self,
         interaction: Interaction,
     ):
-        if not interaction.permissions.manage_channels:
-            return
         return await Config.clear_message_logs(self, interaction)
 
 

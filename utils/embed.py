@@ -27,6 +27,24 @@ def warn_embed_ephemeral(description: str, footer: str = None) -> nextcord.Embed
     )
 
 
+def cancellable_embed_ephemeral(
+    author: nextcord.Member, description: str, footer: str = None
+) -> nextcord.Embed:
+    return (
+        nextcord.Embed(
+            color=warn_embed_color,
+            description=f"⚠️ {description}",
+        )
+        .set_author(
+            name=author.name,
+            icon_url=author.avatar
+            if author.avatar
+            else "https://canary.discord.com/assets/c09a43a372ba81e3018c3151d4ed4773.png",
+        )
+        .set_footer(text=footer)
+    )
+
+
 def warn_embed(
     user: nextcord.User, description: str, footer: str = None
 ) -> nextcord.Embed:
@@ -52,18 +70,14 @@ def failed_embed(
     ).set_author(name=user.name, icon_url=user.display_avatar)
 
 
-def missing_permissions(
-    description: str, footer: str = None
-) -> nextcord.Embed:
+def missing_permissions(description: str, footer: str = None) -> nextcord.Embed:
     return nextcord.Embed(
         color=failed_embed_color,
         description=f"<:red_tick:954499768124583947> You're missing the `{description.lower()}` permission.",
     )
 
 
-def self_missing_permissions(
-    description: str, footer: str = None
-) -> nextcord.Embed:
+def self_missing_permissions(description: str, footer: str = None) -> nextcord.Embed:
     return nextcord.Embed(
         color=failed_embed_color,
         description=f"<:red_tick:954499768124583947> I don't have the `{description.lower()}` permission.",

@@ -1,4 +1,5 @@
-from nextcord.ext import commands
+import nextcord
+from nextcord.ext import commands, application_checks
 from nextcord.ext.commands import errors, Context
 from nextcord.ext.commands.cooldowns import BucketType
 from utils.data import create_error_log
@@ -41,6 +42,22 @@ class Errors(commands.Cog):
             )
 
             await ctx.send(embed=embed)
+
+    @commands.Cog.listener()
+    async def on_application_command_error(
+        self, interaction: nextcord.Interaction, err
+    ):
+        if isinstance(err, application_checks.errors.ApplicationMissingPermissions):
+            return await interaction.response.send_message(
+                embed=missing_permissions(f"{' '.join(err.missing_permissions)}")
+            )
+
+        if isinstance(err, application_checks.errors.ApplicationBotMissingPermissions):
+            return await interaction.response.send_message(
+                embed=self_missing_permissions(f"{' '.join(err.missing_permissions)}")
+            )
+
+        pass
 
 
 def setup(bot):

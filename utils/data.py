@@ -39,7 +39,7 @@ from dotenv import dotenv_values
 
 do_not_load = (
     "cogs.interactives",
-    "cogs.mod_slash",
+    "cogs.nuke"
 )
 
 

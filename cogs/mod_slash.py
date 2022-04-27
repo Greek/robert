@@ -1,9 +1,9 @@
-from discord import ButtonStyle, Interaction
+from discord import Interaction
 import nextcord
 import os
 
 from nextcord import SlashOption
-from nextcord.ext import commands
+from nextcord.ext import commands, application_checks
 
 from redis.asyncio import Redis
 from pymongo import MongoClient
@@ -29,6 +29,8 @@ class ModSlash(commands.Cog):
     @nextcord.slash_command(
         name="kick", description=_("cmds.kick.desc"), guild_ids=[932369210611494982]
     )
+    @application_checks.has_guild_permissions(kick_members=True)
+    @application_checks.bot_has_guild_permissions(kick_members=True)
     async def _kick(
         self,
         ctx: Interaction,
@@ -40,11 +42,18 @@ class ModSlash(commands.Cog):
             name="reason", description=_("cmds.kick.option_reason"), required=False
         )
     ):
-        return await Mod.kick_user(context=self, ctx=ctx, member=member, reason=reason)
+        try:
+            return await Mod.kick_user(
+                context=self, ctx=ctx, member=member, reason=reason
+            )
+        except:
+            pass
 
     @nextcord.slash_command(
         name="ban", description=_("cmds.ban.desc"), guild_ids=[932369210611494982]
     )
+    @application_checks.has_guild_permissions(ban_members=True)
+    @application_checks.bot_has_guild_permissions(ban_members=True)
     async def _ban(
         self,
         ctx,
@@ -56,9 +65,14 @@ class ModSlash(commands.Cog):
             name="reason", description=_("cmds.ban.option_reason"), required=False
         )
     ):
-        await Mod.ban_user(context=self, ctx=ctx, member=member.id, reason=reason)
+        try:
+            await Mod.ban_user(context=self, ctx=ctx, member=member.id, reason=reason)
+        except:
+            pass
 
     @nextcord.slash_command(name="purge", description=_("cmds.purge.desc"))
+    @application_checks.has_guild_permissions(manage_messages=True)
+    @application_checks.bot_has_guild_permissions(manage_messages=True)
     async def _clear(
         self,
         ctx,
@@ -66,9 +80,14 @@ class ModSlash(commands.Cog):
             name="amount", description=_("cmds.purge.option_amount"), required=True
         ),
     ):
-        return await Mod.mass_delete(context=self, ctx=ctx, amount=amount)
+        try:
+            return await Mod.mass_delete(context=self, ctx=ctx, amount=amount)
+        except:
+            pass
 
     @nextcord.slash_command(name="mute", description="Mute a person.")
+    @application_checks.has_guild_permissions(manage_messages=True)
+    @application_checks.bot_has_guild_permissions(manage_roles=True)
     async def _mute(
         self,
         ctx,
@@ -81,14 +100,19 @@ class ModSlash(commands.Cog):
             required=False,
         ),
     ):
-        return await Mod.mute_member(
-            context=self,
-            ctx=ctx,
-            member=member,
-            duration_in_seconds=duration_in_seconds,
-        )
+        try:
+            return await Mod.mute_member(
+                context=self,
+                ctx=ctx,
+                member=member,
+                duration_in_seconds=duration_in_seconds,
+            )
+        except:
+            pass
 
     @nextcord.slash_command(name="unmute", description="Un-mute a person.")
+    @application_checks.has_guild_permissions(manage_messages=True)
+    @application_checks.bot_has_guild_permissions(manage_roles=True)
     async def _unmute(
         self,
         ctx,
@@ -96,7 +120,10 @@ class ModSlash(commands.Cog):
             name="person", description="Person to un-mute", required=True
         ),
     ):
-        return await Mod.unmute_member(context=self, ctx=ctx, member=member)
+        try:
+            return await Mod.unmute_member(context=self, ctx=ctx, member=member)
+        except:
+            pass
 
 
 def setup(bot):
