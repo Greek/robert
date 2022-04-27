@@ -27,7 +27,7 @@ class ModSlash(commands.Cog):
         )
 
     @nextcord.slash_command(
-        name="kick", description=_("cmds.kick.desc"), guild_ids=[932369210611494982]
+        name="kick", description=_("cmds.kick.desc")
     )
     @application_checks.has_guild_permissions(kick_members=True)
     @application_checks.bot_has_guild_permissions(kick_members=True)
@@ -50,7 +50,7 @@ class ModSlash(commands.Cog):
             pass
 
     @nextcord.slash_command(
-        name="ban", description=_("cmds.ban.desc"), guild_ids=[932369210611494982]
+        name="ban", description=_("cmds.ban.desc")
     )
     @application_checks.has_guild_permissions(ban_members=True)
     @application_checks.bot_has_guild_permissions(ban_members=True)
@@ -85,7 +85,7 @@ class ModSlash(commands.Cog):
         except:
             pass
 
-    @nextcord.slash_command(name="mute", description="Mute a person.")
+    @nextcord.slash_command(name="mute", description=_("cmds.mute.desc"))
     @application_checks.has_guild_permissions(manage_messages=True)
     @application_checks.bot_has_guild_permissions(manage_roles=True)
     async def _mute(
@@ -110,7 +110,7 @@ class ModSlash(commands.Cog):
         except:
             pass
 
-    @nextcord.slash_command(name="unmute", description="Un-mute a person.")
+    @nextcord.slash_command(name="unmute", description=_("cmds.unmute.desc"))
     @application_checks.has_guild_permissions(manage_messages=True)
     @application_checks.bot_has_guild_permissions(manage_roles=True)
     async def _unmute(
