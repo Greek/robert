@@ -20,7 +20,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import cmd
 import nextcord
 import os
 import logging
@@ -31,10 +30,9 @@ import uuid
 
 from nextcord import Interaction
 from nextcord.ext.commands import AutoShardedBot, MinimalHelpCommand, Context
-from utils import perms, default
+from utils import default
 from utils.default import translate as _, traceback_maker
 from utils import embed as uembed
-from dotenv import dotenv_values
 
 
 do_not_load = (

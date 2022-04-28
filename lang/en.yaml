@@ -6,7 +6,7 @@ cmds:
       user: "The person's avatar you want to get"
   config:
     welcome:
-      desc: "Set a welcoming channel and message."
+      desc: "Set a welcoming channel and message. Special words: {mention}, {name}, {tag}"
       desc_clear: "Clear the welcome message."
       success: "Set the welcome message to \"%{message}\" in %{channel}."
       removal_success: "Removed the welcome message configuration."
