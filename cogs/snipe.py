@@ -1,11 +1,10 @@
 import nextcord
 import os
 
+
 from nextcord.ext import commands
-from nextcord.ext.commands import Context, errors
-from nextcord import Message
-from nextcord.ext import commands
-from utils import default, perms
+
+from utils import default
 from utils.default import translate as _
 
 
@@ -19,20 +18,20 @@ class Snipe(commands.Cog):
         self.snipe_message_new = {}
 
     @commands.Cog.listener()
-    async def on_message_delete(self, message: Message):
+    async def on_message_delete(self, message: nextcord.Message):
         if message.author.bot:
              return
         self.snipe_message[message.channel.id] = message
 
     @commands.Cog.listener()
-    async def on_message_edit(self, message: Message, new_message: Message):
+    async def on_message_edit(self, message: nextcord.Message, new_message: nextcord.Message):
         if message.author.bot:
              return
         self.snipe_message_old[message.channel.id] = message
         self.snipe_message_new[message.channel.id] = new_message
 
     @commands.command(name="snipe", aliases=["s"], description=_("cmds.snipe.desc"))
-    async def get_last_deleted_message(self, ctx: Context):
+    async def get_last_deleted_message(self, ctx: commands.Context):
         try:
             embed = default.branded_embed(
                 description=str(self.snipe_message[ctx.channel.id].content)
@@ -61,7 +60,7 @@ class Snipe(commands.Cog):
     @commands.command(
         name="editsnipe", aliases=["es"], description=_("cmds.snipe.desc")
     )
-    async def get_last_edited_message(self, ctx: Context):
+    async def get_last_edited_message(self, ctx: commands.Context):
         try:
             embed = default.branded_embed(
                 description=str(self.snipe_message_old[ctx.channel.id].content),

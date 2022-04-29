@@ -25,9 +25,7 @@ SOFTWARE.
 import nextcord
 import os
 
-from nextcord import Client, TextChannel, Interaction
 from nextcord.ext import commands, tasks
-from nextcord.ext.commands import Context
 
 from redis.asyncio import Redis
 from pymongo import MongoClient
@@ -77,7 +75,7 @@ class ActionReason(commands.Converter):
 class Mod(commands.Cog):
     """Commands for moderators"""
 
-    def __init__(self, bot: Client):
+    def __init__(self, bot: nextcord.Client):
 
         self.bot = bot
         self.guild_id = 932369210611494982
@@ -138,7 +136,7 @@ class Mod(commands.Cog):
         await self.subscribe_expiry_handler()
 
     @commands.Cog.listener()
-    async def on_guild_channel_create(self, channel: TextChannel):
+    async def on_guild_channel_create(self, channel: nextcord.TextChannel):
         try:
             res = self.config_coll.find_one({"_id": f"{channel.guild.id}"})
             role = channel.guild.get_role(int(res["muteRole"]))
@@ -168,14 +166,14 @@ class Mod(commands.Cog):
     @commands.guild_only()
     async def kick_user(self, ctx, member: nextcord.Member, *, reason=None) -> None:
         try:
-            if isinstance(ctx, Interaction):
+            if isinstance(ctx, nextcord.Interaction):
                 if await perms.check_priv_interaction(ctx, member=member):
                     return
             if await perms.check_priv(ctx, member=member):
                 return
             await member.kick(
                 reason=default.responsible(
-                    ctx.author if isinstance(ctx, Context) else ctx.user, reason
+                    ctx.author if isinstance(ctx, commands.Context) else ctx.user, reason
                 )
             )
             await ctx.send(
@@ -191,7 +189,7 @@ class Mod(commands.Cog):
     @commands.bot_has_guild_permissions(ban_members=True)
     @commands.guild_only()
     async def ban_user(self, ctx, member: MemberID, *, reason=None) -> None:
-        caller = ctx.author if isinstance(ctx, Context) else ctx.user
+        caller = ctx.author if isinstance(ctx, commands.Context) else ctx.user
         m = ctx.guild.get_member(member)
         try:
             if m is not None and await perms.check_priv(ctx, m):
@@ -232,10 +230,10 @@ class Mod(commands.Cog):
     @commands.bot_has_guild_permissions(manage_roles=True)
     @commands.guild_only()
     async def mute_member(
-        self, ctx: Context, member: nextcord.Member, *, duration_in_seconds: int = None
+        self, ctx: commands.Context, member: nextcord.Member, *, duration_in_seconds: int = None
     ):
         try:
-            if isinstance(ctx, Interaction):
+            if isinstance(ctx, nextcord.Interaction):
                 if await perms.check_priv_interaction(ctx, member=member):
                     return
             if await perms.check_priv(ctx, member=member):
@@ -279,7 +277,7 @@ class Mod(commands.Cog):
                 await member.add_roles(
                     role,
                     reason=f"Muted by {ctx.author}"
-                    if isinstance(ctx, Context)
+                    if isinstance(ctx, commands.Context)
                     else f"Muted by {ctx.user}",
                 )
             except nextcord.errors.Forbidden:
@@ -306,7 +304,7 @@ class Mod(commands.Cog):
     @commands.guild_only()
     async def unmute_member(
         self,
-        ctx: Context,
+        ctx: commands.Context,
         member: nextcord.Member,
     ):
         try:
@@ -346,7 +344,7 @@ class Mod(commands.Cog):
             await member.remove_roles(
                 role,
                 reason=f"Mute removed by {ctx.author}"
-                if isinstance(ctx, Context)
+                if isinstance(ctx, commands.Context)
                 else f"Mute removed by {ctx.user}",
             )
             await ctx.send(
@@ -360,7 +358,7 @@ class Mod(commands.Cog):
     @commands.command(
         name="servermute", aliases=["sm"], description="Server mute a person."
     )
-    async def _sm(self, ctx: Context, member: nextcord.Member):
+    async def _sm(self, ctx: commands.Context, member: nextcord.Member):
         if await perms.check_priv(ctx, member=member):
             return
 

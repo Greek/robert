@@ -29,7 +29,6 @@ import os
 import time
 
 from nextcord.ext import commands
-from nextcord.ext.commands import Context
 from pymongo import MongoClient
 from utils import default, perms, _io
 from utils.default import translate as _
@@ -151,7 +150,7 @@ class Admin(commands.Cog):
 
     @commands.command(name="embedtest", hidden=True)
     @commands.check(perms.only_owner)
-    async def embedtest(self, ctx: Context):
+    async def embedtest(self, ctx: commands.Context):
         await ctx.send(
             embeds=[
                 success_embed_ephemeral("Hello"),

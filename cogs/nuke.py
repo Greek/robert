@@ -1,4 +1,5 @@
 import nextcord
+
 from nextcord.ext import commands
 
 from utils.embed import cancellable_embed_ephemeral

@@ -3,8 +3,9 @@ import os
 
 from nextcord import TextChannel
 from nextcord.ext import commands
-from nextcord.ext.commands import Context
+
 from pymongo import MongoClient
+
 from utils import embed
 from utils.default import translate as _
 
@@ -115,7 +116,7 @@ class Config(commands.Cog):
     @welcome.command(name="clear", description=_("cmds.config.welcome.desc"))
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
-    async def clear_welcome_message(self, ctx: Context):
+    async def clear_welcome_message(self, ctx: commands.Context):
         try:
             self.config_coll.find_one_and_update(
                 {"_id": f"{ctx.guild.id}"},

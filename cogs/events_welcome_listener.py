@@ -1,9 +1,8 @@
 import nextcord
 import os
 
-from nextcord import Member
 from nextcord.ext import commands
-from nextcord.ext.commands import Context
+
 from pymongo import MongoClient
 
 
@@ -18,7 +17,7 @@ class EventsWelcomeListener(commands.Cog):
         self.config_coll = self.db["guild-configs"]
 
     @commands.Cog.listener()
-    async def on_member_join(self, member: Member):
+    async def on_member_join(self, member: nextcord.Member):
         try:
             res = self.config_coll.find_one({"_id": f"{member.guild.id}"})
             parsed_message = (

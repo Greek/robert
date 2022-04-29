@@ -1,7 +1,8 @@
 import nextcord
+
 from nextcord.ext import commands, application_checks
-from nextcord.ext.commands import errors, Context
-from nextcord.ext.commands.cooldowns import BucketType
+from nextcord.ext.commands import errors
+
 from utils.data import create_error_log
 from utils.default import translate as _
 from utils.embed import (
@@ -18,7 +19,7 @@ class Errors(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx: Context, err):
+    async def on_command_error(self, ctx: commands.Context, err):
         if isinstance(err, errors.CommandInvokeError):
             await create_error_log(self, ctx, err)
 

@@ -2,9 +2,10 @@ import nextcord
 import pymongo
 import os
 
-from nextcord import Message
 from nextcord.ext import commands
+
 from pytz import timezone
+
 from utils import default, embed as eutil
 
 
@@ -18,7 +19,7 @@ class Messages(commands.Cog):
         self.message_log_coll = self.db["guild-configs"]
 
     @commands.Cog.listener()
-    async def on_message_delete(self, message: Message):
+    async def on_message_delete(self, message: nextcord.Message):
         try:
             res = self.message_log_coll.find_one({"_id": f"{message.guild.id}"})
             cid = int(res["messageLog"])
@@ -58,7 +59,7 @@ class Messages(commands.Cog):
         await log.send(embed=embed)
 
     @commands.Cog.listener()
-    async def on_message_edit(self, message: Message, new_message: Message):
+    async def on_message_edit(self, message: nextcord.Message, new_message: nextcord.Message):
         try:
             if message.content == new_message.content:
                 return

@@ -10,7 +10,6 @@ from pymongo import MongoClient
 
 from cogs.mod import Mod
 
-from utils import perms, embed as eutil
 from utils.default import translate as _
 
 

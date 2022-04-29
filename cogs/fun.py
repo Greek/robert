@@ -23,12 +23,11 @@ SOFTWARE.
 """
 
 
-import string
 import nextcord
 
-from nextcord import Interaction, SlashOption
+from nextcord import SlashOption
 from nextcord.ext import commands
-from nextcord.ext.commands import Context
+
 from utils import default
 from utils.default import translate as _
 from utils.data import create_error_log
@@ -43,7 +42,7 @@ class Fun(commands.Cog):
     )
     async def get_user_info(self, ctx, member: nextcord.Member = None):
 
-        if isinstance(ctx, Interaction):
+        if isinstance(ctx, nextcord.Interaction):
             member = member or ctx.user
         else:
             member = member or ctx.author
@@ -126,7 +125,7 @@ class Fun(commands.Cog):
     @commands.command(name="avatar")
     async def get_user_avatar(self, ctx, *, member: nextcord.Member = None):
         try:
-            if isinstance(ctx, Interaction):
+            if isinstance(ctx, nextcord.Interaction):
                 member = member or ctx.user
             else:
                 member = member or ctx.author
@@ -146,7 +145,7 @@ class Fun(commands.Cog):
         await self.get_user_avatar(ctx, member=member)
 
     @commands.command(name="im", hidden=True)
-    async def _im(self, ctx: Context, *, u: nextcord.Member = None):
+    async def _im(self, ctx: commands.Context, *, u: nextcord.Member = None):
         if u is None:
             return await ctx.send("Huh?")
         if u is ctx.author:

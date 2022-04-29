@@ -2,7 +2,7 @@ import nextcord
 import json
 
 from nextcord.ext import commands
-from nextcord import Guild, TextChannel, User, Message
+
 from utils import embed as embed2, default
 
 
@@ -13,7 +13,7 @@ class EventsGuild(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_guild_join(self, guild: Guild):
+    async def on_guild_join(self, guild: nextcord.Guild):
         f = open("config.json")
         config = json.load(f)
         guilds = config.get("allowlistServers")
@@ -22,8 +22,8 @@ class EventsGuild(commands.Cog):
         except ValueError:
             return print("[Guild Log] Tried to log join, no channel ID found in config")
 
-        owner: User = await self.bot.fetch_user(guild.owner_id)
-        log_channel: TextChannel = self.bot.get_channel(cid)
+        owner: nextcord.User = await self.bot.fetch_user(guild.owner_id)
+        log_channel: nextcord.TextChannel = self.bot.get_channel(cid)
         embed = default.branded_embed(
             title=f"Guild joined | {guild.name} ({guild.id})",
             color=embed2.success_embed_color,
@@ -57,7 +57,7 @@ class EventsGuild(commands.Cog):
         await log_channel.send(embed=embed)
 
     @commands.Cog.listener()
-    async def on_guild_remove(self, guild: Guild):
+    async def on_guild_remove(self, guild: nextcord.Guild):
         f = open("config.json")
         config = json.load(f)
         guilds = config.get("allowlistServers")
@@ -68,8 +68,8 @@ class EventsGuild(commands.Cog):
                 "[Guild Log] Tried to log guild leave, no channel ID found in config"
             )
 
-        owner: User = await self.bot.fetch_user(guild.owner_id)
-        log_channel: TextChannel = self.bot.get_channel(cid)
+        owner: nextcord.User = await self.bot.fetch_user(guild.owner_id)
+        log_channel: nextcord.TextChannel = self.bot.get_channel(cid)
         embed = default.branded_embed(
             title=f"Guild left | {guild.name} ({guild.id})",
             color=embed2.failed_embed_color,

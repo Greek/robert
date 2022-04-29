@@ -31,7 +31,6 @@ import os
 from random import choice
 from nextcord import Client
 from nextcord.ext import commands
-from nextcord.ext.commands import Context
 from utils import default
 from utils.default import translate as _
 
@@ -45,7 +44,7 @@ class About(commands.Cog):
     @commands.command(
         name="about", description=_("cmds.about"), aliases=["info", "stats", "status"]
     )
-    async def about(self, ctx: Context):
+    async def about(self, ctx: commands.Context):
         avg_members = sum(g.member_count for g in self.bot.guilds)
 
         if hasattr(ctx, "guild") and ctx.guild is not None:
@@ -73,9 +72,8 @@ class About(commands.Cog):
             await ctx.send(content=f"", embed=embed)
 
     @commands.command(name="ping", descriptions="Pong!")
-    async def ping(self, ctx: Context):
+    async def ping(self, ctx: commands.Context):
         quotes = [
-            "the cavern",
             "andreas' iphone 13 pro max",
             "my tonka",
             "cloud based septic tank",
