@@ -13,7 +13,7 @@ from utils.embed import (
 
 
 class Errors(commands.Cog):
-    """The description for Errors goes here."""
+    """Command error handlers"""
 
     def __init__(self, bot):
         self.bot = bot

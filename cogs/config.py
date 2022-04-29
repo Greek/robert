@@ -11,7 +11,7 @@ from utils.default import translate as _
 
 
 class Config(commands.Cog):
-    """The description for Config goes here."""
+    """Guild-specific configurations."""
 
     def __init__(self, bot):
         self.bot = bot

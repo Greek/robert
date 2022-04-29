@@ -9,8 +9,6 @@ from pymongo import MongoClient
 
 
 class ConfigSlash(commands.Cog):
-    """The description for ConfigSlash goes here."""
-
     def __init__(self, bot):
         self.bot = bot
         self.cluster = MongoClient(os.environ.get("MONGO_DB"))

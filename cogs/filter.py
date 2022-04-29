@@ -10,7 +10,7 @@ from utils.embed import success_embed_ephemeral, warn_embed_ephemeral
 
 
 class Filter(commands.Cog):
-    """The description for Filter goes here."""
+    """Message filters."""
 
     def __init__(self, bot: nextcord.Client):
         self.bot = bot

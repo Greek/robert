@@ -10,7 +10,7 @@ from utils import default, embed as eutil
 
 
 class Messages(commands.Cog):
-    """Message event handlers."""
+    """Message event handlers (primarily logging)"""
 
     def __init__(self, bot):
         self.bot = bot

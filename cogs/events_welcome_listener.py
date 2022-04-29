@@ -7,7 +7,7 @@ from pymongo import MongoClient
 
 
 class EventsWelcomeListener(commands.Cog):
-    """The description for EventsWelcomeListener goes here."""
+    """Member welcome listener"""
 
     def __init__(self, bot):
         self.bot = bot

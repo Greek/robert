@@ -57,19 +57,6 @@ class MemberID(commands.Converter):
         else:
             return m.id
 
-
-class ActionReason(commands.Converter):
-    async def convert(self, ctx, argument):
-        ret = argument
-
-        if len(ret) > 512:
-            reason_max = 512 - len(ret) - len(argument)
-            raise commands.BadArgument(
-                f"reason is too long ({len(argument)}/{reason_max})"
-            )
-        return ret
-
-
 class Mod(commands.Cog):
     """Commands for moderators"""
 

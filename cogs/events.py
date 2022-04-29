@@ -31,7 +31,7 @@ from utils import default
 from utils.default import translate as _
 
 class Events(commands.Cog):
-    """Event listeners :Smile:"""
+    """General listeners"""
 
     def __init__(self, bot):
         self.bot = bot
