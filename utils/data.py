@@ -30,9 +30,9 @@ import uuid
 
 from nextcord import Interaction
 from nextcord.ext.commands import AutoShardedBot, MinimalHelpCommand, Context
-from utils import default
+
+from utils import default, embed as uembed
 from utils.default import translate as _, traceback_maker
-from utils import embed as uembed
 
 
 do_not_load = (

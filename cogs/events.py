@@ -22,8 +22,8 @@ SOFTWARE.
 
 import nextcord
 import datetime
-import os
 import pymongo
+import os
 
 from nextcord.ext import commands
 
@@ -31,8 +31,6 @@ from utils import default
 from utils.default import translate as _
 
 class Events(commands.Cog):
-    """Event listeners :Smile:"""
-
     def __init__(self, bot):
         self.bot = bot
         self.last_timeStamp = datetime.datetime.utcfromtimestamp(0)

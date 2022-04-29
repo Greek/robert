@@ -3,7 +3,7 @@ import json
 
 from nextcord.ext import commands
 
-from utils import embed as embed2, default
+from utils import embed as eutil, default
 
 
 class EventsGuild(commands.Cog):
@@ -26,7 +26,7 @@ class EventsGuild(commands.Cog):
         log_channel: nextcord.TextChannel = self.bot.get_channel(cid)
         embed = default.branded_embed(
             title=f"Guild joined | {guild.name} ({guild.id})",
-            color=embed2.success_embed_color,
+            color=eutil.success_embed_color,
         )
 
         embed.set_author(name=f"{guild.name}", icon_url=f"{guild.icon}")
@@ -72,7 +72,7 @@ class EventsGuild(commands.Cog):
         log_channel: nextcord.TextChannel = self.bot.get_channel(cid)
         embed = default.branded_embed(
             title=f"Guild left | {guild.name} ({guild.id})",
-            color=embed2.failed_embed_color,
+            color=eutil.failed_embed_color,
         )
 
         embed.set_author(name=f"{guild.name}", icon_url=f"{guild.icon}")
