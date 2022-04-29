@@ -1,9 +1,8 @@
 import nextcord
 import os
 
-from nextcord import Interaction, SlashOption
+from nextcord import ChannelType, Interaction, SlashOption
 from nextcord.ext import commands, application_checks
-
 from cogs.config import Config
 from utils.default import translate as _
 from pymongo import MongoClient
@@ -23,19 +22,19 @@ class ConfigSlash(commands.Cog):
         description="Configure the bot for your server's needs",
         default_permission=False
     )
-    async def config_slash(interaction: nextcord.Interaction):
+    async def config_slash(interaction: Interaction):
         pass
 
     @config_slash.subcommand(
         name="welcome", description="Configure the bot for your server's needs"
     )
-    async def welcome_slash(interaction: nextcord.Interaction):
+    async def welcome_slash(interaction: Interaction):
         pass
 
     @config_slash.subcommand(
         name="logs", description="Configure the bot for your server's needs"
     )
-    async def logs_slash(interaction: nextcord.Interaction):
+    async def logs_slash(interaction: Interaction):
         pass
 
 
@@ -44,10 +43,10 @@ class ConfigSlash(commands.Cog):
     @application_checks.bot_has_guild_permissions(manage_channels=True)
     async def change_welcome_message_slash(
         self,
-        ctx: nextcord.Interaction,
+        ctx: Interaction,
         channel: nextcord.abc.GuildChannel = SlashOption(
             name="channel",
-            channel_types=[nextcord.ChannelType.text],
+            channel_types=[ChannelType.text],
             description=_("cmds.config.welcome.desc"),
             required=True,
         ),
@@ -64,7 +63,7 @@ class ConfigSlash(commands.Cog):
     )
     @application_checks.has_guild_permissions(manage_channels=True)
     @application_checks.bot_has_guild_permissions(manage_channels=True)
-    async def clear_welcome_message_slash(self, ctx: nextcord.Interaction):
+    async def clear_welcome_message_slash(self, ctx: Interaction):
         return await Config.clear_welcome_message(context=self, ctx=ctx)
 
 
@@ -75,10 +74,10 @@ class ConfigSlash(commands.Cog):
     @application_checks.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs(
         self,
-        interaction: nextcord.Interaction,
+        interaction: Interaction,
         channel: nextcord.abc.GuildChannel = SlashOption(
             name="channel",
-            channel_types=[nextcord.ChannelType.text],
+            channel_types=[ChannelType.text],
             description=_("cmds.config.welcome.desc"),
             required=True,
         ),
@@ -92,7 +91,7 @@ class ConfigSlash(commands.Cog):
     @application_checks.bot_has_guild_permissions(manage_channels=True)
     async def clear_message_log(
         self,
-        interaction: nextcord.Interaction,
+        interaction: Interaction,
     ):
         return await Config.clear_message_logs(self, interaction)
 
