@@ -13,8 +13,9 @@ class ConfirmDeletion(nextcord.ui.View):
     async def delete(
         self, button: nextcord.ui.Button, interaction: nextcord.Interaction
     ):
-        if not interaction.message.author:
+        if not self.interaction_check(interaction.user.id):
             return
+            
         # There is a clone function for this but it doesn't support position parameter
         await interaction.channel.delete()
         await interaction.guild.create_text_channel(
