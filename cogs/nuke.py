@@ -2,6 +2,7 @@ import nextcord
 
 from nextcord.ext import commands
 
+from utils import perms
 from utils.embed import cancellable_embed_ephemeral
 
 
@@ -42,7 +43,8 @@ class ChannelRecreate(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="nuke")
+    @commands.command(name="nuke", hidden=True)
+    @commands.check(perms.only_owner)
     @commands.has_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def _nuke(self, ctx: commands.Context):
@@ -55,7 +57,9 @@ class ChannelRecreate(commands.Cog):
             ),
             view=view,
         )
-        await view.wait()
+        if view.interaction_check(ctx.user.id):
+            await view.wait()
+        
 
 
 def setup(bot):
