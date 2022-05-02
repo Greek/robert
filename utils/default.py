@@ -20,14 +20,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import traceback
-import json
-import ast
-import aiohttp
-from collections import namedtuple
-
 import nextcord
+import traceback
+import aiohttp
+import json
 import i18n
+import ast
+
+from collections import namedtuple
 
 i18n.set("skip_locale_root_data", True)
 i18n.translations.container.clear()
