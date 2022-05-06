@@ -1,6 +1,6 @@
 # bot
 
-A Discord bot made in Python. It uses a slightly modified version of Discord.py, which 
+A Discord bot made in Python. It uses a slightly modified version of Discord.py. 
 
 ## how to run
 
