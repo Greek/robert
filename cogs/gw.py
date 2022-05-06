@@ -1,13 +1,16 @@
 import asyncio
 import nextcord
+import random
+import time
 import os
 
+from pymongo import MongoClient
 from redis.asyncio import Redis
 from nextcord.ext import commands, tasks
-from pymongo import MongoClient
+from pytimeparse.timeparse import timeparse
 
 from utils.data import create_error_log
-from utils.embed import warn_embed_ephemeral
+from utils.embed import success_embed_ephemeral, warn_embed_ephemeral
 from utils.default import translate as _
 
 from dotenv import dotenv_values, load_dotenv
@@ -34,11 +37,33 @@ class Giveaways(commands.Cog):
     def cog_unload(self):
         self.subscribe_expiry_handler.cancel()
         self.listen_messages.cancel()
+        self.disconnect_redis()
+
+    async def disconenct_redis(self):
+        await self.redis.close()
 
     async def expiry_handler(self, msg) -> None:
-        if msg["data"].startswith("giveaway"):
+        gw_winner_count = 3
+
+        if msg["data"].startswith("giveaway:"):
             try:
-                print("I Jus turned a 5 2 Üh 60")
+                # giveaway-guild.id-channel.id-msg.id
+                data = msg["data"].split(":")
+
+                guild = self.bot.get_guild(int(data[1]))
+                channel: nextcord.TextChannel = guild.get_channel(int(data[2]))
+                message = await channel.fetch_message(int(data[3]))
+
+                reactions = await message.reactions[0].users().flatten()
+
+                new_message: nextcord.Message = await channel.send(
+                    f"Congratulations to the following winners: {random.choice(reactions).mention}"
+                )
+                await message.edit(
+                    embed=success_embed_ephemeral(
+                        f"Giveaway has ended, see results [here]({new_message.to_reference().jump_url})"
+                    )
+                )
             except Exception as e:
                 ctx = self.bot
                 await create_error_log(self, ctx, e)
@@ -65,13 +90,13 @@ class Giveaways(commands.Cog):
         await self.bot.wait_until_ready()
         await self.subscribe_expiry_handler()
 
-    @commands.group(name="giveaway")
+    @commands.group(name="giveaway", aliases=["gw"])
     async def _giveaway(self, ctx: commands.Context):
         if ctx.invoked_subcommand is None:
             await ctx.send_help(ctx.command)
         pass
 
-    @_giveaway.command(name="create")
+    @_giveaway.command(name="create", aliases=["c"])
     async def _create(self, ctx: commands.Context):
         def author_check(author):
             def inner_check(message):
@@ -95,44 +120,60 @@ class Giveaways(commands.Cog):
         if msg.content == "yes":
             await ctx.send("What are you giving away?")
             try:
-                prize = await self.bot.wait_for("message", check=check, timeout=30)
+                gw_prize = await self.bot.wait_for("message", check=check, timeout=30)
+                if len(gw_prize.content) > 48:
+                    return await ctx.send("Please provide a shorter giveaway prize.")
             except asyncio.TimeoutError:
                 return await ctx.send("You took too long! Action cancelled.")
 
-            await ctx.send("How many winners do you want?")
-            try:
-                winner_count: nextcord.Message = await self.bot.wait_for(
-                    "message", check=check, timeout=30
-                )
-            except asyncio.TimeoutError:
-                return await ctx.send("You took too long! Action cancelled.")
+            # TODO(greek): cba to do this. host seperate giveaways for multiple winners LOL
+            # await ctx.send("How many winners do you want?")
+            # try:
+            #     gw_winner_count: nextcord.Message = await self.bot.wait_for(
+            #         "message", check=check, timeout=30
+            #     )
+            # except asyncio.TimeoutError:
+            #     return await ctx.send("You took too long! Action cancelled.")
 
             await ctx.send("When would you like this to end?")
             try:
-                duration = await self.bot.wait_for("message", check=check, timeout=30)
+                gw_duration = await self.bot.wait_for(
+                    "message", check=check, timeout=30
+                )
+                parsed_gw_duration = timeparse(f"{gw_duration.content}")
             except asyncio.TimeoutError:
                 return await ctx.send("You took too long! Action cancelled.")
-
             dedicated_channel: nextcord.TextChannel = self.bot.get_channel(
                 int(res["giveawayChannel"])
             )
+
             try:
+                if parsed_gw_duration is None:
+                    return await ctx.send(
+                        "Please re-run the command with a valid time. (30s, 2h, 3d, etc..)"
+                    )
                 giveaway_embed = (
                     nextcord.Embed(
-                        title=f"Giveaway: {prize.content}",
-                        description="React with :tada: to enter this giveaway!\n\nEnding in x",
+                        title=f"Giveaway: {gw_prize.content}",
+                        description=f"React with :tada: to enter this giveaway!\nThis giveaway will end <t:{parsed_gw_duration + int(time.time())}:R>.",
                         color=nextcord.Embed.Empty,
-                    )
-                    .set_author(
+                    ).set_author(
                         name=ctx.author.name,
                         icon_url=ctx.author.avatar
                         if ctx.author.avatar
                         else "https://canary.discord.com/assets/c09a43a372ba81e3018c3151d4ed4773.png",
                     )
-                    .set_footer(text=f"{winner_count.content} winners")
+                    # .set_footer(text=f"")
                 )
                 msg = await dedicated_channel.send(embed=giveaway_embed)
                 await msg.add_reaction("🎉")
+                await asyncio.sleep(2)
+                return await self.redis.setex(
+                    f"giveaway:{ctx.guild.id}:{msg.channel.id}:{msg.id}",
+                    parsed_gw_duration,
+                    "Giveaway",
+                )
+
             except Exception as e:
                 await create_error_log(self, ctx, e)
 
