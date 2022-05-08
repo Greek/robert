@@ -16,6 +16,14 @@ cmds:
         desc_clear: "Remove the logging channel."
         success: "Set the logging channel to %{channel}."
         success_clear: "Cleared the logging channel."
+    giveaway:
+      set:
+        desc: "Set a channel to announce giveaways."
+        res:
+          success: "Set the giveaway channel to %{channel}"
+          cleared: "Cleared the giveaway channel."
+          not_found: "Could not find that channel."
+
   # Moderation commands
   ban:
     desc: "Ban a person."

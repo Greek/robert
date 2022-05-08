@@ -35,6 +35,13 @@ class Config(commands.Cog):
         if ctx.invoked_subcommand is None:
             await ctx.send_help(str(ctx.command))
 
+    @config.group(name="giveaway")
+    async def giveaways(self, ctx):
+        if ctx.invoked_subcommand is None:
+            await ctx.send_help(str(ctx.command))
+
+    # Logs
+
     @logs.group(name="messages")
     async def messages(self, ctx):
         if ctx.invoked_subcommand is None:
@@ -60,9 +67,13 @@ class Config(commands.Cog):
                 )
             )
         except:
-            await ctx.send(embed=embed.failed_embed_ephemeral("Could not change logging channel."))
+            await ctx.send(
+                embed=embed.failed_embed_ephemeral("Could not change logging channel.")
+            )
 
-    @messages.command(name="clear", description=_("cmds.config.logs.message.desc_clear"))
+    @messages.command(
+        name="clear", description=_("cmds.config.logs.message.desc_clear")
+    )
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def clear_message_logs(self, ctx):
@@ -83,12 +94,14 @@ class Config(commands.Cog):
         except Exception as e:
             print(e)
 
+    # Logs end
+
+    # Welcome
+
     @welcome.command(name="set", description=_("cmds.config.welcome.desc"))
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
-    async def change_welcome_message(
-        self, ctx, channel: TextChannel, *, message: str
-    ):
+    async def change_welcome_message(self, ctx, channel: TextChannel, *, message: str):
         try:
             self.config_coll.find_one_and_update(
                 {"_id": f"{ctx.guild.id}"},
@@ -127,6 +140,64 @@ class Config(commands.Cog):
                 embed=embed.success_embed_ephemeral(
                     _(
                         "cmds.config.welcome.removal_success",
+                    )
+                )
+            )
+        except Exception as e:
+            await ctx.send(e)
+
+    # Welcome end
+
+    # Giveaways
+
+    @giveaways.command(name="set", description=_("cmds.config.giveaway.set.desc"))
+    @commands.has_guild_permissions(manage_channels=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
+    async def set_giveaway_channel(
+        self, ctx: commands.Context, channel: nextcord.TextChannel
+    ):
+        try:
+            if channel is None:
+                return await ctx.send(_("cmds.config.giveaway.set.not_found"))
+
+            self.config_coll.find_one_and_update(
+                {"_id": f"{ctx.guild.id}"},
+                {
+                    "$set": {
+                        "giveawayChannel": f"{channel.id}",
+                    }
+                },
+                upsert=True,
+            )
+            await ctx.send(
+                embed=embed.success_embed_ephemeral(
+                    _(
+                        "cmds.config.giveaway.set.res.success",
+                        channel=channel.mention,
+                    )
+                )
+            )
+        except Exception as e:
+            await ctx.send(e)
+
+    @giveaways.command(name="clear", description=_("cmds.config.giveaway.set.desc"))
+    @commands.has_guild_permissions(manage_channels=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
+    async def clear_giveaway_channel(self, ctx: commands.Context):
+        try:
+            self.config_coll.find_one_and_update(
+                {"_id": f"{ctx.guild.id}"},
+                {
+                    "$unset": {
+                        "giveawayChannel": "",
+                    }
+                },
+                upsert=True,
+            )
+            await ctx.send(
+                embed=embed.success_embed_ephemeral(
+                    _(
+                        "cmds.config.giveaway.set.res.cleared",
                     )
                 )
             )

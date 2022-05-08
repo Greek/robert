@@ -1,4 +1,6 @@
 import asyncio
+from contextvars import Context
+from discord import Interaction
 import nextcord
 import random
 import time
@@ -96,7 +98,9 @@ class Giveaways(commands.Cog):
         pass
 
     @commands.has_permissions(manage_guild=True)
-    @_giveaway.command(name="create", aliases=["c"])
+    @_giveaway.command(
+        name="create", description="Create a new giveaway!", aliases=["c"]
+    )
     async def _create(self, ctx: commands.Context):
         def author_check(author):
             def inner_check(message):
@@ -105,7 +109,13 @@ class Giveaways(commands.Cog):
             return inner_check
 
         def check(message):
-            return message.author == ctx.author and message.content
+            return (
+                message.author
+                if isinstance(message, commands.Context)
+                else message.user == ctx.author
+                if isinstance(message, commands.Context)
+                else message.user and message.content
+            )
 
         res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
         try:
@@ -178,6 +188,14 @@ class Giveaways(commands.Cog):
                 await create_error_log(self, ctx, e)
         else:
             return await ctx.send("As you wish, captain.")
+
+    # @nextcord.slash_command(name="giveaway")
+    # async def _slash_giveaway(self, interaction: nextcord.Interaction):
+    #     pass
+
+    # @_slash_giveaway.subcommand(name="create", description="Create a new giveaway!")
+    # async def _slash_giveaway_create(self, interaction: Interaction):
+    #     return await self._create(context=self)
 
 
 def setup(bot):

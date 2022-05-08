@@ -18,7 +18,7 @@ class ConfigSlash(commands.Cog):
     @nextcord.slash_command(
         name="config",
         description="Configure the bot for your server's needs",
-        default_permission=False
+        default_permission=False,
     )
     async def config_slash(interaction: Interaction):
         pass
@@ -35,7 +35,13 @@ class ConfigSlash(commands.Cog):
     async def logs_slash(interaction: Interaction):
         pass
 
+    @config_slash.subcommand(
+        name="giveaway", description="Configure the bot for your server's needs"
+    )
+    async def giveaway_slash(interaction: Interaction):
+        pass
 
+    # Welcome
     @welcome_slash.subcommand(name="set", description=_("cmds.config.welcome.desc"))
     @application_checks.has_guild_permissions(manage_channels=True)
     @application_checks.bot_has_guild_permissions(manage_channels=True)
@@ -64,6 +70,9 @@ class ConfigSlash(commands.Cog):
     async def clear_welcome_message_slash(self, ctx: Interaction):
         return await Config.clear_welcome_message(context=self, ctx=ctx)
 
+    # Welcome end
+
+    # Logs
 
     @logs_slash.subcommand(
         name="messages-set", description="Configure the bot for your server's needs"
@@ -92,6 +101,35 @@ class ConfigSlash(commands.Cog):
         interaction: Interaction,
     ):
         return await Config.clear_message_logs(self, interaction)
+
+    # Logs end
+    @giveaway_slash.subcommand(
+        name="set", description="Configure the bot for your server's needs"
+    )
+    @application_checks.has_guild_permissions(manage_channels=True)
+    @application_checks.bot_has_guild_permissions(manage_channels=True)
+    async def set_giveaway_channel(
+        self,
+        interaction: Interaction,
+        channel: nextcord.abc.GuildChannel = SlashOption(
+            name="channel",
+            channel_types=[ChannelType.text],
+            description=_("cmds.config.welcome.desc"),
+            required=True,
+        ),
+    ):
+        return await Config.set_giveaway_channel(self, interaction, channel=channel)
+
+    @giveaway_slash.subcommand(
+        name="clear", description="Configure the bot for your server's needs"
+    )
+    @application_checks.has_guild_permissions(manage_channels=True)
+    @application_checks.bot_has_guild_permissions(manage_channels=True)
+    async def clear_giveaway_channel(
+        self,
+        interaction: Interaction,
+    ):
+        return await Config.clear_giveaway_channel(self, interaction)
 
 
 def setup(bot):
