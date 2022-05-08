@@ -21,23 +21,23 @@ SOFTWARE.
 """
 
 import nextcord
-import os
-import logging
-import warnings
 import itertools
+import warnings
+import logging
+import os
 import json
 import uuid
 
 from nextcord import Interaction
 from nextcord.ext.commands import AutoShardedBot, MinimalHelpCommand, Context
-from utils import default
+
+from utils import default, embed as uembed
 from utils.default import translate as _, traceback_maker
-from utils import embed as uembed
 
 
 do_not_load = (
     "cogs.interactives",
-    "cogs.nuke"
+    "cogs.nuke",
 )
 
 

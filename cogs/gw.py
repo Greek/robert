@@ -43,11 +43,9 @@ class Giveaways(commands.Cog):
         await self.redis.close()
 
     async def expiry_handler(self, msg) -> None:
-        gw_winner_count = 3
-
         if msg["data"].startswith("giveaway:"):
             try:
-                # giveaway-guild.id-channel.id-msg.id
+                # giveaway:guild.id:channel:id:msg.id:prize
                 data = msg["data"].split(":")
 
                 guild = self.bot.get_guild(int(data[1]))
@@ -57,7 +55,7 @@ class Giveaways(commands.Cog):
                 reactions = await message.reactions[0].users().flatten()
 
                 new_message: nextcord.Message = await channel.send(
-                    f"Congratulations to the following winners: {random.choice(reactions).mention}"
+                    f"Congratulations {random.choice(reactions).mention}, you won: {data[4]}"
                 )
                 await message.edit(
                     embed=success_embed_ephemeral(
@@ -77,7 +75,7 @@ class Giveaways(commands.Cog):
     async def listen_messages(self):
         message = await self.pubsub.get_message()
         if message:
-            print(f"[Giveaways] Listening to expired keys through Pub/Sub")
+            print(f"[Giveaways] Watching expired giveaways")
         else:
             pass
 
@@ -90,12 +88,14 @@ class Giveaways(commands.Cog):
         await self.bot.wait_until_ready()
         await self.subscribe_expiry_handler()
 
+    @commands.has_permissions(manage_guild=True)
     @commands.group(name="giveaway", aliases=["gw"])
     async def _giveaway(self, ctx: commands.Context):
         if ctx.invoked_subcommand is None:
             await ctx.send_help(ctx.command)
         pass
 
+    @commands.has_permissions(manage_guild=True)
     @_giveaway.command(name="create", aliases=["c"])
     async def _create(self, ctx: commands.Context):
         def author_check(author):
@@ -114,10 +114,10 @@ class Giveaways(commands.Cog):
             return await ctx.send("Please provide a giveaway channel in the config!")
 
         await ctx.send(
-            "Hey! This is the creation flow for a new giveaway. Would you like to continue?"
+            "Hey! This is the creation flow for a new giveaway. Would you like to continue? (yes/no)"
         )
         msg = await self.bot.wait_for("message", check=check, timeout=30)
-        if msg.content == "yes":
+        if msg.content == "yes".lower():
             await ctx.send("What are you giving away?")
             try:
                 gw_prize = await self.bot.wait_for("message", check=check, timeout=30)
@@ -169,13 +169,15 @@ class Giveaways(commands.Cog):
                 await msg.add_reaction("🎉")
                 await asyncio.sleep(2)
                 return await self.redis.setex(
-                    f"giveaway:{ctx.guild.id}:{msg.channel.id}:{msg.id}",
+                    f"giveaway:{ctx.guild.id}:{msg.channel.id}:{msg.id}:{gw_prize.content}",
                     parsed_gw_duration,
                     "Giveaway",
                 )
 
             except Exception as e:
                 await create_error_log(self, ctx, e)
+        else:
+            return await ctx.send("As you wish, captain.")
 
 
 def setup(bot):
