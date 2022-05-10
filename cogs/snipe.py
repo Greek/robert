@@ -20,13 +20,13 @@ class Snipe(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self, message: nextcord.Message):
         if message.author.bot:
-             return
+            return
         self.snipe_message[message.channel.id] = message
 
     @commands.Cog.listener()
     async def on_message_edit(self, message: nextcord.Message, new_message: nextcord.Message):
         if message.author.bot:
-             return
+            return
         self.snipe_message_old[message.channel.id] = message
         self.snipe_message_new[message.channel.id] = new_message
 
