@@ -27,6 +27,11 @@ class Snipe(commands.Cog):
     async def on_message_edit(self, message: nextcord.Message, new_message: nextcord.Message):
         if message.author.bot:
             return
+        if message.content == new_message.content:
+            return # Return if the old content matches the new content.
+                   # With links, the msg content automatically updates to add
+                   # an embed to the message. This is why we return here.
+                   
         self.snipe_message_old[message.channel.id] = message
         self.snipe_message_new[message.channel.id] = new_message
 
