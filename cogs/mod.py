@@ -107,7 +107,7 @@ class Mod(commands.Cog):
     async def listen_messages(self):
         message = await self.pubsub.get_message()
         if message:
-            print(f"[Mute] Listening to expired keys through Pub/Sub")
+            print(f"[Mute] Listening to expired mutes")
         else:
             pass
 
