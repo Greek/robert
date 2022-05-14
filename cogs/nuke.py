@@ -49,7 +49,7 @@ class ChannelRecreate(commands.Cog):
     def __init__(self, bot: nextcord.Client):
         self.bot = bot
 
-    @commands.command(name="nuke", hidden=True)
+    @commands.command(name="nuke")
     @commands.has_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def _nuke(self, ctx: commands.Context):
