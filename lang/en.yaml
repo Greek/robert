@@ -8,7 +8,7 @@ cmds:
     welcome:
       desc: "Set a welcoming channel and message. Special words: {mention}, {name}, {tag}"
       desc_clear: "Clear the welcome message."
-      success: "Set the welcome message to \"%{message}\" in %{channel}."
+      success: 'Set the welcome message to "%{message}" in %{channel}.'
       removal_success: "Removed the welcome message configuration."
     logs:
       message:
@@ -23,20 +23,27 @@ cmds:
           success: "Set the giveaway channel to %{channel}"
           cleared: "Cleared the giveaway channel."
           not_found: "Could not find that channel."
+  role:
+    desc: "Command to manage roles"
+    set:
+      desc: "Set a person's role"
+      res:
+        success: 'Added "%{role}" to %{user}.'
+        success_remove: 'Removed "%{role}" from %{user}.'
 
   # Moderation commands
   ban:
     desc: "Ban a person."
-    option_member: 'The person you want to ban'
-    option_reason: 'Reason to ban a person.'
-    reason: 'Your reason'
+    option_member: "The person you want to ban"
+    option_reason: "Reason to ban a person."
+    reason: "Your reason"
     res_noreason: "<:smoke:953134627608993842>"
     res_reason: "<:smoke:953134627608993842>"
   kick:
     desc: "Kick a person."
-    option_member: 'The person you want to kick'
-    option_reason: 'Reason to kick a person.'
-    reason: 'Your reason'
+    option_member: "The person you want to kick"
+    option_reason: "Reason to kick a person."
+    reason: "Your reason"
     res_noreason: "👍"
     res_reason: "👍"
   purge:
@@ -62,6 +69,12 @@ cmds:
     res_not_muted: "%{person} isn't muted."
     res: "%{person} has been un-muted."
 
+  nuke:
+    desc: "Re-create a channel instantly."
+    warning:
+      desc: "Are you sure you want to re-create %{channel}? You may need to re-adjust permissions."
+      footer: "If you'd like to cancel this, press on 'Nevermind!' or wait %{timeout} seconds."
+
   # "Fun" commands
   who:
     desc: "Get info about a person."
@@ -86,6 +99,7 @@ events:
   missing_permission: "I can't do that :("
   missing_args: "Are you missing something?"
   forbidden_dm: "I can't DM you, turn on your DMs!"
+  not_your_interaction: "You cannot interact with this message."
   priv_checks:
     self: "You can't %{action} yourself!"
     self_interaction: "You can't do that to yourself."

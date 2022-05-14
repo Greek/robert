@@ -2,21 +2,28 @@ import nextcord
 
 from nextcord.ext import commands
 
-from utils import perms
-from utils.embed import cancellable_embed_ephemeral
+from utils.default import translate as _
+from utils.embed import cancellable_embed_ephemeral, warn_embed_ephemeral
 
 
 class ConfirmDeletion(nextcord.ui.View):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, ctx: commands.Context, **kwargs):
+        super().__init__(**kwargs)
+        self.timeout = 10.0
+        self.ctx = ctx
+
+    async def interaction_check(self, interaction: nextcord.Interaction) -> bool:
+        if interaction.user != self.ctx.author:
+            await interaction.send(
+                embed=warn_embed_ephemeral(_("events.not_your_interaction")),
+                ephemeral=True,
+            )
+        return self.ctx.author == interaction.user
 
     @nextcord.ui.button(label="Confirm", style=nextcord.ButtonStyle.danger)
-    async def delete(
+    async def _delete(
         self, button: nextcord.ui.Button, interaction: nextcord.Interaction
     ):
-        if not self.interaction_check(interaction.user.id):
-            return
-            
         # There is a clone function for this but it doesn't support position parameter
         await interaction.channel.delete()
         await interaction.guild.create_text_channel(
@@ -31,35 +38,34 @@ class ConfirmDeletion(nextcord.ui.View):
         self.stop()
 
     @nextcord.ui.button(label="Nevermind", style=nextcord.ButtonStyle.secondary)
-    async def cancel(
+    async def _cancel(
         self, button: nextcord.ui.Button, interaction: nextcord.Interaction
     ):
-        if not interaction.message.author:
-            return
         await interaction.message.delete()
         self.stop()
 
+
 class ChannelRecreate(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: nextcord.Client):
         self.bot = bot
 
     @commands.command(name="nuke", hidden=True)
-    @commands.check(perms.only_owner)
     @commands.has_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def _nuke(self, ctx: commands.Context):
-        view = ConfirmDeletion()
+        def check(interaction: nextcord.Interaction):
+            return interaction.user
+
+        view = ConfirmDeletion(ctx)
         await ctx.send(
             embed=cancellable_embed_ephemeral(
                 ctx.author,
-                f"Are you sure you want to re-create {ctx.channel.name}? You may need to re-adjust permissions.",
-                f'If you\'d like to cancel this, press on "Nevermind!" or wait 10 seconds.',
+                _("cmds.nuke.warning.desc", channel=ctx.channel.mention),
+                _("cmds.nuke.warning.footer", timeout=f"{view.timeout:.0f}"),
             ),
             view=view,
         )
-        if view.interaction_check(ctx.user.id):
-            await view.wait()
-        
+        await view.wait()
 
 
 def setup(bot):

@@ -5,6 +5,7 @@ from nextcord.ext import commands
 from utils.default import translate as _
 from utils.embed import success_embed_ephemeral
 
+
 class Role(commands.Cog):
     """Role utilities"""
 
@@ -12,11 +13,13 @@ class Role(commands.Cog):
         self.bot = bot
 
     @commands.group(name="role", description=_("cmds.role.desc"))
+    @commands.has_permissions(manage_roles=True)
+    @commands.bot_has_permissions(manage_roles=True)
     async def _role(self, ctx: commands.Context, user: nextcord.Member, role: str):
         indexed_role = nextcord.utils.get(ctx.guild.roles, name=role)
 
         if indexed_role in user.roles:
-            await  user.remove_roles(indexed_role)
+            await user.remove_roles(indexed_role)
             return await ctx.send(
                 embed=success_embed_ephemeral(
                     _(
@@ -33,10 +36,6 @@ class Role(commands.Cog):
                 _("cmds.role.set.res.success", role=role, user=user.mention)
             )
         )
-
-    # @_role.command(name="add", aliases=["give"])
-    # async def _role_add(self, ctx: commands.Context, user: nextcord.Member, role: str):
-    #     return await self._role(ctx, user=user, role=role)
 
 
 def setup(bot):
