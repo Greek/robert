@@ -28,11 +28,6 @@ Please make sure you have all these fields in, the bot might break if you don't!
 6. `error_reporting` - channel ID to report any runtime errors in your code
 7. `guild_log` - channel ID to log any new guilds the bot joins/leaves
 
-## credits
-
-I cheated and ~~plagiarized~~ borrowed code from Alex's "discord_bot.py" discord
-bot, mainly utilities and helper functions. the whole structure of the bot is
-inspired from Alex's bot.
 
 [python]: https://www.python.org/
 
