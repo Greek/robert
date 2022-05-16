@@ -25,8 +25,10 @@ import os
 
 from nextcord.ext import commands, tasks
 
+from pytimeparse.timeparse import timeparse
 from redis.asyncio import Redis
 from pymongo import MongoClient
+
 
 from utils import default, perms
 from utils.data import create_error_log
@@ -215,7 +217,7 @@ class Mod(commands.Cog):
     @commands.bot_has_guild_permissions(manage_roles=True)
     @commands.guild_only()
     async def mute_member(
-        self, ctx: commands.Context, member: nextcord.Member, *, duration_in_seconds: int = None
+        self, ctx: commands.Context, member: nextcord.Member, *, duration: int = None
     ):
         try:
             if isinstance(ctx, nextcord.Interaction):
@@ -268,12 +270,14 @@ class Mod(commands.Cog):
             except nextcord.errors.Forbidden:
                 return
 
-            if duration_in_seconds is None:
+            parsed_duration = timeparse(duration)
+
+            if duration is None:
                 await self.redis.set(f"mute-{member.id}-{ctx.guild.id}", "Muted")
             else:
                 await self.redis.setex(
                     f"mute-{member.id}-{ctx.guild.id}",
-                    duration_in_seconds,
+                    parsed_duration,
                     "Muted",
                 )
 
