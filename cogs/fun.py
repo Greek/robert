@@ -152,7 +152,7 @@ class Fun(commands.Cog):
 
     @commands.command(name="emoji", aliases=["e", "emote", "jumbo"])
     async def _enlarge_emoji(
-        self, ctx: commands.Context, emoji: nextcord.PartialEmoji | nextcord.Emoji
+        self, ctx: commands.Context, emoji: nextcord.PartialEmoji
     ):
         return await ctx.send(emoji.url)
 
