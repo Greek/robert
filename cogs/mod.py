@@ -59,6 +59,7 @@ class MemberID(commands.Converter):
         else:
             return m.id
 
+
 class Mod(commands.Cog):
     """Commands for moderators"""
 
@@ -137,15 +138,17 @@ class Mod(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: nextcord.Member):
-        mute_key = await self.redis.get(f'mute-{member.id}-{member.guild.id}')
+        mute_key = await self.redis.get(f"mute-{member.id}-{member.guild.id}")
         if mute_key is not None:
             try:
                 res = self.config_coll.find_one({"_id": f"{member.guild.id}"})
                 role = member.guild.get_role(int(res["muteRole"]))
             except:
                 return
-            
-            return await member.add_roles(role, reason="Muted person re-joined the server. Muting again.")
+
+            return await member.add_roles(
+                role, reason="Muted person re-joined the server. Muting again."
+            )
 
     @commands.command(name="kick", description=_("cmds.kick.desc"))
     @commands.has_guild_permissions(kick_members=True)
@@ -160,7 +163,8 @@ class Mod(commands.Cog):
                 return
             await member.kick(
                 reason=default.responsible(
-                    ctx.author if isinstance(ctx, commands.Context) else ctx.user, reason
+                    ctx.author if isinstance(ctx, commands.Context) else ctx.user,
+                    reason,
                 )
             )
             await ctx.send(
@@ -217,7 +221,7 @@ class Mod(commands.Cog):
     @commands.bot_has_guild_permissions(manage_roles=True)
     @commands.guild_only()
     async def mute_member(
-        self, ctx: commands.Context, member: nextcord.Member, *, duration: int = None
+        self, ctx: commands.Context, member: nextcord.Member, *, duration: str = None
     ):
         try:
             if isinstance(ctx, nextcord.Interaction):
@@ -270,20 +274,27 @@ class Mod(commands.Cog):
             except nextcord.errors.Forbidden:
                 return
 
-            parsed_duration = timeparse(duration)
+            parsed_duration = timeparse(duration) if duration is not None else None
 
-            if duration is None:
+            if parsed_duration is None:
                 await self.redis.set(f"mute-{member.id}-{ctx.guild.id}", "Muted")
+                await ctx.send(
+                    embed=success_embed_ephemeral(
+                        _("cmds.mute.res_perm", person=member.mention)
+                    )
+                )
             else:
                 await self.redis.setex(
                     f"mute-{member.id}-{ctx.guild.id}",
                     parsed_duration,
                     "Muted",
                 )
+                return await ctx.send(
+                    embed=success_embed_ephemeral(
+                        _("cmds.mute.res", person=member.mention, duration=duration)
+                    )
+                )
 
-            await ctx.send(
-                embed=success_embed_ephemeral(_("cmds.mute.res", person=member.mention))
-            )
         except Exception as e:
             await create_error_log(self, ctx, e)
 
@@ -353,8 +364,8 @@ class Mod(commands.Cog):
 
         await member.edit(mute=False)
         return await ctx.send(
-                embed=success_embed_ephemeral(f"Server muted {member.mention}")
-            )
+            embed=success_embed_ephemeral(f"Server muted {member.mention}")
+        )
 
 
 def setup(bot):
