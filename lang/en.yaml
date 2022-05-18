@@ -62,13 +62,19 @@ cmds:
   mute:
     desc: "Mute a person."
     no_permission: "I can't mute this person."
-    res_existing_mute: "%{person} is already muted."
-    res: "%{person} has been muted for %{duration}."
-    res_perm: "%{person} has been muted."
+    res:
+      muted:
+        temp: "%{person} has been muted for %{duration}."
+        forever: "%{person} has been muted."
+      invalid:
+        time: "Please provide a valid time period below 14 days."
+        already_muted: "%{person} is already muted."
   unmute:
     desc: "Un-mute a person."
-    res_not_muted: "%{person} isn't muted."
-    res: "%{person} has been un-muted."
+    res:
+      success: "%{person} has been un-muted."
+      invalid:
+        not_muted: "%{person} isn't muted."
 
   nuke:
     desc: "Re-create a channel instantly."

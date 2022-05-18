@@ -260,7 +260,7 @@ class Mod(commands.Cog):
             if existing_mute:
                 return await ctx.send(
                     embed=warn_embed_ephemeral(
-                        _("cmds.mute.res_existing_mute", person=member.mention)
+                        _("cmds.mute.res.invalid.already_muted", person=member.mention)
                     )
                 )
 
@@ -275,12 +275,17 @@ class Mod(commands.Cog):
                 return
 
             parsed_duration = timeparse(duration) if duration is not None else None
+            
+            # if parsed_duration is not None and parsed_duration or int(duration) >= 1209600:
+            #     return await ctx.send(
+            #         embed=warn_embed_ephemeral(_("cmds.mute.res.invalid.time"))
+            #     )
 
             if parsed_duration is None:
                 await self.redis.set(f"mute-{member.id}-{ctx.guild.id}", "Muted")
                 await ctx.send(
                     embed=success_embed_ephemeral(
-                        _("cmds.mute.res_perm", person=member.mention)
+                        _("cmds.mute.res.muted.forever", person=member.mention)
                     )
                 )
             else:
@@ -291,7 +296,11 @@ class Mod(commands.Cog):
                 )
                 return await ctx.send(
                     embed=success_embed_ephemeral(
-                        _("cmds.mute.res", person=member.mention, duration=duration)
+                        _(
+                            "cmds.mute.res.muted.temp",
+                            person=member.mention,
+                            duration=duration,
+                        )
                     )
                 )
 
@@ -315,7 +324,7 @@ class Mod(commands.Cog):
             if mute is None:
                 return await ctx.send(
                     embed=warn_embed_ephemeral(
-                        _("cmds.unmute.res_not_muted", person=member.mention)
+                        _("cmds.unmute.res.invalid.not_muted", person=member.mention)
                     )
                 )
 
@@ -325,7 +334,7 @@ class Mod(commands.Cog):
             except KeyError:
                 await ctx.send(
                     embed=success_embed_ephemeral(
-                        _("cmds.unmute.res", person=member.mention)
+                        _("cmds.unmute.res.success", person=member.mention)
                     )
                 ),
                 return await self.redis.delete(
@@ -335,7 +344,7 @@ class Mod(commands.Cog):
             if role is None:
                 await ctx.send(
                     embed=success_embed_ephemeral(
-                        _("cmds.unmute.res", person=member.mention)
+                        _("cmds.unmute.res.success", person=member.mention)
                     )
                 ),
                 return await self.redis.delete(f"mute-{member.id}-{ctx.guild.id}")
@@ -349,7 +358,7 @@ class Mod(commands.Cog):
             )
             await ctx.send(
                 embed=success_embed_ephemeral(
-                    _("cmds.unmute.res", person=member.mention)
+                    _("cmds.unmute.res.success", person=member.mention)
                 )
             )
         except Exception as e:
