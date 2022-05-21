@@ -22,7 +22,7 @@ SOFTWARE.
 
 import nextcord
 import itertools
-import warnings
+import sys
 import logging
 import os
 import json
@@ -46,15 +46,17 @@ class Bot(AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         try:
-            logger = logging.getLogger("discord")
+            logger = logging.getLogger('nextcord')
             logger.setLevel(logging.INFO)
-            handler = logging.FileHandler(
-                filename="logs/discord.log", encoding="utf-8", mode="w"
-            )
-            handler.setFormatter(
-                logging.Formatter("%(asctime)s:%(levelname)s:%(name)s: %(message)s")
-            )
+
+            handler = logging.FileHandler(filename='logs/discord.log', encoding='utf-8', mode='a')
+            handler2 = logging.StreamHandler(sys.stdout)
+
+            handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+            handler2.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+
             logger.addHandler(handler)
+            logger.addHandler(handler2)
 
             self.load_extension("jishaku")
             for cog in os.listdir("cogs"):
