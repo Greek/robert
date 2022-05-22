@@ -32,6 +32,11 @@ class Filter(commands.Cog):
             msg_split = message.content.lower().split()
 
             try:
+                link_filtering = filtered_words["linksDelete"]
+            except:
+                pass
+
+            try:
                 mute_list = filtered_words["muteWordList"]
             except:
                 pass
@@ -51,8 +56,8 @@ class Filter(commands.Cog):
             except:
                 pass
 
-            if message.author.id == message.guild.owner_id:
-                return
+            # if message.author.id == message.guild.owner_id:
+            #     return
 
             # if message.author.top_role > message.guild.me.top_role:
             #     return
@@ -75,6 +80,11 @@ class Filter(commands.Cog):
                             await message.delete()
                         except:
                             pass
+
+                if link_filtering:
+                    if word.startswith("http" or "https" or "https://" or "http://" or "www") \
+                            or word.endswith(".com" or ".net" or ".org" or ".xxx"):
+                        await message.delete()
 
         except Exception as e:
             print(e)
@@ -138,20 +148,32 @@ class Filter(commands.Cog):
             embed=success_embed_ephemeral(f'Added "{word}" to the ban filter.')
         )
 
-    @_filter_add.command(
-        name="links", description=_("cmds.filter.desc_ban"), hidden=True
+    @_filter.command(
+        name="links", description=_("cmds.filter.desc_ban")
     )
-    @commands.check(only_owner)
-    async def _filter_add_ban(self, ctx: commands.Context):
-        self.config_coll.find_one_and_update(
-            {"_id": f"{ctx.guild.id}"},
-            {"$set": {"linksDelete": True}},
-            upsert=True,
-        )
+    async def _filter_add_links(self, ctx: commands.Context):
+        res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
 
-        return await ctx.send(
-            embed=success_embed_ephemeral(f"Set any links to automatically delete.")
-        )
+        if res["linksDelete"]:
+            self.config_coll.find_one_and_update(
+                    {"_id": f"{ctx.guild.id}"},
+                    {"$set": {"linksDelete": False}},
+                    upsert=True,
+                )
+
+            return await ctx.send(
+                    embed=success_embed_ephemeral(_("cmds.filter.res.success.allow"))
+                )
+        else:
+            self.config_coll.find_one_and_update(
+                {"_id": f"{ctx.guild.id}"},
+                {"$set": {"linksDelete": True}},
+                upsert=True,
+            )
+
+            return await ctx.send(
+                embed=success_embed_ephemeral(_("cmds.filter.res.success.delete"))
+            )
 
     @_filter.command(name="remove", description=_("cmds.filter.desc_remove"))
     async def _filter_remove(self, ctx: commands.Context, word: str):

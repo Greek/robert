@@ -70,6 +70,10 @@ cmds:
     desc_exempt: "Add a role that is can bypass this filter."
     desc_remove: "Remove a phrase from the filter."
     desc_reset: "Reset the filter."
+    res:
+      success:
+        allow: "All links are now allowed."
+        delete: "Set all links to get deleted."
 
   mute:
     desc: "Mute a person."
