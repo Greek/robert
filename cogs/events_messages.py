@@ -29,6 +29,9 @@ class Messages(commands.Cog):
         log = self.bot.get_channel(cid)
         tz = timezone("EST")
 
+        if str(message.channel.id) in res["messageLogIgnore"]:
+            return
+
         if message.author.id == self.bot.user.id:
             return
 
@@ -69,6 +72,9 @@ class Messages(commands.Cog):
             log = self.bot.get_channel(cid)
 
             tz = timezone("EST")
+        
+            if str(message.channel.id) in res["messageLogIgnore"]:
+                return
 
             if message.author.id == self.bot.user.id:
                 return

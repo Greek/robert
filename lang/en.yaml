@@ -13,9 +13,21 @@ cmds:
     logs:
       message:
         desc: "Set a message logging channel to monitor edited and deleted messages."
+        desc_whitelist: "Add a channel to not log."
+        desc_whitelist_remove: "Remove channel from whitelist."
+        desc_whitelist_clear: "Clear the whitelist."
         desc_clear: "Remove the logging channel."
         success: "Set the logging channel to %{channel}."
         success_clear: "Cleared the logging channel."
+        res:
+          whitelist:
+            not_found: "That channel is not whitelisted."
+            already_whitelisted: "That channel is already whitelisted."
+            clear:
+              success: "Cleared the whitelist."
+            remove:
+              success: "Removed %{channel} from the whitelist."
+            success: "Added %{channel} to the whitelist."
     giveaway:
       set:
         desc: "Set a channel to announce giveaways."

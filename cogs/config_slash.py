@@ -89,7 +89,58 @@ class ConfigSlash(commands.Cog):
             required=True,
         ),
     ):
-        return await Config.set_message_logs(self, interaction, channel=channel)
+        return await Config.set_message_logs(self, ctx=interaction, channel=channel)
+
+    @logs_slash.subcommand(
+        name="messages-whitelist", description="Configure the bot for your server's needs"
+    )
+    @application_checks.has_guild_permissions(manage_channels=True)
+    @application_checks.bot_has_guild_permissions(manage_channels=True)
+    async def set_message_logs_whitelist(
+        self,
+        interaction: Interaction,
+        channel: nextcord.abc.GuildChannel = SlashOption(
+            name="channel",
+            channel_types=[ChannelType.text],
+            description=_("cmds.config.welcome.desc"),
+            required=True,
+        ),
+    ):
+        return await Config.set_message_logs_whitelist(self, ctx=interaction, channel=channel)
+
+    @logs_slash.subcommand(
+        name="messages-unwhitelist", description="Configure the bot for your server's needs"
+    )
+    @application_checks.has_guild_permissions(manage_channels=True)
+    @application_checks.bot_has_guild_permissions(manage_channels=True)
+    async def set_message_logs_whitelist_remove(
+        self,
+        interaction: Interaction,
+        channel: nextcord.abc.GuildChannel = SlashOption(
+            name="channel",
+            channel_types=[ChannelType.text],
+            description=_("cmds.config.welcome.desc_whitellist_remove"),
+            required=True,
+        ),
+    ):
+        return await Config.set_message_logs_whitelist_remove(self, ctx=interaction, channel=channel)
+
+    @logs_slash.subcommand(
+        name="messages-clearwhitelist", description="Configure the bot for your server's needs"
+    )
+    @application_checks.has_guild_permissions(manage_channels=True)
+    @application_checks.bot_has_guild_permissions(manage_channels=True)
+    async def set_message_logs_whitelist_clear(
+        self,
+        interaction: Interaction,
+        channel: nextcord.abc.GuildChannel = SlashOption(
+            name="channel",
+            channel_types=[ChannelType.text],
+            description=_("cmds.config.welcome.desc_whitellist_clear"),
+            required=True,
+        ),
+    ):
+        return await Config.set_message_logs_whitelist_clear(self, interaction, channel=channel)
 
     @logs_slash.subcommand(
         name="messages-clear", description="Configure the bot for your server's needs"

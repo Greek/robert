@@ -1,3 +1,4 @@
+from attr import has
 import nextcord
 import os
 
@@ -7,6 +8,7 @@ from nextcord.ext import commands
 from pymongo import MongoClient
 
 from utils import embed
+from utils.data import create_error_log
 from utils.default import translate as _
 
 
@@ -70,6 +72,87 @@ class Config(commands.Cog):
             await ctx.send(
                 embed=embed.failed_embed_ephemeral("Could not change logging channel.")
             )
+
+    @messages.command(name="whitelist", description=_("cmds.config.logs.message.desc_whitelist"))
+    @commands.has_guild_permissions(manage_channels=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
+    async def set_message_logs_whitelist(self, ctx, channel: TextChannel):
+        try:
+            res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
+
+            try:
+                if str(channel.id) in res["messageLogIgnore"]:
+                    return await ctx.send(embed=embed.warn_embed_ephemeral(_("cmds.config.logs.message.res.whitelist.already_whitelisted")))
+            except:
+                pass
+
+            self.config_coll.find_one_and_update(
+                {"_id": f"{ctx.guild.id}"},
+                {"$push": {"messageLogIgnore": f"{channel.id}"}},
+                upsert=True,
+            )
+            await ctx.send(
+                embed=embed.success_embed_ephemeral(
+                    _(
+                        "cmds.config.logs.message.res.whitelist.success",
+                        channel=channel.mention,
+                    )
+                    # f'Set welcome message to "{message}" in {channel.mention}.'
+                )
+            )
+        except Exception as error:
+            await create_error_log(self, ctx, error)
+
+    @messages.command(name="unwhitelist", description=_("cmds.config.logs.message.desc_whitelist"))
+    @commands.has_guild_permissions(manage_channels=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
+    async def set_message_logs_whitelist_remove(self, ctx, channel: TextChannel):
+        try:
+            res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
+
+            try:
+                if str(channel.id) not in res["messageLogIgnore"]:
+                    return await ctx.send(embed=embed.warn_embed_ephemeral(_("cmds.config.logs.message.res.whitelist.not_found")))
+            except:
+                return await ctx.send(embed=embed.warn_embed_ephemeral(_("cmds.config.logs.message.res.whitelist.not_found")))
+
+            self.config_coll.find_one_and_update(
+                {"_id": f"{ctx.guild.id}"},
+                {"$pull": {"messageLogIgnore": f"{channel.id}"}},
+                upsert=True,
+            )
+            await ctx.send(
+                embed=embed.success_embed_ephemeral(
+                    _(
+                        "cmds.config.logs.message.res.whitelist.remove.success",
+                        channel=channel.mention,
+                    )
+                    # f'Set welcome message to "{message}" in {channel.mention}.'
+                )
+            )
+        except Exception as error:
+            await create_error_log(self, ctx, error)
+
+    @messages.command(name="clearwhitelist", description=_("cmds.config.logs.message.desc_whitelist"))
+    @commands.has_guild_permissions(manage_channels=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
+    async def set_message_logs_whitelist_clear(self, ctx):
+        try:
+            self.config_coll.find_one_and_update(
+                {"_id": f"{ctx.guild.id}"},
+                {"$unset": {"messageLogIgnore": f""}},
+                upsert=True,
+            )
+            await ctx.send(
+                embed=embed.success_embed_ephemeral(
+                    _(
+                        "cmds.config.logs.message.res.whitelist.clear.success"
+                    )
+                    # f'Set welcome message to "{message}" in {channel.mention}.'
+                )
+            )
+        except Exception as error:
+            await create_error_log(self, ctx, error)
 
     @messages.command(
         name="clear", description=_("cmds.config.logs.message.desc_clear")
