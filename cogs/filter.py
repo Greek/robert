@@ -83,7 +83,7 @@ class Filter(commands.Cog):
 
                 if link_filtering:
                     if word.startswith("http" or "https" or "https://" or "http://" or "www") \
-                            or word.endswith(".com" or ".net" or ".org" or ".xxx"):
+                            or word.endswith(".com" or ".net" or ".org" or ".gg" or ".xxx"):
                         await message.delete()
 
         except Exception as e:
