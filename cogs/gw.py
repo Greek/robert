@@ -109,13 +109,7 @@ class Giveaways(commands.Cog):
             return inner_check
 
         def check(message):
-            return (
-                message.author
-                if isinstance(message, commands.Context)
-                else message.user == ctx.author
-                if isinstance(message, commands.Context)
-                else message.user and message.content
-            )
+            return message.author == ctx.author
 
         res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
         try:
