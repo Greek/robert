@@ -4,6 +4,9 @@ cmds:
     desc: "Get a person's avatar"
     options:
       user: "The person's avatar you want to get"
+
+  lastfm:
+    help: "See a list of LastFM commands here: https://s.apap04.com/insertlinkhere"
   config:
     welcome:
       desc: "Set a welcoming channel and message. Special words: {mention}, {name}, {tag}"

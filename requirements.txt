@@ -10,3 +10,4 @@ aiohttp==3.8.1
 pytz
 jishaku==2.4.0
 pytimeparse
+pylast
