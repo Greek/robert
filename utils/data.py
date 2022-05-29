@@ -52,8 +52,8 @@ class Bot(AutoShardedBot):
             handler = logging.FileHandler(filename='logs/discord.log', encoding='utf-8', mode='a')
             handler2 = logging.StreamHandler(sys.stdout)
 
-            handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-            handler2.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+            handler.setFormatter(logging.Formatter('[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s'))
+            handler2.setFormatter(logging.Formatter('[%(levelname)s] [%(name)s] %(message)s'))
 
             logger.addHandler(handler)
             logger.addHandler(handler2)

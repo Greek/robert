@@ -6,7 +6,12 @@ cmds:
       user: "The person's avatar you want to get"
 
   lastfm:
+    desc: "A collection of LastFM utilities."
     help: "See a list of LastFM commands here: https://s.apap04.com/insertlinkhere"
+    nowplaying:
+      desc: "Fetch the song you're currently listening to."
+      res:
+        not_playing: "There's no song playing right now ;)"
   config:
     welcome:
       desc: "Set a welcoming channel and message. Special words: {mention}, {name}, {tag}"
