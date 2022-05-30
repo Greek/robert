@@ -1,11 +1,17 @@
+from discord import Interaction
 import nextcord
 import pylast
 import os
 
 from nextcord.ext import commands
-from utils.constants import LASTFM_EMBED_COLOR
+from pymongo import MongoClient
 
+
+from utils.constants import LASTFM_EMBED_COLOR
 from utils.default import translate as _
+from utils.embed import failed_embed_ephemeral, warn_embed_ephemeral
+from utils.perms import only_owner
+from utils.data import create_error_log
 
 
 class Lastfm(commands.Cog):
@@ -13,15 +19,54 @@ class Lastfm(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
+        self.cluster = MongoClient(os.environ.get("MONGO_DB"))
+        self.db = self.cluster[os.environ.get("MONGO_NAME")]
+
+        self.lf_coll = self.db["lastfm"]
         self.lf = pylast.LastFMNetwork(
             api_key=os.environ.get("LAST_FM_KEY"),
             api_secret=os.environ.get("LAST_FM_SECRET"),
         )
 
     @commands.group(name="lastfm", description=_("cmds.lastfm.desc"), aliases=["lf"])
+    @commands.check(only_owner)
     async def _lf(self, ctx: commands.Context):
         if ctx.invoked_subcommand is None:
             return await ctx.send(_("cmds.lastfm.help"))
+
+    @_lf.command(name="login", description=_("cmds.lastfm.login.desc"))
+    async def _lf_login(self, ctx: commands.Context, username: str):
+        caller = ctx.user if isinstance(ctx, nextcord.Interaction) else ctx.author
+
+        try:
+            if self.lf_coll.find_one(
+                {"_id": f"{caller.id}", "username": f"{username}"}
+            ):
+                return await ctx.send(
+                    embed=warn_embed_ephemeral(
+                        _("cmds.lastfm.login.res.already_claimed")
+                    )
+                )
+        except:
+            pass
+
+        try:
+            if self.lf_coll.find({"username": f"{username}"}):
+                return await ctx.send(
+                    embed=failed_embed_ephemeral(
+                        _("cmds.lastfm.login.res.already_exists")
+                    )
+                )
+
+        except:
+            pass
+        self.lf_coll.find_one_and_update(
+            {"_id": f"{caller.id}"},
+            {"$set": {f"username": f"{username}"}},
+            upsert=True,
+        )
+
+        return await ctx.send("Hi")
 
     @_lf.command(
         name="nowplaying",
@@ -29,11 +74,48 @@ class Lastfm(commands.Cog):
         aliases=["np", "fm"],
     )
     async def _lf_nowplaying(self, ctx: commands.Context):
-        lfuser = self.lf.get_user("isthisandywandy")
+        await ctx.trigger_typing()
+        caller = ctx.user if isinstance(ctx, nextcord.Interaction) else ctx.author
+
+        res = self.lf_coll.find_one({"_id": f"{caller.id}"})
+
+        try:
+            lfuser = self.lf.get_user(res["lastfmUser"])
+        except:
+            return await ctx.send(
+                embed=warn_embed_ephemeral(_("cmds.lastfm.res.user_not_set"))
+            )
+
         current_track = lfuser.get_now_playing()
+        most_current_track = lfuser.get_recent_tracks(limit=1)
 
         if current_track is None:
-            return await ctx.send(_("cmds.lastfm.nowplaying.res.not_playing"))
+            return await ctx.reply(
+                embed=failed_embed_ephemeral(
+                    _("cmds.lastfm.nowplaying.res.not_playing")
+                ),
+                mention_author=False,
+            )
+
+            try:
+                for track in most_current_track:
+                    lastfm_embed = nextcord.Embed(color=LASTFM_EMBED_COLOR)
+                    lastfm_embed.set_author(
+                        name=f"Currently playing - {ctx.author.name}"
+                    )
+                    # lastfm_embed.set_thumbnail(url=track.track.get_cover_image())
+                    lastfm_embed.set_footer(
+                        text=f"Scrobbles: {track.track.get_userplaycount():,} | "
+                        f"Total play count: {track.track.get_playcount():,} requested by {lfuser.get_name()}"
+                    )
+
+                    lastfm_embed.description = f"[{track.track.get_name()}]({track.track.get_url()})\n**by** \
+                 *[{track.track.get_artist()}]({track.track.get_artist()})*\n \
+                 **on** *[{track.track.get_album()}]({track.track.get_album()})*"
+
+                    return await ctx.send(embed=lastfm_embed)
+            except Exception as exc:
+                return await create_error_log(self, ctx, exc)
 
         lastfm_embed = nextcord.Embed(color=LASTFM_EMBED_COLOR)
         lastfm_embed.set_author(name=f"Currently playing - {ctx.author.name}")
@@ -54,6 +136,7 @@ class Lastfm(commands.Cog):
         description=_("cmds.lastfm.nowplaying.desc"),
         aliases=["fm", "np"],
     )
+    @commands.check(only_owner)
     async def _nowplaying(self, ctx: commands.Context):
         return await self._lf_nowplaying(context=ctx)
 

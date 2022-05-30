@@ -8,10 +8,20 @@ cmds:
   lastfm:
     desc: "A collection of LastFM utilities."
     help: "See a list of LastFM commands here: https://s.apap04.com/insertlinkhere"
+    res:
+      user_not_set: "You don't have a LastFM username set. Run `,lf login` to set your name."
+    login:
+      desc: "Set your LastFM username in Toilet."
+      res:
+        success: "Your username has been successfully set."
+        failed: "Could not set your username."
+        doesnt_exist: "That username doesn't exist. Are you sure you got the right one?"
+        already_exists: "That username is already registered by someone else."
+        already_claimed: "You already have a username set."
     nowplaying:
       desc: "Fetch the song you're currently listening to."
       res:
-        not_playing: "There's no song playing right now ;)"
+        not_playing: "You're not listening to anything!"
   config:
     welcome:
       desc: "Set a welcoming channel and message. Special words: {mention}, {name}, {tag}"
