@@ -1,10 +1,10 @@
 # bot
 
-A Discord bot made in Python. It uses a slightly modified version of Discord.py. 
+A Discord bot made in Python. It uses a slightly modified version of Discord.py.
 
 ## how to run
 
-Python 3.x is needed to run the bot, as well as some other dependencies on
+Python 3.6 is needed to run the bot, as well as some other dependencies on
 Linux based systems.
 
 Steps:
@@ -17,6 +17,7 @@ Steps:
 6. Run `python bot.py`
 
 ## config settings
+
 Please make sure you have all these fields in, the bot might break if you don't!
 
 1. `owners` - an array for user IDs, used to represent the owners of the bot.
@@ -28,9 +29,5 @@ Please make sure you have all these fields in, the bot might break if you don't!
 6. `error_reporting` - channel ID to report any runtime errors in your code
 7. `guild_log` - channel ID to log any new guilds the bot joins/leaves
 
-
 [python]: https://www.python.org/
-
 [values]: #config-settings
-
-

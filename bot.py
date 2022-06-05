@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 
+0_0 # Python 3.6 and up is required.
+
 import nextcord
 import os
 
