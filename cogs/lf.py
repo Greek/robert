@@ -136,7 +136,6 @@ class Lastfm(commands.Cog):
         description=_("cmds.lastfm.nowplaying.desc"),
         aliases=["fm", "np"],
     )
-    @commands.check(only_owner)
     async def _nowplaying(self, ctx: commands.Context):
         return await self._lf_nowplaying(context=ctx)
 
