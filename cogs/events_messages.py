@@ -29,8 +29,11 @@ class Messages(commands.Cog):
         log = self.bot.get_channel(cid)
         tz = timezone("EST")
 
-        if str(message.channel.id) in res["messageLogIgnore"]:
-            return
+        try:
+            if str(message.channel.id) in res["messageLogIgnore"]:
+                return
+        except:
+            pass
 
         if message.author.id == self.bot.user.id:
             return
