@@ -13,9 +13,10 @@ cfg = get("config.json")
 dot_cfg = dotenv_values(".env")
 load_dotenv(".env")
 
-intents = nextcord.Intents(messages=True, guilds=True, members=True)
+intents = nextcord.Intents.default()
+intents.message_content = True
 
-bot = nextcord.Client(
+bot = Bot(
     command_prefix=os.environ.get('DISCORD_PREFIX'),
     prefix=os.environ.get('DISCORD_PREFIX'),
     command_attrs=dict(hidden=True),
