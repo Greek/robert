@@ -19,9 +19,9 @@ class EventsWelcomeListener(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member: nextcord.Member):
         try:
-            res = self.config_coll.find_one({"_id": f"{member.guild.id}"})
+            res = self.config_coll.find_one({"_id": member.guild.id})
             parsed_message = (
-                str(res["welcomeGreeting"])
+                res["welcomeGreeting"]
                 .replace("@everyone", "everyone")
                 .replace("@here", "here")
                 .replace("{mention}", f"{member.mention}")
@@ -31,7 +31,7 @@ class EventsWelcomeListener(commands.Cog):
                 .replace("{user.name}", f"{member.name}")
                 .replace("{user.tag}", f"{member.name}#{member.discriminator}")
             )
-            channel = self.bot.get_channel(int(res["welcomeChannel"]))
+            channel = self.bot.get_channel(res["welcomeChannel"])
 
             await channel.send(parsed_message)
         except Exception as e:

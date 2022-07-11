@@ -55,8 +55,8 @@ class Config(commands.Cog):
     async def set_message_logs(self, ctx, channel: TextChannel):
         try:
             self.config_coll.find_one_and_update(
-                {"_id": f"{ctx.guild.id}"},
-                {"$set": {"messageLog": f"{channel.id}"}},
+                {"_id": ctx.guild.id},
+                {"$set": {"messageLog": channel.id}},
                 upsert=True,
             )
             await ctx.send(
@@ -78,7 +78,7 @@ class Config(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs_whitelist(self, ctx, channel: TextChannel):
         try:
-            res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
+            res = self.config_coll.find_one({"_id": ctx.guild.id})
 
             try:
                 if str(channel.id) in res["messageLogIgnore"]:
@@ -87,8 +87,8 @@ class Config(commands.Cog):
                 pass
 
             self.config_coll.find_one_and_update(
-                {"_id": f"{ctx.guild.id}"},
-                {"$push": {"messageLogIgnore": f"{channel.id}"}},
+                {"_id": ctx.guild.id},
+                {"$push": {"messageLogIgnore": channel.id}},
                 upsert=True,
             )
             await ctx.send(
@@ -108,17 +108,17 @@ class Config(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs_whitelist_remove(self, ctx, channel: TextChannel):
         try:
-            res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
+            res = self.config_coll.find_one({"_id": ctx.guild.id})
 
             try:
-                if str(channel.id) not in res["messageLogIgnore"]:
+                if channel.id not in res["messageLogIgnore"]:
                     return await ctx.send(embed=embed.warn_embed_ephemeral(_("cmds.config.logs.message.res.whitelist.not_found")))
             except:
                 return await ctx.send(embed=embed.warn_embed_ephemeral(_("cmds.config.logs.message.res.whitelist.not_found")))
 
             self.config_coll.find_one_and_update(
-                {"_id": f"{ctx.guild.id}"},
-                {"$pull": {"messageLogIgnore": f"{channel.id}"}},
+                {"_id": ctx.guild.id},
+                {"$pull": {"messageLogIgnore": channel.id}},
                 upsert=True,
             )
             await ctx.send(
@@ -139,7 +139,7 @@ class Config(commands.Cog):
     async def set_message_logs_whitelist_clear(self, ctx):
         try:
             self.config_coll.find_one_and_update(
-                {"_id": f"{ctx.guild.id}"},
+                {"_id": ctx.guild.id},
                 {"$unset": {"messageLogIgnore": f""}},
                 upsert=True,
             )
@@ -162,7 +162,7 @@ class Config(commands.Cog):
     async def clear_message_logs(self, ctx):
         try:
             self.config_coll.find_one_and_update(
-                {"_id": f"{ctx.guild.id}"},
+                {"_id": ctx.guild.id},
                 {"$unset": {"messageLog": ""}},
                 upsert=True,
             )
@@ -187,10 +187,10 @@ class Config(commands.Cog):
     async def change_welcome_message(self, ctx, channel: TextChannel, *, message: str):
         try:
             self.config_coll.find_one_and_update(
-                {"_id": f"{ctx.guild.id}"},
+                {"_id": ctx.guild.id},
                 {
                     "$set": {
-                        "welcomeChannel": f"{channel.id}",
+                        "welcomeChannel": channel.id,
                         "welcomeGreeting": message,
                     }
                 },
@@ -215,7 +215,7 @@ class Config(commands.Cog):
     async def clear_welcome_message(self, ctx: commands.Context):
         try:
             self.config_coll.find_one_and_update(
-                {"_id": f"{ctx.guild.id}"},
+                {"_id": ctx.guild.id},
                 {"$unset": {"welcomeChannel": "", "welcomeGreeting": ""}},
                 upsert=True,
             )
@@ -244,10 +244,10 @@ class Config(commands.Cog):
                 return await ctx.send(_("cmds.config.giveaway.set.not_found"))
 
             self.config_coll.find_one_and_update(
-                {"_id": f"{ctx.guild.id}"},
+                {"_id": ctx.guild.id},
                 {
                     "$set": {
-                        "giveawayChannel": f"{channel.id}",
+                        "giveawayChannel": channel.id,
                     }
                 },
                 upsert=True,
@@ -269,7 +269,7 @@ class Config(commands.Cog):
     async def clear_giveaway_channel(self, ctx: commands.Context):
         try:
             self.config_coll.find_one_and_update(
-                {"_id": f"{ctx.guild.id}"},
+                {"_id": ctx.guild.id},
                 {
                     "$unset": {
                         "giveawayChannel": "",

@@ -25,7 +25,7 @@ class Filter(commands.Cog):
         try:
             try:
                 filtered_words = self.config_coll.find_one(
-                    {"_id": f"{message.guild.id}"}
+                    {"_id": message.guild.id}
                 )
             except:
                 return
@@ -83,10 +83,13 @@ class Filter(commands.Cog):
                         except:
                             pass
 
-                if link_filtering:
-                    if word.startswith("http" or "https" or "https://" or "http://" or "www") \
-                            or word.endswith(".com" or ".net" or ".org" or ".gg" or ".xxx"):
-                        await message.delete()
+                try:
+                    if link_filtering:
+                        if word.startswith("http" or "https" or "https://" or "http://" or "www") \
+                                or word.endswith(".com" or ".net" or ".org" or ".gg" or ".xxx"):
+                            await message.delete()
+                except:
+                    pass
 
         except Exception as e:
             print(e)
@@ -106,7 +109,7 @@ class Filter(commands.Cog):
 
     @_filter_add.command(name="delete", description=_("cmds.filter.desc"))
     async def _filter_add_delete(self, ctx: commands.Context, *, word: str):
-        word_list = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
+        word_list = self.config_coll.find_one({"_id": ctx.guild.id})
 
         try:
             if word in word_list["deleteWordList"]:
@@ -117,7 +120,7 @@ class Filter(commands.Cog):
             pass  # There is nothing to check.
 
         self.config_coll.find_one_and_update(
-            {"_id": f"{ctx.guild.id}"},
+            {"_id": ctx.guild.id},
             {"$push": {"deleteWordList": f"{word}"}},
             upsert=True,
         )
@@ -128,7 +131,7 @@ class Filter(commands.Cog):
 
     @_filter_add.command(name="ban", description=_("cmds.filter.desc_ban"))
     async def _filter_add_ban(self, ctx: commands.Context, *, word: str):
-        word_list = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
+        word_list = self.config_coll.find_one({"_id": ctx.guild.id})
 
         try:
             if word in word_list["banWordList"]:
@@ -141,7 +144,7 @@ class Filter(commands.Cog):
         await asyncio.sleep(0.2)
 
         self.config_coll.find_one_and_update(
-            {"_id": f"{ctx.guild.id}"},
+            {"_id": ctx.guild.id},
             {"$push": {"banWordList": f"{word}"}},
             upsert=True,
         )
@@ -154,21 +157,21 @@ class Filter(commands.Cog):
         name="links", description=_("cmds.filter.desc_ban")
     )
     async def _filter_add_links(self, ctx: commands.Context):
-        res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
+        res = self.config_coll.find_one({"_id": ctx.guild.id})
 
-        if res["linksDelete"]:
-            self.config_coll.find_one_and_update(
-                    {"_id": f"{ctx.guild.id}"},
-                    {"$set": {"linksDelete": False}},
-                    upsert=True,
-                )
+        if res["linksDelete"] == True:
+                self.config_coll.find_one_and_update(
+                        {"_id": ctx.guild.id},
+                        {"$set": {"linksDelete": False}},
+                        upsert=True,
+                    )
 
-            return await ctx.send(
-                    embed=success_embed_ephemeral(_("cmds.filter.res.success.allow"))
-                )
+                return await ctx.send(
+                        embed=success_embed_ephemeral(_("cmds.filter.res.success.allow"))
+                    )
         else:
             self.config_coll.find_one_and_update(
-                {"_id": f"{ctx.guild.id}"},
+                {"_id": ctx.guild.id},
                 {"$set": {"linksDelete": True}},
                 upsert=True,
             )
@@ -181,7 +184,7 @@ class Filter(commands.Cog):
     async def _filter_remove(self, ctx: commands.Context, word: str):
         try:
             self.config_coll.find_one_and_update(
-                {"_id": f"{ctx.guild.id}"},
+                {"_id": ctx.guild.id},
                 {"$pull": {"banWordList": f"{word}"}},
                 upsert=True,
             )
@@ -190,7 +193,7 @@ class Filter(commands.Cog):
 
         try:
             self.config_coll.find_one_and_update(
-                {"_id": f"{ctx.guild.id}"},
+                {"_id": ctx.guild.id},
                 {"$pull": {"deleteWordList": f"{word}"}},
                 upsert=True,
             )
@@ -211,7 +214,7 @@ class Filter(commands.Cog):
     async def _filter_reset(self, ctx: commands.Context):
         try:
             self.config_coll.find_one_and_update(
-                {"_id": f"{ctx.guild.id}"},
+                {"_id": ctx.guild.id},
                 {"$unset": {"banWordList": ""}},
                 upsert=True,
             )
@@ -220,7 +223,7 @@ class Filter(commands.Cog):
 
         try:
             self.config_coll.find_one_and_update(
-                {"_id": f"{ctx.guild.id}"},
+                {"_id": ctx.guild.id},
                 {"$unset": {"deleteWordList": ""}},
                 upsert=True,
             )

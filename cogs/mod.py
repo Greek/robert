@@ -91,8 +91,8 @@ class Mod(commands.Cog):
                 member = guild.get_member(int(data[1]))
 
                 try:
-                    res = self.config_coll.find_one({"_id": f"{guild.id}"})
-                    role = guild.get_role(int(res["muteRole"]))
+                    res = self.config_coll.find_one({"_id": guild.id})
+                    role = guild.get_role(res["muteRole"])
                 except:
                     return
 
@@ -126,7 +126,7 @@ class Mod(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_channel_create(self, channel: nextcord.TextChannel):
         try:
-            res = self.config_coll.find_one({"_id": f"{channel.guild.id}"})
+            res = self.config_coll.find_one({"_id": channel.guild.id})
             role = channel.guild.get_role(int(res["muteRole"]))
             await channel.set_permissions(
                 role,
@@ -141,8 +141,8 @@ class Mod(commands.Cog):
         mute_key = await self.redis.get(f"mute-{member.id}-{member.guild.id}")
         if mute_key is not None:
             try:
-                res = self.config_coll.find_one({"_id": f"{member.guild.id}"})
-                role = member.guild.get_role(int(res["muteRole"]))
+                res = self.config_coll.find_one({"_id": member.guild.id})
+                role = member.guild.get_role(res["muteRole"])
             except:
                 return
 
@@ -231,10 +231,10 @@ class Mod(commands.Cog):
                 return
 
             existing_mute = await self.redis.get(f"mute-{member.id}-{ctx.guild.id}")
-            res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
+            res = self.config_coll.find_one({"_id": ctx.guild.id})
 
             try:
-                role = ctx.guild.get_role(int(res["muteRole"]))
+                role = ctx.guild.get_role(res["muteRole"])
             except KeyError:
                 role = await ctx.guild.create_role(name="Muted")
                 role.permissions.send_messages = False
@@ -243,7 +243,7 @@ class Mod(commands.Cog):
                     await channel.set_permissions(role, send_messages=False)
 
                 self.config_coll.find_one_and_update(
-                    {"_id": f"{ctx.guild.id}"}, {"$set": {f"muteRole": f"{role.id}"}}
+                    {"_id": ctx.guild.id}, {"$set": {f"muteRole": role.id}}
                 )
 
             if role is None:
@@ -254,7 +254,7 @@ class Mod(commands.Cog):
                     await channel.set_permissions(role, send_messages=False)
 
                 self.config_coll.find_one_and_update(
-                    {"_id": f"{ctx.guild.id}"}, {"$set": {f"muteRole": f"{role.id}"}}
+                    {"_id": ctx.guild.id}, {"$set": {f"muteRole": role.id}}
                 )
 
             if existing_mute:
@@ -328,9 +328,9 @@ class Mod(commands.Cog):
                     )
                 )
 
-            res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
+            res = self.config_coll.find_one({"_id": ctx.guild.id})
             try:
-                role = ctx.guild.get_role(int(res["muteRole"]))
+                role = ctx.guild.get_role(res["muteRole"])
             except KeyError:
                 await ctx.send(
                     embed=success_embed_ephemeral(

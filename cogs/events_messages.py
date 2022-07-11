@@ -21,8 +21,8 @@ class Messages(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self, message: nextcord.Message):
         try:
-            res = self.message_log_coll.find_one({"_id": f"{message.guild.id}"})
-            cid = int(res["messageLog"])
+            res = self.message_log_coll.find_one({"_id": message.guild.id})
+            cid = res["messageLog"]
         except:
             return
 
@@ -30,7 +30,7 @@ class Messages(commands.Cog):
         tz = timezone("EST")
 
         try:
-            if str(message.channel.id) in res["messageLogIgnore"]:
+            if message.channel.id in res["messageLogIgnore"]:
                 return
         except:
             pass
@@ -70,14 +70,18 @@ class Messages(commands.Cog):
             if message.content == new_message.content:
                 return
 
-            res = self.message_log_coll.find_one({"_id": f"{message.guild.id}"})
-            cid = int(res["messageLog"])
+            res = self.message_log_coll.find_one({"_id": message.guild.id})
+            cid = res["messageLog"]
             log = self.bot.get_channel(cid)
 
             tz = timezone("EST")
         
-            if str(message.channel.id) in res["messageLogIgnore"]:
-                return
+            try:
+                if message.channel.id in res["messageLogIgnore"]:
+                    return
+            except:
+                pass
+
 
             if message.author.id == self.bot.user.id:
                 return
@@ -103,8 +107,8 @@ class Messages(commands.Cog):
             embed.set_footer(text=f"Author ID: {message.author.id}\n")
 
             await log.send(embed=embed)
-        except:
-            return
+        except Exception as e:
+            print(e)
 
 
 def setup(bot):

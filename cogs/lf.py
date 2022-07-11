@@ -40,7 +40,7 @@ class Lastfm(commands.Cog):
 
         try:
             if self.lf_coll.find_one(
-                {"_id": f"{caller.id}", "username": f"{username}"}
+                {"_id": caller.id, "username": f"{username}"}
             ):
                 return await ctx.send(
                     embed=warn_embed_ephemeral(
@@ -50,18 +50,18 @@ class Lastfm(commands.Cog):
         except:
             pass
 
-        try:
-            if self.lf_coll.find({"username": f"{username}"}):
-                return await ctx.send(
-                    embed=failed_embed_ephemeral(
-                        _("cmds.lastfm.login.res.already_exists")
-                    )
-                )
+        # try:
+        #     if self.lf_coll.find({"username": f"{username}"}):
+        #         return await ctx.send(
+        #             embed=failed_embed_ephemeral(
+        #                 _("cmds.lastfm.login.res.already_exists")
+        #             )
+        #         )
 
-        except:
-            pass
+        # except:
+            # pass
         self.lf_coll.find_one_and_update(
-            {"_id": f"{caller.id}"},
+            {"_id": caller.id},
             {"$set": {f"username": f"{username}"}},
             upsert=True,
         )
@@ -77,10 +77,10 @@ class Lastfm(commands.Cog):
         await ctx.trigger_typing()
         caller = ctx.user if isinstance(ctx, nextcord.Interaction) else ctx.author
 
-        res = self.lf_coll.find_one({"_id": f"{caller.id}"})
+        res = self.lf_coll.find_one({"_id": caller.id})
 
         try:
-            lfuser = self.lf.get_user(res["lastfmUser"])
+            lfuser = self.lf.get_user(res["username"])
         except:
             return await ctx.send(
                 embed=warn_embed_ephemeral(_("cmds.lastfm.res.user_not_set"))
@@ -90,12 +90,12 @@ class Lastfm(commands.Cog):
         most_current_track = lfuser.get_recent_tracks(limit=1)
 
         if current_track is None:
-            return await ctx.reply(
-                embed=failed_embed_ephemeral(
-                    _("cmds.lastfm.nowplaying.res.not_playing")
-                ),
-                mention_author=False,
-            )
+            # return await ctx.reply(
+            #     embed=failed_embed_ephemeral(
+            #         _("cmds.lastfm.nowplaying.res.not_playing")
+            #     ),
+            #     mention_author=False,
+            # )
 
             try:
                 for track in most_current_track:

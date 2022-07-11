@@ -111,7 +111,7 @@ class Giveaways(commands.Cog):
         def check(message):
             return message.author == ctx.author
 
-        res = self.config_coll.find_one({"_id": f"{ctx.guild.id}"})
+        res = self.config_coll.find_one({"_id": ctx.guild.id})
         try:
             res["giveawayChannel"]
         except KeyError:
