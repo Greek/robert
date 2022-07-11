@@ -14,7 +14,9 @@ dot_cfg = dotenv_values(".env")
 load_dotenv(".env")
 
 intents = nextcord.Intents.default()
+intents.guild_messages = True
 intents.message_content = True
+intents.members = True
 
 bot = Bot(
     command_prefix=os.environ.get('DISCORD_PREFIX'),
