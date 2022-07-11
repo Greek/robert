@@ -18,7 +18,6 @@ class ConfigSlash(commands.Cog):
     @nextcord.slash_command(
         name="config",
         description="Configure the bot for your server's needs",
-        default_permission=False,
     )
     async def config_slash(interaction: Interaction):
         pass
