@@ -20,6 +20,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import aiohttp
 import nextcord
 import datetime
 import os
@@ -33,7 +34,7 @@ from utils.default import translate as _
 class Events(commands.Cog):
     """General listeners"""
 
-    def __init__(self, bot):
+    def __init__(self, bot: nextcord.Client):
         self.bot = bot
         self.last_timeStamp = datetime.datetime.utcfromtimestamp(0)
         self.config = default.get("config.json")
@@ -42,6 +43,12 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        async with aiohttp.ClientSession() as session:
+            top_gg_url = "https://top.gg/api/"
+            await session.post(top_gg_url + "bots/707789556820213883/stats", 
+                        headers={'authorization': f'Bearer {os.environ.get("TOP_GG_TOKEN")}'}, 
+                        json={'server_count': len(self.bot.guilds)} )
+
         print(
             f"[Bot] Logged on as {self.bot.user} on {len(self.bot.guilds)} guild(s)\n"
         )
