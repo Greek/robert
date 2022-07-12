@@ -20,13 +20,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+from types import NoneType
 import aiohttp
 import nextcord
 import datetime
 import os
 import pymongo
 
-from nextcord.ext import commands
+from nextcord.ext import commands, tasks
 
 from utils import default
 from utils.default import translate as _
@@ -40,15 +41,30 @@ class Events(commands.Cog):
         self.config = default.get("config.json")
         self.db = pymongo.MongoClient(os.environ.get("MONGO_DB"))
 
+        self.update_top_gg_guilds.start()
+
+    @tasks.loop(minutes=1.0)
+    async def update_top_gg_guilds(self):
+        try:
+            if len(os.environ.get("TOP_GG_TOKEN")) > 10:
+                async with aiohttp.ClientSession() as session:
+                    top_gg_url = "https://top.gg/api/"
+                    await session.post(top_gg_url + "bots/707789556820213883/stats", 
+                            headers={'authorization': f'Bearer {os.environ.get("TOP_GG_TOKEN")}'}, 
+                            json={'server_count': len(self.bot.guilds)})
+                    await session.close()
+            else:
+                return
+        except Exception:
+            pass
+
+    @update_top_gg_guilds.before_loop
+    async def update_top_gg_guilds_before(self):
+        await self.bot.wait_until_ready()
+
 
     @commands.Cog.listener()
     async def on_ready(self):
-        async with aiohttp.ClientSession() as session:
-            top_gg_url = "https://top.gg/api/"
-            await session.post(top_gg_url + "bots/707789556820213883/stats", 
-                        headers={'authorization': f'Bearer {os.environ.get("TOP_GG_TOKEN")}'}, 
-                        json={'server_count': len(self.bot.guilds)} )
-
         print(
             f"[Bot] Logged on as {self.bot.user} on {len(self.bot.guilds)} guild(s)\n"
         )
