@@ -60,7 +60,7 @@ cmds:
       res:
         success: 'Added "%{role}" to %{user}.'
         success_remove: 'Removed "%{role}" from %{user}.'
-        error: "I couldn't add that role to %{user}."
+        error: "I couldn't add/remove that role from %{user}."
 
   # Moderation commands
   ban:
