@@ -168,9 +168,9 @@ class Mod(commands.Cog):
                 )
             )
             await ctx.send(
-                _("cmds.kick.res_noreason", user=member)
+                _("cmds.kick.res_noreason", user="this user" if member is None else f"{member.name}#{member.discriminator}")
                 if reason is None
-                else _("cmds.kick.res_reason", user=member, reason=reason)
+                else _("cmds.kick.res_reason", user="this user" if member is None else f"{member.name}#{member.discriminator}", reason=reason)
             )
         except Exception as e:
             await create_error_log(self, ctx, e)
@@ -193,11 +193,12 @@ class Mod(commands.Cog):
                 delete_message_days=0,
             )
             await ctx.send(
-                _("cmds.ban.res_noreason", user=f"{m.name}#{m.discriminator}")
+                _("cmds.ban.res_noreason", user="this user" if m is None else f"{m.name}#{m.discriminator}")
                 if reason is None
-                else _("cmds.ban.res_reason", user=m, reason=reason)
+                else _("cmds.ban.res_reason", user="this user" if m is None else m, reason=reason)
             )
         except Exception as e:
+            await create_error_log(self, ctx, e)
             await ctx.send(embed=failed_embed_ephemeral("I can't ban that person."))
 
     @commands.command(
