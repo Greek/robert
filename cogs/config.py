@@ -8,14 +8,14 @@ from nextcord.ext import commands
 from pymongo import MongoClient
 
 from utils import embed
-from utils.data import create_error_log
+from utils.data import Bot, create_error_log
 from utils.default import translate as _
 
 
 class Config(commands.Cog):
     """Guild-specific configurations."""
 
-    def __init__(self, bot):
+    def __init__(self, bot: Bot):
         self.bot = bot
 
         self.cluster = MongoClient(os.environ.get("MONGO_DB"))
@@ -54,7 +54,12 @@ class Config(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs(self, ctx, channel: TextChannel):
         try:
-            self.config_coll.find_one_and_update(
+            # self.config_coll.find_one_and_update(
+            # {"_id": ctx.guild.id},
+            # {"$set": {"messageLog": channel.id}},
+            # upsert=True,
+            # )
+            self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$set": {"messageLog": channel.id}},
                 upsert=True,
@@ -73,7 +78,9 @@ class Config(commands.Cog):
                 embed=embed.failed_embed_ephemeral("Could not change logging channel.")
             )
 
-    @messages.command(name="whitelist", description=_("cmds.config.logs.message.desc_whitelist"))
+    @messages.command(
+        name="whitelist", description=_("cmds.config.logs.message.desc_whitelist")
+    )
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs_whitelist(self, ctx, channel: TextChannel):
@@ -82,11 +89,17 @@ class Config(commands.Cog):
 
             try:
                 if str(channel.id) in res["messageLogIgnore"]:
-                    return await ctx.send(embed=embed.warn_embed_ephemeral(_("cmds.config.logs.message.res.whitelist.already_whitelisted")))
+                    return await ctx.send(
+                        embed=embed.warn_embed_ephemeral(
+                            _(
+                                "cmds.config.logs.message.res.whitelist.already_whitelisted"
+                            )
+                        )
+                    )
             except:
                 pass
 
-            self.config_coll.find_one_and_update(
+            self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$push": {"messageLogIgnore": channel.id}},
                 upsert=True,
@@ -103,7 +116,9 @@ class Config(commands.Cog):
         except Exception as error:
             await create_error_log(self, ctx, error)
 
-    @messages.command(name="unwhitelist", description=_("cmds.config.logs.message.desc_whitelist"))
+    @messages.command(
+        name="unwhitelist", description=_("cmds.config.logs.message.desc_whitelist")
+    )
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs_whitelist_remove(self, ctx, channel: TextChannel):
@@ -112,11 +127,19 @@ class Config(commands.Cog):
 
             try:
                 if channel.id not in res["messageLogIgnore"]:
-                    return await ctx.send(embed=embed.warn_embed_ephemeral(_("cmds.config.logs.message.res.whitelist.not_found")))
-            except:
-                return await ctx.send(embed=embed.warn_embed_ephemeral(_("cmds.config.logs.message.res.whitelist.not_found")))
+                    return await ctx.send(
+                        embed=embed.warn_embed_ephemeral(
+                            _("cmds.config.logs.message.res.whitelist.not_found")
+                        )
+                    )
+            except Exception as e:
+                return await ctx.send(
+                    embed=embed.warn_embed_ephemeral(
+                        _("cmds.config.logs.message.res.whitelist.not_found")
+                    )
+                )
 
-            self.config_coll.find_one_and_update(
+            self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$pull": {"messageLogIgnore": channel.id}},
                 upsert=True,
@@ -133,21 +156,21 @@ class Config(commands.Cog):
         except Exception as error:
             await create_error_log(self, ctx, error)
 
-    @messages.command(name="clearwhitelist", description=_("cmds.config.logs.message.desc_whitelist"))
+    @messages.command(
+        name="clearwhitelist", description=_("cmds.config.logs.message.desc_whitelist")
+    )
     @commands.has_guild_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs_whitelist_clear(self, ctx):
         try:
-            self.config_coll.find_one_and_update(
+            self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$unset": {"messageLogIgnore": f""}},
                 upsert=True,
             )
             await ctx.send(
                 embed=embed.success_embed_ephemeral(
-                    _(
-                        "cmds.config.logs.message.res.whitelist.clear.success"
-                    )
+                    _("cmds.config.logs.message.res.whitelist.clear.success")
                     # f'Set welcome message to "{message}" in {channel.mention}.'
                 )
             )
@@ -161,7 +184,7 @@ class Config(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def clear_message_logs(self, ctx):
         try:
-            self.config_coll.find_one_and_update(
+            self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$unset": {"messageLog": ""}},
                 upsert=True,
@@ -186,7 +209,7 @@ class Config(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def change_welcome_message(self, ctx, channel: TextChannel, *, message: str):
         try:
-            self.config_coll.find_one_and_update(
+            self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {
                     "$set": {
@@ -214,7 +237,7 @@ class Config(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def clear_welcome_message(self, ctx: commands.Context):
         try:
-            self.config_coll.find_one_and_update(
+            self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$unset": {"welcomeChannel": "", "welcomeGreeting": ""}},
                 upsert=True,
@@ -243,7 +266,7 @@ class Config(commands.Cog):
             if channel is None:
                 return await ctx.send(_("cmds.config.giveaway.set.not_found"))
 
-            self.config_coll.find_one_and_update(
+            self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {
                     "$set": {
@@ -268,7 +291,7 @@ class Config(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def clear_giveaway_channel(self, ctx: commands.Context):
         try:
-            self.config_coll.find_one_and_update(
+            self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {
                     "$unset": {

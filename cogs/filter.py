@@ -4,6 +4,7 @@ import pymongo
 import os
 
 from nextcord.ext import commands
+from utils.data import Bot
 
 from utils.default import translate as _
 from utils.perms import only_owner
@@ -13,18 +14,14 @@ from utils.embed import success_embed_ephemeral, warn_embed_ephemeral
 class Filter(commands.Cog):
     """Message filters."""
 
-    def __init__(self, bot: nextcord.Client):
+    def __init__(self, bot: Bot):
         self.bot = bot
-
-        self.cluster = pymongo.MongoClient(os.environ.get("MONGO_DB"))
-        self.db = self.cluster[os.environ.get("MONGO_NAME")]
-        self.config_coll = self.db["guild-configs"]
 
     @commands.Cog.listener(name="on_message")
     async def check_message_content(self, message: nextcord.Message):
         try:
             try:
-                filtered_words = self.config_coll.find_one(
+                filtered_words = self.bot.mguild_config.find_one(
                     {"_id": message.guild.id}
                 )
             except:
@@ -63,7 +60,8 @@ class Filter(commands.Cog):
             #     return
 
             for word in msg_split:
-                if message.author.bot: return
+                if message.author.bot:
+                    return
 
                 if ban_list:
                     if word in ban_list:
@@ -85,8 +83,11 @@ class Filter(commands.Cog):
 
                 try:
                     if link_filtering:
-                        if word.startswith("http" or "https" or "https://" or "http://" or "www") \
-                                or word.endswith(".com" or ".net" or ".org" or ".gg" or ".xxx"):
+                        if word.startswith(
+                            "http" or "https" or "https://" or "http://" or "www"
+                        ) or word.endswith(
+                            ".com" or ".net" or ".org" or ".gg" or ".xxx"
+                        ):
                             await message.delete()
                 except:
                     pass
@@ -109,7 +110,7 @@ class Filter(commands.Cog):
 
     @_filter_add.command(name="delete", description=_("cmds.filter.desc"))
     async def _filter_add_delete(self, ctx: commands.Context, *, word: str):
-        word_list = self.config_coll.find_one({"_id": ctx.guild.id})
+        word_list = self.bot.mguild_config.find_one({"_id": ctx.guild.id})
 
         try:
             if word in word_list["deleteWordList"]:
@@ -119,7 +120,7 @@ class Filter(commands.Cog):
         except:
             pass  # There is nothing to check.
 
-        self.config_coll.find_one_and_update(
+        self.bot.mguild_config.find_one_and_update(
             {"_id": ctx.guild.id},
             {"$push": {"deleteWordList": f"{word}"}},
             upsert=True,
@@ -131,7 +132,7 @@ class Filter(commands.Cog):
 
     @_filter_add.command(name="ban", description=_("cmds.filter.desc_ban"))
     async def _filter_add_ban(self, ctx: commands.Context, *, word: str):
-        word_list = self.config_coll.find_one({"_id": ctx.guild.id})
+        word_list = self.bot.mguild_config.find_one({"_id": ctx.guild.id})
 
         try:
             if word in word_list["banWordList"]:
@@ -143,7 +144,7 @@ class Filter(commands.Cog):
 
         await asyncio.sleep(0.2)
 
-        self.config_coll.find_one_and_update(
+        self.bot.mguild_config.find_one_and_update(
             {"_id": ctx.guild.id},
             {"$push": {"banWordList": f"{word}"}},
             upsert=True,
@@ -153,24 +154,22 @@ class Filter(commands.Cog):
             embed=success_embed_ephemeral(f'Added "{word}" to the ban filter.')
         )
 
-    @_filter.command(
-        name="links", description=_("cmds.filter.desc_ban")
-    )
+    @_filter.command(name="links", description=_("cmds.filter.desc_ban"))
     async def _filter_add_links(self, ctx: commands.Context):
-        res = self.config_coll.find_one({"_id": ctx.guild.id})
+        res = self.bot.mguild_config.find_one({"_id": ctx.guild.id})
 
         if res["linksDelete"] == True:
-                self.config_coll.find_one_and_update(
-                        {"_id": ctx.guild.id},
-                        {"$set": {"linksDelete": False}},
-                        upsert=True,
-                    )
+            self.bot.mguild_config.find_one_and_update(
+                {"_id": ctx.guild.id},
+                {"$set": {"linksDelete": False}},
+                upsert=True,
+            )
 
-                return await ctx.send(
-                        embed=success_embed_ephemeral(_("cmds.filter.res.success.allow"))
-                    )
+            return await ctx.send(
+                embed=success_embed_ephemeral(_("cmds.filter.res.success.allow"))
+            )
         else:
-            self.config_coll.find_one_and_update(
+            self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$set": {"linksDelete": True}},
                 upsert=True,
@@ -183,7 +182,7 @@ class Filter(commands.Cog):
     @_filter.command(name="remove", description=_("cmds.filter.desc_remove"))
     async def _filter_remove(self, ctx: commands.Context, word: str):
         try:
-            self.config_coll.find_one_and_update(
+            self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$pull": {"banWordList": f"{word}"}},
                 upsert=True,
@@ -192,7 +191,7 @@ class Filter(commands.Cog):
             pass
 
         try:
-            self.config_coll.find_one_and_update(
+            self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$pull": {"deleteWordList": f"{word}"}},
                 upsert=True,
@@ -213,7 +212,7 @@ class Filter(commands.Cog):
     @_filter.command(name="reset", description=_("cmds.filter.desc_reset"))
     async def _filter_reset(self, ctx: commands.Context):
         try:
-            self.config_coll.find_one_and_update(
+            self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$unset": {"banWordList": ""}},
                 upsert=True,
@@ -222,7 +221,7 @@ class Filter(commands.Cog):
             pass
 
         try:
-            self.config_coll.find_one_and_update(
+            self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$unset": {"deleteWordList": ""}},
                 upsert=True,

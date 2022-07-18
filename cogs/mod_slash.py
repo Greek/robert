@@ -9,12 +9,13 @@ from redis.asyncio import Redis
 from pymongo import MongoClient
 
 from cogs.mod import Mod
+from utils.data import Bot
 
 from utils.default import translate as _
 
 
 class ModSlash(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: Bot):
         self.bot = bot
 
         self.cluster = MongoClient(os.environ.get("MONGO_DB"))
@@ -25,9 +26,7 @@ class ModSlash(commands.Cog):
             url=os.environ.get("REDIS_URL"), decode_responses=True
         )
 
-    @nextcord.slash_command(
-        name="kick", description=_("cmds.kick.desc")
-    )
+    @nextcord.slash_command(name="kick", description=_("cmds.kick.desc"))
     @application_checks.has_guild_permissions(kick_members=True)
     @application_checks.bot_has_guild_permissions(kick_members=True)
     async def _kick(
@@ -48,9 +47,7 @@ class ModSlash(commands.Cog):
         except:
             pass
 
-    @nextcord.slash_command(
-        name="ban", description=_("cmds.ban.desc")
-    )
+    @nextcord.slash_command(name="ban", description=_("cmds.ban.desc"))
     @application_checks.has_guild_permissions(ban_members=True)
     @application_checks.bot_has_guild_permissions(ban_members=True)
     async def _ban(

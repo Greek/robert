@@ -7,21 +7,19 @@ from nextcord.ext import commands
 from pytz import timezone
 
 from utils import default, embed as eutil
+from utils.data import Bot
 
 
 class Messages(commands.Cog):
     """Message event handlers (primarily logging)"""
 
-    def __init__(self, bot):
+    def __init__(self, bot: Bot):
         self.bot = bot
-        self.cluster = pymongo.MongoClient(os.environ.get("MONGO_DB"))
-        self.db = self.cluster[os.environ.get("MONGO_NAME")]
-        self.message_log_coll = self.db["guild-configs"]
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: nextcord.Message):
         try:
-            res = self.message_log_coll.find_one({"_id": message.guild.id})
+            res = self.bot.mguild_config.find_one({"_id": message.guild.id})
             cid = res["messageLog"]
         except:
             return
@@ -65,23 +63,24 @@ class Messages(commands.Cog):
         await log.send(embed=embed)
 
     @commands.Cog.listener()
-    async def on_message_edit(self, message: nextcord.Message, new_message: nextcord.Message):
+    async def on_message_edit(
+        self, message: nextcord.Message, new_message: nextcord.Message
+    ):
         try:
             if message.content == new_message.content:
                 return
 
-            res = self.message_log_coll.find_one({"_id": message.guild.id})
+            res = self.bot.mguild_config.find_one({"_id": message.guild.id})
             cid = res["messageLog"]
             log = self.bot.get_channel(cid)
 
             tz = timezone("EST")
-        
+
             try:
                 if message.channel.id in res["messageLogIgnore"]:
                     return
             except:
                 pass
-
 
             if message.author.id == self.bot.user.id:
                 return

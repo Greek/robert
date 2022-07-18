@@ -11,7 +11,7 @@ from redis.asyncio import Redis
 from nextcord.ext import commands, tasks
 from pytimeparse.timeparse import timeparse
 
-from utils.data import create_error_log
+from utils.data import Bot, create_error_log
 from utils.embed import success_embed_ephemeral, warn_embed_ephemeral
 from utils.default import translate as _
 
@@ -22,16 +22,12 @@ load_dotenv(".env")
 
 
 class Giveaways(commands.Cog):
-    def __init__(self, bot: nextcord.Client):
+    def __init__(self, bot: Bot):
         self.bot = bot
         self.redis: Redis = Redis.from_url(
             url=os.environ.get("REDIS_URL"), decode_responses=True
         )
         self.pubsub = self.redis.pubsub()
-
-        self.cluster = MongoClient(os.environ.get("MONGO_DB"))
-        self.db = self.cluster[os.environ.get("MONGO_NAME")]
-        self.config_coll = self.db["guild-configs"]
 
         self.subscribe_expiry_handler.start()
         self.listen_messages.start()
@@ -111,7 +107,7 @@ class Giveaways(commands.Cog):
         def check(message):
             return message.author == ctx.author
 
-        res = self.config_coll.find_one({"_id": ctx.guild.id})
+        res = self.bot.mguild_config.find_one({"_id": ctx.guild.id})
         try:
             res["giveawayChannel"]
         except KeyError:

@@ -20,7 +20,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from types import NoneType
 import aiohttp
 import nextcord
 import datetime
@@ -31,6 +30,7 @@ from nextcord.ext import commands, tasks
 
 from utils import default
 from utils.default import translate as _
+
 
 class Events(commands.Cog):
     """General listeners"""
@@ -49,9 +49,13 @@ class Events(commands.Cog):
             if len(os.environ.get("TOP_GG_TOKEN")) > 10:
                 async with aiohttp.ClientSession() as session:
                     top_gg_url = "https://top.gg/api/"
-                    await session.post(top_gg_url + "bots/707789556820213883/stats", 
-                            headers={'authorization': f'Bearer {os.environ.get("TOP_GG_TOKEN")}'}, 
-                            json={'server_count': len(self.bot.guilds)})
+                    await session.post(
+                        top_gg_url + "bots/707789556820213883/stats",
+                        headers={
+                            "authorization": f'Bearer {os.environ.get("TOP_GG_TOKEN")}'
+                        },
+                        json={"server_count": len(self.bot.guilds)},
+                    )
                     await session.close()
             else:
                 return
@@ -61,7 +65,6 @@ class Events(commands.Cog):
     @update_top_gg_guilds.before_loop
     async def update_top_gg_guilds_before(self):
         await self.bot.wait_until_ready()
-
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -87,6 +90,7 @@ class Events(commands.Cog):
             activity=nextcord.Activity(type=playing_type, name=self.config.playing),
             status=status,
         )
+
 
 def setup(bot):
     bot.add_cog(Events(bot))

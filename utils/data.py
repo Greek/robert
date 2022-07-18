@@ -34,10 +34,9 @@ from nextcord.ext.commands import AutoShardedBot, MinimalHelpCommand, Context
 from utils import default, embed as uembed
 from utils.default import translate as _, traceback_maker
 
+from pymongo import MongoClient
 
-do_not_load = (
-    "cogs.interactives",
-)
+do_not_load = ("cogs.interactives",)
 
 
 class Bot(AutoShardedBot):
@@ -46,14 +45,22 @@ class Bot(AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         try:
-            logger = logging.getLogger('nextcord')
+            logger = logging.getLogger("nextcord")
             logger.setLevel(logging.INFO)
 
-            handler = logging.FileHandler(filename='logs/discord.log', encoding='utf-8', mode='a')
+            handler = logging.FileHandler(
+                filename="logs/discord.log", encoding="utf-8", mode="a"
+            )
             handler2 = logging.StreamHandler(sys.stdout)
 
-            handler.setFormatter(logging.Formatter('[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s'))
-            handler2.setFormatter(logging.Formatter('[%(levelname)s] [%(name)s] %(message)s'))
+            handler.setFormatter(
+                logging.Formatter(
+                    "[%(asctime)s] [%(levelname)s] [%(name)s] %(message)s"
+                )
+            )
+            handler2.setFormatter(
+                logging.Formatter("[%(levelname)s] [%(name)s] %(message)s")
+            )
 
             logger.addHandler(handler)
             logger.addHandler(handler2)
@@ -80,6 +87,15 @@ class Bot(AutoShardedBot):
                 )  # ignore this pylance err
             )
             raise exc
+
+    async def start(self, *args, **kwargs):
+        self.mclient = MongoClient(os.environ.get("MONGO_DB"))
+        self.mdb = self.mclient[os.environ.get("MONGO_NAME")]
+
+        self.mguild_config = self.mdb.guildconfig
+        self.mlastfm = self.mdb.lastfm
+
+        await super().start(*args, **kwargs)
 
 
 class HelpFormat(MinimalHelpCommand):
@@ -144,7 +160,9 @@ class HelpFormat(MinimalHelpCommand):
         #     await destination.send(embed=embed)
         # except nextcord.Forbidden:
         #     return await self.get_destination(no_pm=True).send(_("events.forbidden_dm"))
-        await self.context.send("Check out the help guide here: http://s.apap04.com/0trneJ4\nIf you need any further help, join our Discord: discord.gg/YqkpR4g5dX")
+        await self.context.send(
+            "Check out the help guide here: http://s.apap04.com/0trneJ4\nIf you need any further help, join our Discord: discord.gg/YqkpR4g5dX"
+        )
 
     async def send_command_help(self, command):
         global _cmd

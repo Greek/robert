@@ -1,4 +1,4 @@
-"""
+    """
 Copyright (c) 2021-present flower and contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -74,7 +74,7 @@ class Mod(commands.Cog):
 
         self.cluster = MongoClient(os.environ.get("MONGO_DB"))
         self.db = self.cluster[os.environ.get("MONGO_NAME")]
-        self.config_coll = self.db["guild-configs"]
+        self.config_coll = self.db["guildconfigs"]
 
         self.subscribe_expiry_handler.start()
         self.listen_messages.start()

@@ -11,18 +11,14 @@ from utils.constants import LASTFM_EMBED_COLOR
 from utils.default import translate as _
 from utils.embed import failed_embed_ephemeral, warn_embed_ephemeral
 from utils.perms import only_owner
-from utils.data import create_error_log
+from utils.data import Bot, create_error_log
 
 
 class Lastfm(commands.Cog):
     """LastFM utilities"""
 
-    def __init__(self, bot):
+    def __init__(self, bot: Bot):
         self.bot = bot
-        self.cluster = MongoClient(os.environ.get("MONGO_DB"))
-        self.db = self.cluster[os.environ.get("MONGO_NAME")]
-
-        self.lf_coll = self.db["lastfm"]
         self.lf = pylast.LastFMNetwork(
             api_key=os.environ.get("LAST_FM_KEY"),
             api_secret=os.environ.get("LAST_FM_SECRET"),
@@ -39,9 +35,7 @@ class Lastfm(commands.Cog):
         caller = ctx.user if isinstance(ctx, nextcord.Interaction) else ctx.author
 
         try:
-            if self.lf_coll.find_one(
-                {"_id": caller.id, "username": f"{username}"}
-            ):
+            if self.bot.mlastfm.find_one({"_id": caller.id, "username": f"{username}"}):
                 return await ctx.send(
                     embed=warn_embed_ephemeral(
                         _("cmds.lastfm.login.res.already_claimed")
@@ -59,8 +53,8 @@ class Lastfm(commands.Cog):
         #         )
 
         # except:
-            # pass
-        self.lf_coll.find_one_and_update(
+        # pass
+        self.bot.mlastfm.find_one_and_update(
             {"_id": caller.id},
             {"$set": {f"username": f"{username}"}},
             upsert=True,
@@ -77,7 +71,7 @@ class Lastfm(commands.Cog):
         await ctx.trigger_typing()
         caller = ctx.user if isinstance(ctx, nextcord.Interaction) else ctx.author
 
-        res = self.lf_coll.find_one({"_id": caller.id})
+        res = self.bot.mlastfm.find_one({"_id": caller.id})
 
         try:
             lfuser = self.lf.get_user(res["username"])
