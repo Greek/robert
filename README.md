@@ -1,20 +1,31 @@
 # bot
 
-A Discord bot made in Python. It uses a slightly modified version of Discord.py.
+A monorepository holding all the code responsible for the Toilet bot, API and dash.
 
-## how to run
+## monorepo setup
 
-Python 3.6 is needed to run the bot, as well as some other dependencies on
+To begin coding in the monorepo, ensure you have your IDE opened in the root
+directory of the repository. Do NOT open your IDE in the place you wish to edit.
+
+Follow these installation steps:
+
+1. Begin with installing the **recommended** version of [NodeJS](https://nodejs.org/en/)
+2. Install [Yarn v1](https://classic.yarnpkg.com/en/docs/install)
+
+## how to run (bot)
+
+Python 3.9+ is needed to run the bot, as well as some other dependencies on
 Linux based systems.
 
 Steps:
 
-1. (Windows only) Install [Python][python] (any version above 2.x should do)
+1. (Windows only) Install [Python][python] (any version above 3.9 should do)
 2. (Unix only) Run `sudo apt install gcc python3-dev`
 3. Install requirements: `python -m pip install -r requirements.txt`
-4. Copy `config.json.example` to `config.json` and change [appropriate values][values].
-5. Copy `.env.example` to `.env` and change the values.
-6. Run `python bot.py`
+4. In the `discord` directory, copy `config.json.example` to `config.json`
+   and change [appropriate values][values].
+5. In the `discord` directory, copy `.env.example` to `.env` and change the values.
+6. Run `python discord/bot.py`
 
 ## config settings
 
