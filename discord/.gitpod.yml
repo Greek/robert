@@ -1,0 +1,3 @@
+tasks:
+  - init: python -m pip install -r requirements.txt
+    command: python -m pip install -r requirements.txt

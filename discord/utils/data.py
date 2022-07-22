@@ -49,7 +49,7 @@ class Bot(AutoShardedBot):
             logger.setLevel(logging.INFO)
 
             handler = logging.FileHandler(
-                filename="logs/discord.log", encoding="utf-8", mode="a"
+                filename="discord/logs/discord.log", encoding="utf-8", mode="a"
             )
             handler2 = logging.StreamHandler(sys.stdout)
 
@@ -66,7 +66,7 @@ class Bot(AutoShardedBot):
             logger.addHandler(handler2)
 
             self.load_extension("jishaku")
-            for cog in os.listdir("cogs"):
+            for cog in os.listdir("discord/cogs"):
                 if cog.endswith(".py"):
                     name = cog[:-3]
                     self.load_extension(f"cogs.{name}")
