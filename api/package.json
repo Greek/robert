@@ -1,0 +1,43 @@
+{
+  "name": "toilet-api",
+  "version": "0.0.1",
+  "description": "Toilet API to retrieve and set bot  information",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "nodemon src/index.ts",
+    "format": "pretty-quick --staged",
+    "lint": "eslint . --ext .ts",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "src/**/*.ts": "eslint --fix"
+  },
+  "repository": "https://github.com/Greek/bot-api.git",
+  "author": "Andreas <me@apap04.com>",
+  "license": "SEE LICENSE IN LICENSE",
+  "private": false,
+  "dependencies": {
+    "@typegoose/typegoose": "^9.10.1",
+    "consola": "^2.15.3",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "helmet": "^5.1.0",
+    "mongoose": "^6.4.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^18.0.3",
+    "@typescript-eslint/eslint-plugin": "^5.30.5",
+    "@typescript-eslint/parser": "^5.30.5",
+    "eslint": "^8.19.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "husky": "^8.0.1",
+    "lint-staged": "^13.0.3",
+    "nodemon": "^2.0.19",
+    "prettier": "^2.7.1",
+    "pretty-quick": "^3.1.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.7.4"
+  }
+}

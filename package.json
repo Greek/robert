@@ -1,0 +1,20 @@
+{
+  "name": "bot",
+  "version": "0.0.1",
+  "description": "Toilet Bot monorepo",
+  "repository": "git@github.com:Greek/bot.git",
+  "author": "Andreas <me@apap04.com>",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "cz-conventional-changelog": "3.3.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
