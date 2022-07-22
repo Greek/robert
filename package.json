@@ -9,7 +9,8 @@
   "scripts": {
     "prepare": "husky install",
     "lint": "npx pretty-quick --staged",
-    "lint-api": "prettier --config .prettierrc --write ./**/*.ts"
+    "lint-api": "prettier --config .prettierrc --write ./**/*.ts",
+    "commit": "cz"
   },
   "devDependencies": {
     "cz-conventional-changelog": "3.3.0",
