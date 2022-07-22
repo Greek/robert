@@ -1,4 +1,4 @@
-    """
+"""
 Copyright (c) 2021-present flower and contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -31,7 +31,7 @@ from pymongo import MongoClient
 
 
 from utils import default, perms
-from utils.data import create_error_log
+from utils.data import Bot, create_error_log
 from utils.embed import (
     failed_embed_ephemeral,
     success_embed_ephemeral,
@@ -63,7 +63,7 @@ class MemberID(commands.Converter):
 class Mod(commands.Cog):
     """Commands for moderators"""
 
-    def __init__(self, bot: nextcord.Client):
+    def __init__(self, bot: Bot):
 
         self.bot = bot
         self.guild_id = 932369210611494982
@@ -71,10 +71,6 @@ class Mod(commands.Cog):
             url=os.environ.get("REDIS_URL"), decode_responses=True
         )
         self.pubsub = self.redis.pubsub()
-
-        self.cluster = MongoClient(os.environ.get("MONGO_DB"))
-        self.db = self.cluster[os.environ.get("MONGO_NAME")]
-        self.config_coll = self.db["guildconfigs"]
 
         self.subscribe_expiry_handler.start()
         self.listen_messages.start()
@@ -91,7 +87,7 @@ class Mod(commands.Cog):
                 member = guild.get_member(int(data[1]))
 
                 try:
-                    res = self.config_coll.find_one({"_id": guild.id})
+                    res = self.bot.mguild_config.find_one({"_id": guild.id})
                     role = guild.get_role(res["muteRole"])
                 except:
                     return
@@ -126,7 +122,7 @@ class Mod(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_channel_create(self, channel: nextcord.TextChannel):
         try:
-            res = self.config_coll.find_one({"_id": channel.guild.id})
+            res = self.bot.mguild_config.find_one({"_id": channel.guild.id})
             role = channel.guild.get_role(int(res["muteRole"]))
             await channel.set_permissions(
                 role,
@@ -141,7 +137,7 @@ class Mod(commands.Cog):
         mute_key = await self.redis.get(f"mute-{member.id}-{member.guild.id}")
         if mute_key is not None:
             try:
-                res = self.config_coll.find_one({"_id": member.guild.id})
+                res = self.bot.mguild_config.find_one({"_id": member.guild.id})
                 role = member.guild.get_role(res["muteRole"])
             except:
                 return
@@ -168,9 +164,20 @@ class Mod(commands.Cog):
                 )
             )
             await ctx.send(
-                _("cmds.kick.res_noreason", user="this user" if member is None else f"{member.name}#{member.discriminator}")
+                _(
+                    "cmds.kick.res_noreason",
+                    user="this user"
+                    if member is None
+                    else f"{member.name}#{member.discriminator}",
+                )
                 if reason is None
-                else _("cmds.kick.res_reason", user="this user" if member is None else f"{member.name}#{member.discriminator}", reason=reason)
+                else _(
+                    "cmds.kick.res_reason",
+                    user="this user"
+                    if member is None
+                    else f"{member.name}#{member.discriminator}",
+                    reason=reason,
+                )
             )
         except Exception as e:
             await create_error_log(self, ctx, e)
@@ -193,9 +200,16 @@ class Mod(commands.Cog):
                 delete_message_days=0,
             )
             await ctx.send(
-                _("cmds.ban.res_noreason", user="this user" if m is None else f"{m.name}#{m.discriminator}")
+                _(
+                    "cmds.ban.res_noreason",
+                    user="this user" if m is None else f"{m.name}#{m.discriminator}",
+                )
                 if reason is None
-                else _("cmds.ban.res_reason", user="this user" if m is None else m, reason=reason)
+                else _(
+                    "cmds.ban.res_reason",
+                    user="this user" if m is None else m,
+                    reason=reason,
+                )
             )
         except Exception as e:
             await create_error_log(self, ctx, e)
@@ -233,7 +247,7 @@ class Mod(commands.Cog):
                 return
 
             existing_mute = await self.redis.get(f"mute-{member.id}-{ctx.guild.id}")
-            res = self.config_coll.find_one({"_id": ctx.guild.id})
+            res = self.bot.mguild_config.find_one({"_id": ctx.guild.id})
 
             try:
                 role = ctx.guild.get_role(res["muteRole"])
@@ -244,7 +258,7 @@ class Mod(commands.Cog):
                 for channel in channels:
                     await channel.set_permissions(role, send_messages=False)
 
-                self.config_coll.find_one_and_update(
+                self.bot.mguild_config.find_one_and_update(
                     {"_id": ctx.guild.id}, {"$set": {f"muteRole": role.id}}
                 )
 
@@ -255,7 +269,7 @@ class Mod(commands.Cog):
                 for channel in channels:
                     await channel.set_permissions(role, send_messages=False)
 
-                self.config_coll.find_one_and_update(
+                self.bot.mguild_config.find_one_and_update(
                     {"_id": ctx.guild.id}, {"$set": {f"muteRole": role.id}}
                 )
 
@@ -277,7 +291,7 @@ class Mod(commands.Cog):
                 return
 
             parsed_duration = timeparse(duration) if duration is not None else None
-            
+
             # if parsed_duration is not None and parsed_duration or int(duration) >= 1209600:
             #     return await ctx.send(
             #         embed=warn_embed_ephemeral(_("cmds.mute.res.invalid.time"))
@@ -330,7 +344,7 @@ class Mod(commands.Cog):
                     )
                 )
 
-            res = self.config_coll.find_one({"_id": ctx.guild.id})
+            res = self.bot.mguild_config.find_one({"_id": ctx.guild.id})
             try:
                 role = ctx.guild.get_role(res["muteRole"])
             except KeyError:

@@ -18,14 +18,6 @@ class ModSlash(commands.Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
 
-        self.cluster = MongoClient(os.environ.get("MONGO_DB"))
-        self.db = self.cluster[os.environ.get("MONGO_NAME")]
-        self.config_coll = self.db["guild-configs"]
-
-        self.redis: Redis = Redis.from_url(
-            url=os.environ.get("REDIS_URL"), decode_responses=True
-        )
-
     @nextcord.slash_command(name="kick", description=_("cmds.kick.desc"))
     @application_checks.has_guild_permissions(kick_members=True)
     @application_checks.bot_has_guild_permissions(kick_members=True)
