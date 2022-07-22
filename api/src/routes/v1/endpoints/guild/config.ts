@@ -8,17 +8,14 @@ const config = express.Router();
 config.get('/:id/config', async (req: Request, res: Response) => {
   console.log(req.params.id);
   try {
-
-    return res.status(501).send("Not implemented")
+    return res.status(501).send('Not implemented');
     const result = await guildconfig.findById({ id: '953134018071769169' });
 
     return res.status(200).json(result);
   } catch (e) {
     consola.error(e);
-    return res.status(500).send("500 Internal Server Error")
+    return res.status(500).send('500 Internal Server Error');
   }
-
-  
 });
 
 export default config;

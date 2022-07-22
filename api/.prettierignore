@@ -1,6 +1,0 @@
-build
-dist
-.env
-.env.example
-.husky
-.vscode
