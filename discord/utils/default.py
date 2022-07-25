@@ -74,10 +74,10 @@ def branded_embed(
     author_image: str = None,
     author_url: str = None,
     title_url: str = None,
-    inline: str = None
+    inline: str = None,
 ) -> nextcord.Embed:
 
-    f = open("config.json")
+    f = open("discord/config.json")
     config = json.load(f)
     accent_color = config.get("accent_color")
     if color is not None:
@@ -98,7 +98,9 @@ def branded_embed(
                 embed = nextcord.Embed(title=title, color=color, url=title_url)
         else:
             if title_url is None:
-                embed = nextcord.Embed(title=title, description=description, color=color)
+                embed = nextcord.Embed(
+                    title=title, description=description, color=color
+                )
             else:
                 embed = nextcord.Embed(
                     title=title, description=description, color=color, url=title_url
@@ -136,6 +138,7 @@ def branded_embed(
             else:
                 embed.set_author(name=author_text)
     return embed
+
 
 async def fetch_xkcd_comic(comic: int = None, **kwargs):
     if comic:
