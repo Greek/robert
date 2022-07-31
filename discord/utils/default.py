@@ -33,13 +33,13 @@ i18n.set("skip_locale_root_data", True)
 i18n.translations.container.clear()
 i18n.set("file_format", "yaml")
 i18n.set("filename_format", "{locale}.{format}")
-i18n.load_path.append("./discord/lang/")
+i18n.load_path.append("./lang/")
 
 
 def get(file):
     """Helper function to open files."""
     try:
-        with open(f"discord/{file}", encoding="utf8") as data:
+        with open(f"./{file}", encoding="utf8") as data:
             return json.load(
                 data, object_hook=lambda d: namedtuple("X", d.keys())(*d.values())
             )
