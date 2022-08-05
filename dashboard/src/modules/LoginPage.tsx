@@ -33,13 +33,13 @@ export const LoginPage = () => {
       {!session && (
         <Button
           onClick={() => {
-            signIn('google');
+            signIn('discord');
           }}
         >
           Sign in
         </Button>
       )}
-      <p>{session?.user?.email}</p>
+      <p>{session?.user?.name}</p>
     </CenterLayout>
   );
 };
