@@ -1,0 +1,83 @@
+@use '~inter-ui/default' with (
+  $inter-font-display: swap,
+  $inter-font-path: '~inter-ui/Inter (web)'
+);
+@use '~inter-ui/variable' with (
+  $inter-font-display: swap,
+  $inter-font-path: '~inter-ui/Inter (web)'
+);
+
+@include default.all;
+@include variable.all;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// html {
+//   --color-layout-bg: #fff;
+//   --color-button-text: #c9d1d9;
+//   --color-button-bg: #292a2a;
+//   --color-primary-100: #dee3ea;
+//   --color-primary-200: #b2bdcd;
+//   --color-primary-300: #5d7290;
+//   --color-primary-600: #323d4d;
+//   --color-primary-700: #242c37;
+//   --color-primary-800: #151a21;
+//   --color-primary-900: #0b0e11;
+//   --color-secondary-washed-out: #879eed;
+//   --color-secondary: #5575e7;
+//   --color-accent-glow: rgba(253, 77, 77, 0.3);
+//   --color-accent: #fd4d4d;
+//   --color-accent-hover: #fd6868;
+//   --color-accent-disabled: #f5bfbf;
+//   --screen-height-reduction: 0px;
+//   --color-primary-100-translucent: rgba(222, 227, 234, 0.15);
+// }
+
+:root {
+  --color-layout-bg: #1b1b1b;
+  --color-button-text: #c9d1d9;
+  --color-button-bg: #292a2a;
+  --color-text: #999;
+  --color-primary-100: #dee3ea;
+  --color-primary-200: #b2bdcd;
+  --color-primary-300: #5d7290;
+  --color-primary-600: #323d4d;
+  --color-primary-700: #242c37;
+  --color-primary-800: #151a21;
+  --color-primary-900: #0b0e11;
+  --color-secondary-washed-out: #879eed;
+  --color-secondary: #5575e7;
+  --color-accent-glow: rgba(253, 77, 77, 0.3);
+  --color-accent: #fd4d4d;
+  --color-accent-hover: #fd6868;
+  --color-accent-disabled: #f5bfbf;
+  --screen-height-reduction: 0px;
+  --color-primary-100-translucent: rgba(222, 227, 234, 0.15);
+}
+
+// :root[data-theme=dark] {
+//   --color-button-text: #c9d1d9;
+//   --color-button-bg: #292a2a;
+//   --color-primary-100: #dee3ea;
+//   --color-primary-200: #b2bdcd;
+//   --color-primary-300: #5d7290;
+//   --color-primary-600: #323d4d;
+//   --color-primary-700: #242c37;
+//   --color-primary-800: #151a21;
+//   --color-primary-900: #0b0e11;
+//   --color-secondary-washed-out: #879eed;
+//   --color-secondary: #5575e7;
+//   --color-accent-glow: rgba(253, 77, 77, 0.3);
+//   --color-accent: #fd4d4d;
+//   --color-accent-hover: #fd6868;
+//   --color-accent-disabled: #f5bfbf;
+//   --screen-height-reduction: 0px;
+//   --color-primary-100-translucent: rgba(222, 227, 234, 0.15);
+// }
+
+html {
+  background: var(--color-layout-bg);
+  color: var(--color-text);
+}
