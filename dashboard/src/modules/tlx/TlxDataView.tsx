@@ -8,18 +8,17 @@ interface TlxDataViewProps {
 }
 
 export const TlxDataView: React.FC<TlxDataViewProps> = ({ children }) => {
-
   const router = useRouter();
   const session = useSession();
   const { id } = router.query;
 
-
   useEffect(() => {
-    if (!session.data?.user?.email == "apapuig+discord@gmail.com")
-        router.push('/')
-    if (!session) router.push('/login')
-    
-  }, [session, router])
+    /* eslint-disable */
+    if (!session.data?.user?.email == 'apapuig+discord@gmail.com')
+      router.push('/');
+    if (!session) router.push('/login');
+    /* eslint-enable */
+  }, [session, router]);
 
   return <DashLayout>TLX ID: {id}</DashLayout>;
 };
