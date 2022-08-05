@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "tsc --noEmit",
     "format-all": "prettier --config .prettierrc --write ./**/*.tsx",
     "format": "npx pretty-quick --staged",
     "postinstall": "prisma generate",
