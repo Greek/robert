@@ -11,7 +11,7 @@ export default function Home() {
         There&apos;s some elements in the <kbd>/ui</kbd> directory you can use,
         check it out!
       </p>
-      {session?.user?.email}
+      <p>{session?.user?.email}</p>
     </CenterLayout>
   );
 }
