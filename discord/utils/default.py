@@ -77,7 +77,7 @@ def branded_embed(
     inline: str = None,
 ) -> nextcord.Embed:
 
-    f = open("discord/config.json")
+    f = open("./config.json")
     config = json.load(f)
     accent_color = config.get("accent_color")
     if color is not None:
