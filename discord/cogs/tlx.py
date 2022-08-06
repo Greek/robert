@@ -1,6 +1,6 @@
-import asyncio
 import nextcord
 import aiohttp
+import os
 
 from nextcord.ext import commands
 from utils.data import Bot
@@ -21,7 +21,9 @@ class Tlx(commands.Cog):
         url = "http://toilet.apap04.com/tlx/"
         endpoint_url = "http://toilet.apap04.com/api/tlx/"
 
-        async with aiohttp.ClientSession() as session:
+        async with aiohttp.ClientSession(
+            headers={"Authorization": f"Bearer {os.environ.get('TOILET_API_TOKEN')}"}
+        ) as session:
             async with session.post(
                 f"{endpoint_url}submit",
                 data={
