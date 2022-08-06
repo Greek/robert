@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getToken } from 'next-auth/jwt';
 import prisma from '../../../lib/prisma';
 
 export default async function submit(
@@ -8,18 +7,18 @@ export default async function submit(
 ) {
   const { method } = req;
 
-  const secret = process.env.NEXTAUTH_SECRET;
-  const token = await getToken({ req, secret });
+  // const secret = process.env.NEXTAUTH_SECRET;
+  // const token = await getToken({ req, secret });
 
-  if (!token)
-    return res.status(401).json({ error: 'Please provide a valid token.' });
+  // if (!token)
+  //   return res.status(401).json({ error: 'Please provide a valid token.' });
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  if (!token.email?.valueOf == 'apapuig+discord@gmail.com')
-    return res
-      .status(403)
-      .json({ error: 'You do not have access to this resource.' });
+  // if (!token.email?.valueOf == 'apapuig+discord@gmail.com')
+  //   return res
+  //     .status(403)
+  //     .json({ error: 'You do not have access to this resource.' });
 
   switch (method) {
     case 'GET':
