@@ -36,7 +36,7 @@ class Tlx(commands.Cog):
                 data = await res.json()
                 return await ctx.send(
                     embed=success_embed_ephemeral(
-                        f"Report available [here]({url}{data})"
+                        f"Report available [here]({url}{data['id']})"
                     )
                 )
 
