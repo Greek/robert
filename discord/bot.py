@@ -9,7 +9,7 @@ from utils.data import Bot, HelpFormat
 from utils.default import get
 from dotenv import dotenv_values, load_dotenv
 
-cfg = get("./config.json")
+cfg = get("config.json")
 dot_cfg = dotenv_values("./.env")
 load_dotenv("../.env")
 

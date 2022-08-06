@@ -2,7 +2,6 @@ import nextcord
 import json
 
 from nextcord.ext import commands
-
 from utils import embed as embed2, default
 
 
@@ -14,7 +13,7 @@ class EventsGuild(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: nextcord.Guild):
-        f = open("config.json")
+        f = open("./config.json")
         config = json.load(f)
         guilds = config.get("allowlistServers")
         try:
