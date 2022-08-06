@@ -18,8 +18,8 @@ class Tlx(commands.Cog):
         if guild is None:
             guild = ctx.guild
 
-        url = "http://localhost:3000/tlx/"
-        endpoint_url = "http://localhost:3000/api/tlx/"
+        url = "http://toilet.apap04.com/tlx/"
+        endpoint_url = "http://toilet.apap04.com/api/tlx/"
 
         async with aiohttp.ClientSession() as session:
             async with session.post(
