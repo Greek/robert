@@ -15,9 +15,6 @@ class Tlx(commands.Cog):
 
     @commands.command(name="tlx", desc="Create a tlx report for guild")
     async def _submit(self, ctx: commands.Context, *, guild: nextcord.Guild = None):
-        if guild is None:
-            guild = ctx.guild
-
         url = "http://toilet.apap04.com/tlx/"
         endpoint_url = "http://toilet.apap04.com/api/tlx/"
 
