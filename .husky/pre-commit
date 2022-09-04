@@ -4,4 +4,4 @@
 cd dashboard
 yarn format && yarn lint
 cd ../api
-yarn format && yarn lint && yarn types
+yarn format && yarn type-lint-check

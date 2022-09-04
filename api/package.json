@@ -9,7 +9,8 @@
     "format": "pretty-quick --staged",
     "format-all": "prettier --config prettier.config.js --write ./**/*.{ts,tsx,js,jsx}",
     "types": "tsc --noEmit",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "type-lint-check": "yarn run types && yarn run lint"
   },
   "repository": "https://github.com/Greek/bot-api.git",
   "author": "Andreas <me@apap04.com>",
