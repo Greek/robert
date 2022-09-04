@@ -1,7 +1,0 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-cd dashboard
-yarn format && yarn lint
-cd ../api
-yarn format && yarn type-lint-check
