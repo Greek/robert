@@ -3,3 +3,5 @@
 
 cd dashboard
 yarn format && yarn lint
+cd ../api
+yarn format && yarn lint && yarn build
