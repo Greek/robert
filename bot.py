@@ -11,7 +11,7 @@ from dotenv import dotenv_values, load_dotenv
 
 cfg = get("config.json")
 dot_cfg = dotenv_values("./.env")
-load_dotenv("../.env")
+load_dotenv("./.env")
 
 intents = nextcord.Intents.default()
 intents.guild_messages = True
@@ -20,8 +20,6 @@ intents.members = True
 
 bot = Bot(
     command_prefix=os.environ.get('DISCORD_PREFIX'),
-    prefix=os.environ.get('DISCORD_PREFIX'),
-    command_attrs=dict(hidden=True),
     help_command=HelpFormat(),
     intents=intents,
     case_insensitive=True,

@@ -35,3 +35,6 @@ logs/*.log
 .idea
 media/*
 .env
+
+# other
+node_modules
