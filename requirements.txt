@@ -11,3 +11,5 @@ pytz
 jishaku==2.4.0
 pytimeparse
 pylast
+pylint
+black

@@ -1,11 +1,7 @@
-from attr import has
 import nextcord
-import os
 
 from nextcord import TextChannel
 from nextcord.ext import commands
-
-from pymongo import MongoClient
 
 from utils import embed
 from utils.data import Bot, create_error_log
