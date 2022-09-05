@@ -92,6 +92,7 @@ class Mod(commands.Cog):
                 except:
                     return
 
+                print(f"[DEBUG] [Mute] Mute expired from {self.redis}")
                 await member.remove_roles(role, reason="Mute expired.")
             except Exception as e:
                 ctx = self.bot
