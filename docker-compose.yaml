@@ -10,7 +10,7 @@ services:
       - MONGO_DB=${MONGO_DB}
       - MONGO_NAME=${MONGO_NAME:-toilet}
       - REDIS_PASS=${REDIS_PASS}
-      - REDIS_URL=redis://${REDIS_USERNAME:-default}:${REDIS_PASS}@${REDIS_HOST:-192.168.92.10:6379}/
+      - REDIS_URL=${REDIS_URL:-redis://default:@192.168.92.10:6379}
       - LAST_FM_KEY=${LAST_FM_KEY}
       - LAST_FM_SECRET=${LAST_FM_SECRET}
     depends_on:
@@ -24,7 +24,9 @@ services:
     restart: always
     ports:
       - '6379:6379'
-    command: "redis-server --save 20 1 --loglevel warning"
+    command: "redis-server /usr/local/etc/redis/redis.conf --save 20 1 --loglevel warning"
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
 
 networks:
   tnet:
