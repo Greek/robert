@@ -20,20 +20,22 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from datetime import datetime
+from random import choice
+import os
+import subprocess
+
 import nextcord
 import psutil
-import time
-import os
 
-from random import choice
-from nextcord import Client
 from nextcord.ext import commands
+from nextcord import Client
 from utils import default
 from utils.default import translate as _
 
 
 class About(commands.Cog):
+    """ Basic commands providing information about the bot. """
+
     def __init__(self, bot: Client):
         self.bot = bot
         self.process = psutil.Process(os.getpid())
@@ -43,6 +45,7 @@ class About(commands.Cog):
         name="about", description=_("cmds.about"), aliases=["info", "stats", "status"]
     )
     async def about(self, ctx: commands.Context):
+        system_id = subprocess.check_output(["uname", "-n"]).decode()
         avg_members = sum(g.member_count for g in self.bot.guilds)
 
         if hasattr(ctx, "guild") and ctx.guild is not None:
@@ -63,8 +66,13 @@ class About(commands.Cog):
                 ),
             )
             embed.add_field(
+                name=f"Host ID",
+                value=f"{system_id}",
+            )
+            embed.add_field(
                 name="Servers",
                 value=f"{len(self.bot.guilds)} (serving {avg_members} members)",
+                inline=False
             )
 
             await ctx.send(content=f"", embed=embed)
@@ -86,6 +94,7 @@ class About(commands.Cog):
 
     @nextcord.slash_command(name="about", description=_("cmds.about"))
     async def about_slash(self, ctx: nextcord.Interaction):
+        """ Pong! """
         await self.about(ctx)
 
 

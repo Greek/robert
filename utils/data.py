@@ -67,7 +67,7 @@ class Bot(AutoShardedBot):
 
             self.load_extension("jishaku")
             for cog in os.listdir("./cogs"):
-                if cog.endswith(".py"):
+                if cog.endswith(".py") and not cog.startswith("__"):
                     name = cog[:-3]
                     self.load_extension(f"cogs.{name}")
 
