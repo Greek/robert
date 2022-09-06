@@ -12,6 +12,17 @@ Follow these installation steps:
 1. Begin with installing the **recommended** version of [NodeJS](https://nodejs.org/en/)
 2. Install [Yarn v1](https://classic.yarnpkg.com/en/docs/install)
 
+# how to run (docker)
+
+1. Create a working directory for the bot to hold the `.env` and `config.json` files.
+2. Copy `config.json.example` to `config.json`
+   and change [appropriate values][values].
+3. Copy `.env.example` to `.env` and change the values.
+4. Run this docker command:
+```sh
+$ docker run -it -d --env-file ./.env --name toilet ghcr.io/greek/toilet-bot:master
+```
+
 ## how to run (bot)
 
 Python 3.9+ is needed to run the bot, as well as some other dependencies on
