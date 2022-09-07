@@ -32,6 +32,7 @@ import asyncpg
 
 from nextcord import Interaction
 from nextcord.ext.commands import AutoShardedBot, MinimalHelpCommand, Context
+from prisma import Prisma
 
 from utils import default, embed as uembed
 from utils.default import translate as _, traceback_maker
@@ -96,7 +97,9 @@ class Bot(AutoShardedBot):
         self.mclient = MongoClient(os.environ.get("MONGO_DB"))
         self.mdb = self.mclient[os.environ.get("MONGO_NAME")]
 
-        self.database = await asyncpg.create_pool(dsn=os.environ.get("DATABASE_DSN"))
+        self.pool = await asyncpg.create_pool(dsn=os.environ.get("DATABASE_DSN"))
+        self.prisma = Prisma()
+        await self.prisma.connect()
         self.logger.info("Connected to PostgreSQL.")
 
         self.mguild_config = self.mdb.guildconfig

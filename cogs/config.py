@@ -73,11 +73,26 @@ class Config(commands.Cog):
             # {"$set": {"messageLog": channel.id}},
             # upsert=True,
             # )
-            self.bot.mguild_config.find_one_and_update(
-                {"_id": ctx.guild.id},
-                {"$set": {"messageLog": channel.id}},
-                upsert=True,
+            # self.bot.mguild_config.find_one_and_update(
+            #     {"_id": ctx.guild.id},
+            #     {"$set": {"messageLog": channel.id}},
+            #     upsert=True,
+            # )
+
+            await self.bot.prisma.guildconfiguration.upsert(
+                where={"id": ctx.guild.id},
+                data={
+                    "create": {
+                        "id": ctx.guild.id,
+                        "message_log_channel_id": channel.id,
+                    },
+                    "update": {
+                        "id": ctx.guild.id,
+                        "message_log_channel_id": channel.id,
+                    },
+                },
             )
+
             await ctx.send(
                 embed=embed.success_embed_ephemeral(
                     _(
@@ -87,7 +102,8 @@ class Config(commands.Cog):
                     # f'Set welcome message to "{message}" in {channel.mention}.'
                 )
             )
-        except:
+        except Exception as error:
+            print(error)
             await ctx.send(
                 embed=embed.failed_embed_ephemeral("Could not change logging channel.")
             )
@@ -223,15 +239,30 @@ class Config(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def change_welcome_message(self, ctx, channel: TextChannel, *, message: str):
         try:
-            self.bot.mguild_config.find_one_and_update(
-                {"_id": ctx.guild.id},
-                {
-                    "$set": {
-                        "welcomeChannel": channel.id,
-                        "welcomeGreeting": message,
-                    }
+            # self.bot.mguild_config.find_one_and_update(
+            #     {"_id": ctx.guild.id},
+            #     {
+            #         "$set": {
+            #             "welcomeChannel": channel.id,
+            #             "welcomeGreeting": message,
+            #         }
+            #     },
+            #     upsert=True,
+            # )
+            await self.bot.prisma.guildconfiguration.upsert(
+                where={"id": ctx.guild.id},
+                data={
+                    "create": {
+                        "id": ctx.guild.id,
+                        "welcome_channel": channel.id,
+                        "welcome_greeting": message,
+                    },
+                    "update": {
+                        "id": ctx.guild.id,
+                        "welcome_channel": channel.id,
+                        "welcome_greeting": message,
+                    },
                 },
-                upsert=True,
             )
             await ctx.send(
                 embed=embed.success_embed_ephemeral(
