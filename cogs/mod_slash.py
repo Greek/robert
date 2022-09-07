@@ -1,16 +1,12 @@
 from discord import Interaction
 import nextcord
-import os
 
 from nextcord import SlashOption
 from nextcord.ext import commands, application_checks
 
-from redis.asyncio import Redis
-from pymongo import MongoClient
-
 from cogs.mod import Mod
-from utils.data import Bot
 
+from utils.data import Bot
 from utils.default import translate as _
 
 

@@ -1,5 +1,5 @@
 """
-Copyright (c) 2021-present flower and contributors
+Copyright (c) 2021-present Onyx Studios
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20,15 +20,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import nextcord
 import os
+import nextcord
 
 from nextcord.ext import commands, tasks
 
 from pytimeparse.timeparse import timeparse
+from dotenv import dotenv_values, load_dotenv
 from redis.asyncio import Redis
-from pymongo import MongoClient
-
 
 from utils import default, perms
 from utils.data import Bot, create_error_log
@@ -39,7 +38,6 @@ from utils.embed import (
 )
 from utils.default import translate as _
 
-from dotenv import dotenv_values, load_dotenv
 
 dot_cfg = dotenv_values(".env")
 load_dotenv(".env")
@@ -62,6 +60,8 @@ class MemberID(commands.Converter):
 
 class Mod(commands.Cog):
     """Commands for moderators"""
+
+    # pylint: disable=E1101
 
     def __init__(self, bot: Bot):
 
@@ -94,9 +94,9 @@ class Mod(commands.Cog):
 
                 print(f"[DEBUG] [Mute] Mute expired from {self.redis}")
                 await member.remove_roles(role, reason="Mute expired.")
-            except Exception as e:
+            except Exception as error:
                 ctx = self.bot
-                await create_error_log(self, ctx, e)
+                await create_error_log(self, ctx, error)
 
     @tasks.loop(count=1)
     async def subscribe_expiry_handler(self):
@@ -107,7 +107,7 @@ class Mod(commands.Cog):
     async def listen_messages(self):
         message = await self.pubsub.get_message()
         if message:
-            print(f"[Mute] Listening to expired mutes")
+            print("[INFO] [Mute] Listening to expired mutes")
         else:
             pass
 
@@ -180,8 +180,8 @@ class Mod(commands.Cog):
                     reason=reason,
                 )
             )
-        except Exception as e:
-            await create_error_log(self, ctx, e)
+        except Exception as error:
+            await create_error_log(self, ctx, error)
             await ctx.send(embed=failed_embed_ephemeral("I can't kick that person."))
 
     @commands.command(name="ban", description=_("cmds.ban.desc"))
@@ -212,8 +212,8 @@ class Mod(commands.Cog):
                     reason=reason,
                 )
             )
-        except Exception as e:
-            await create_error_log(self, ctx, e)
+        except Exception as error:
+            await create_error_log(self, ctx, error)
             await ctx.send(embed=failed_embed_ephemeral("I can't ban that person."))
 
     @commands.command(
@@ -260,7 +260,7 @@ class Mod(commands.Cog):
                     await channel.set_permissions(role, send_messages=False)
 
                 self.bot.mguild_config.find_one_and_update(
-                    {"_id": ctx.guild.id}, {"$set": {f"muteRole": role.id}}
+                    {"_id": ctx.guild.id}, {"$set": {"muteRole": role.id}}
                 )
 
             if role is None:
@@ -271,7 +271,7 @@ class Mod(commands.Cog):
                     await channel.set_permissions(role, send_messages=False)
 
                 self.bot.mguild_config.find_one_and_update(
-                    {"_id": ctx.guild.id}, {"$set": {f"muteRole": role.id}}
+                    {"_id": ctx.guild.id}, {"$set": {"muteRole": role.id}}
                 )
 
             if existing_mute:
@@ -321,8 +321,8 @@ class Mod(commands.Cog):
                     )
                 )
 
-        except Exception as e:
-            await create_error_log(self, ctx, e)
+        except Exception as error:
+            await create_error_log(self, ctx, error)
 
     @commands.command(name="unmute", aliases=["um"], description="Un-mute a person.")
     @commands.has_guild_permissions(manage_messages=True)
@@ -378,8 +378,8 @@ class Mod(commands.Cog):
                     _("cmds.unmute.res.success", person=member.mention)
                 )
             )
-        except Exception as e:
-            await create_error_log(self, ctx, e)
+        except Exception as error:
+            await create_error_log(self, ctx, error)
 
     @commands.command(
         name="servermute", aliases=["sm"], description="Server mute a person."

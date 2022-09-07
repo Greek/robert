@@ -1,15 +1,12 @@
-from discord import Interaction
+import os
 import nextcord
 import pylast
-import os
 
 from nextcord.ext import commands
-from pymongo import MongoClient
-
 
 from utils.constants import LASTFM_EMBED_COLOR
 from utils.default import translate as _
-from utils.embed import failed_embed_ephemeral, warn_embed_ephemeral
+from utils.embed import warn_embed_ephemeral
 from utils.perms import only_owner
 from utils.data import Bot, create_error_log
 
@@ -19,7 +16,7 @@ class Lastfm(commands.Cog):
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.lf = pylast.LastFMNetwork(
+        self.lastfm = pylast.LastFMNetwork(
             api_key=os.environ.get("LAST_FM_KEY"),
             api_secret=os.environ.get("LAST_FM_SECRET"),
         )
@@ -56,7 +53,7 @@ class Lastfm(commands.Cog):
         # pass
         self.bot.mlastfm.find_one_and_update(
             {"_id": caller.id},
-            {"$set": {f"username": f"{username}"}},
+            {"$set": {"username": f"{username}"}},
             upsert=True,
         )
 
@@ -74,7 +71,7 @@ class Lastfm(commands.Cog):
         res = self.bot.mlastfm.find_one({"_id": caller.id})
 
         try:
-            lfuser = self.lf.get_user(res["username"])
+            lfuser = self.lastfm.get_user(res["username"])
         except:
             return await ctx.send(
                 embed=warn_embed_ephemeral(_("cmds.lastfm.res.user_not_set"))

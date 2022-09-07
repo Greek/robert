@@ -1,11 +1,33 @@
-import nextcord
+"""
+Copyright (c) 2021-present Onyx Studios
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 import os
+import nextcord
 
 from nextcord import ChannelType, Interaction, SlashOption
 from nextcord.ext import commands, application_checks
+from pymongo import MongoClient
 from cogs.config import Config
 from utils.default import translate as _
-from pymongo import MongoClient
 
 
 class ConfigSlash(commands.Cog):
@@ -15,6 +37,7 @@ class ConfigSlash(commands.Cog):
         self.db = self.cluster[os.environ.get("MONGO_NAME")]
         self.config_coll = self.db["guild-configs"]
 
+    # pylint: disable=E0213,E1120,E1123
     @nextcord.slash_command(
         name="config",
         description="Configure the bot for your server's needs",
@@ -91,7 +114,8 @@ class ConfigSlash(commands.Cog):
         return await Config.set_message_logs(self, ctx=interaction, channel=channel)
 
     @logs_slash.subcommand(
-        name="messages-whitelist", description="Configure the bot for your server's needs"
+        name="messages-whitelist",
+        description="Configure the bot for your server's needs",
     )
     @application_checks.has_guild_permissions(manage_channels=True)
     @application_checks.bot_has_guild_permissions(manage_channels=True)
@@ -105,10 +129,13 @@ class ConfigSlash(commands.Cog):
             required=True,
         ),
     ):
-        return await Config.set_message_logs_whitelist(self, ctx=interaction, channel=channel)
+        return await Config.set_message_logs_whitelist(
+            self, ctx=interaction, channel=channel
+        )
 
     @logs_slash.subcommand(
-        name="messages-unwhitelist", description="Configure the bot for your server's needs"
+        name="messages-unwhitelist",
+        description="Configure the bot for your server's needs",
     )
     @application_checks.has_guild_permissions(manage_channels=True)
     @application_checks.bot_has_guild_permissions(manage_channels=True)
@@ -122,10 +149,13 @@ class ConfigSlash(commands.Cog):
             required=True,
         ),
     ):
-        return await Config.set_message_logs_whitelist_remove(self, ctx=interaction, channel=channel)
+        return await Config.set_message_logs_whitelist_remove(
+            self, ctx=interaction, channel=channel
+        )
 
     @logs_slash.subcommand(
-        name="messages-clearwhitelist", description="Configure the bot for your server's needs"
+        name="messages-clearwhitelist",
+        description="Configure the bot for your server's needs",
     )
     @application_checks.has_guild_permissions(manage_channels=True)
     @application_checks.bot_has_guild_permissions(manage_channels=True)
@@ -139,7 +169,9 @@ class ConfigSlash(commands.Cog):
             required=True,
         ),
     ):
-        return await Config.set_message_logs_whitelist_clear(self, interaction, channel=channel)
+        return await Config.set_message_logs_whitelist_clear(
+            self, interaction, channel=channel
+        )
 
     @logs_slash.subcommand(
         name="messages-clear", description="Configure the bot for your server's needs"

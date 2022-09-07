@@ -1,13 +1,11 @@
-import nextcord
 import asyncio
-import pymongo
-import os
+
+import nextcord
 
 from nextcord.ext import commands
 from utils.data import Bot
 
 from utils.default import translate as _
-from utils.perms import only_owner
 from utils.embed import success_embed_ephemeral, warn_embed_ephemeral
 
 
@@ -100,13 +98,11 @@ class Filter(commands.Cog):
     async def _filter(self, ctx: commands.Context):
         if ctx.invoked_subcommand is None:
             return await ctx.send_help(str(ctx.command))
-        pass
 
     @_filter.group(name="add")
     async def _filter_add(self, ctx: commands.Context):
         if ctx.invoked_subcommand is None:
             return await ctx.send_help(str(ctx.command))
-        pass
 
     @_filter_add.command(name="delete", description=_("cmds.filter.desc"))
     async def _filter_add_delete(self, ctx: commands.Context, *, word: str):
@@ -230,7 +226,7 @@ class Filter(commands.Cog):
             pass
 
         return await ctx.send(
-            embed=success_embed_ephemeral(f"Successfully reset all filters.")
+            embed=success_embed_ephemeral("Successfully reset all filters.")
         )
 
 

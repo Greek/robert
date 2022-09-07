@@ -1,6 +1,7 @@
 from nextcord.ext import commands
 import nextcord
 
+
 class EventsUssy(commands.Cog):
     """The description for EventsUssy goes here."""
 
@@ -15,8 +16,9 @@ class EventsUssy(commands.Cog):
 
                 await member.edit(nick=member.name[:3] + "ussy")
                 await member.add_roles(ussy_role, reason="New member joined")
-            except Exception as e:
-                print(e)
+            except nextcord.errors.Forbidden as error:
+                print(error)
+
 
 def setup(bot):
     bot.add_cog(EventsUssy(bot))

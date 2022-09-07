@@ -1,27 +1,26 @@
 import asyncio
-from contextvars import Context
-from discord import Interaction
-import nextcord
 import random
 import time
 import os
+import nextcord
 
-from pymongo import MongoClient
 from redis.asyncio import Redis
 from nextcord.ext import commands, tasks
 from pytimeparse.timeparse import timeparse
+from dotenv import dotenv_values, load_dotenv
+
 
 from utils.data import Bot, create_error_log
-from utils.embed import success_embed_ephemeral, warn_embed_ephemeral
-from utils.default import translate as _
+from utils.embed import success_embed_ephemeral
 
-from dotenv import dotenv_values, load_dotenv
 
 dot_cfg = dotenv_values(".env")
 load_dotenv(".env")
 
 
 class Giveaways(commands.Cog):
+    # pylint: disable=E1101
+
     def __init__(self, bot: Bot):
         self.bot = bot
         self.redis: Redis = Redis.from_url(
@@ -60,9 +59,9 @@ class Giveaways(commands.Cog):
                         f"Giveaway has ended, see results [here]({new_message.to_reference().jump_url})"
                     )
                 )
-            except Exception as e:
+            except Exception as error:
                 ctx = self.bot
-                await create_error_log(self, ctx, e)
+                await create_error_log(self, ctx, error)
 
     @tasks.loop(count=1)
     async def subscribe_expiry_handler(self):
@@ -73,7 +72,7 @@ class Giveaways(commands.Cog):
     async def listen_messages(self):
         message = await self.pubsub.get_message()
         if message:
-            print(f"[Giveaways] Watching expired giveaways")
+            print("[INFO] [Giveaways] Watching expired giveaways")
         else:
             pass
 
@@ -91,7 +90,6 @@ class Giveaways(commands.Cog):
     async def _giveaway(self, ctx: commands.Context):
         if ctx.invoked_subcommand is None:
             await ctx.send_help(ctx.command)
-        pass
 
     @commands.has_permissions(manage_guild=True)
     @_giveaway.command(
@@ -174,8 +172,8 @@ class Giveaways(commands.Cog):
                     "Giveaway",
                 )
 
-            except Exception as e:
-                await create_error_log(self, ctx, e)
+            except Exception as error:
+                await create_error_log(self, ctx, error)
         else:
             return await ctx.send("As you wish, captain.")
 
