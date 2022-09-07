@@ -64,7 +64,6 @@ class Mod(commands.Cog):
     # pylint: disable=E1101
 
     def __init__(self, bot: Bot):
-
         self.bot = bot
         self.guild_id = 932369210611494982
         self.redis: Redis = Redis.from_url(
@@ -92,7 +91,7 @@ class Mod(commands.Cog):
                 except:
                     return
 
-                print(f"[DEBUG] [Mute] Mute expired from {self.redis}")
+                self.bot.logger.debug(f"Mute expired from {self.redis}")
                 await member.remove_roles(role, reason="Mute expired.")
             except Exception as error:
                 ctx = self.bot
@@ -107,7 +106,7 @@ class Mod(commands.Cog):
     async def listen_messages(self):
         message = await self.pubsub.get_message()
         if message:
-            print("[INFO] [Mute] Listening to expired mutes")
+            self.bot.logger.info("Listening to expired mutes")
         else:
             pass
 

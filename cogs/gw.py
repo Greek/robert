@@ -72,7 +72,7 @@ class Giveaways(commands.Cog):
     async def listen_messages(self):
         message = await self.pubsub.get_message()
         if message:
-            print("[INFO] [Giveaways] Watching expired giveaways")
+            self.bot.logger.info("Watching expired giveaways")
         else:
             pass
 

@@ -20,13 +20,15 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import nextcord
-import itertools
 import sys
-import logging
 import os
 import json
 import uuid
+import logging
+
+import itertools
+import nextcord
+import asyncpg
 
 from nextcord import Interaction
 from nextcord.ext.commands import AutoShardedBot, MinimalHelpCommand, Context
@@ -36,7 +38,7 @@ from utils.default import translate as _, traceback_maker
 
 from pymongo import MongoClient
 
-do_not_load = ("cogs.interactives",)
+do_not_load = ("cogs.interactives", "cogs.gw", "cogs.mod")
 
 
 class Bot(AutoShardedBot):
@@ -44,9 +46,11 @@ class Bot(AutoShardedBot):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.logger = logging.getLogger("nextcord")
         try:
-            logger = logging.getLogger("nextcord")
-            logger.setLevel(logging.INFO)
+
+            self.logger.setLevel(logging.INFO)
+            self.logger.name = "toilet"
 
             handler = logging.FileHandler(
                 filename="./logs/discord.log", encoding="utf-8", mode="a"
@@ -62,8 +66,8 @@ class Bot(AutoShardedBot):
                 logging.Formatter("[%(levelname)s] [%(name)s] %(message)s")
             )
 
-            logger.addHandler(handler)
-            logger.addHandler(handler2)
+            self.logger.addHandler(handler)
+            self.logger.addHandler(handler2)
 
             self.load_extension("jishaku")
             for cog in os.listdir("./cogs"):
@@ -91,6 +95,9 @@ class Bot(AutoShardedBot):
     async def start(self, *args, **kwargs):
         self.mclient = MongoClient(os.environ.get("MONGO_DB"))
         self.mdb = self.mclient[os.environ.get("MONGO_NAME")]
+
+        self.database = await asyncpg.create_pool(dsn=os.environ.get("DATABASE_DSN"))
+        self.logger.info("Connected to PostgreSQL.")
 
         self.mguild_config = self.mdb.guildconfig
         self.mlastfm = self.mdb.lastfm
