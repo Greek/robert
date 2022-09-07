@@ -1,5 +1,5 @@
 """
-Copyright (c) 2021-present flower and contributors
+Copyright (c) 2021-present Onyx Studios
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -34,7 +34,7 @@ from utils.default import translate as _
 
 
 class About(commands.Cog):
-    """ Basic commands providing information about the bot. """
+    """Basic commands providing information about the bot."""
 
     def __init__(self, bot: Client):
         self.bot = bot
@@ -66,16 +66,16 @@ class About(commands.Cog):
                 ),
             )
             embed.add_field(
-                name=f"Host ID",
+                name="Host ID",
                 value=f"{system_id}",
             )
             embed.add_field(
                 name="Servers",
                 value=f"{len(self.bot.guilds)} (serving {avg_members} members)",
-                inline=False
+                inline=False,
             )
 
-            await ctx.send(content=f"", embed=embed)
+            await ctx.send(content="", embed=embed)
 
     @commands.command(name="ping", descriptions="Pong!")
     async def ping(self, ctx: commands.Context):
@@ -84,17 +84,16 @@ class About(commands.Cog):
             "my tonka",
             "cloud based septic tank",
         ]
-        
+
         sent = await ctx.send("Pinging...")
         await sent.edit(
             f"pinged **{choice(quotes)}**, it took {self.bot.latency * 1000:.0f}ms"
         )
         # (edit {datetime.now().timestamp() - sent.created_at.timestamp():.0f}ms)
-        
 
     @nextcord.slash_command(name="about", description=_("cmds.about"))
     async def about_slash(self, ctx: nextcord.Interaction):
-        """ Pong! """
+        """Pong!"""
         await self.about(ctx)
 
 

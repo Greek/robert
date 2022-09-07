@@ -1,3 +1,25 @@
+"""
+Copyright (c) 2021-present Onyx Studios
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 import nextcord
 
 from nextcord import TextChannel
@@ -77,7 +99,7 @@ class Config(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs_whitelist(self, ctx, channel: TextChannel):
         try:
-            res = self.config_coll.find_one({"_id": ctx.guild.id})
+            res = self.bot.mguild_config.find_one({"_id": ctx.guild.id})
 
             try:
                 if str(channel.id) in res["messageLogIgnore"]:
@@ -115,7 +137,7 @@ class Config(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs_whitelist_remove(self, ctx, channel: TextChannel):
         try:
-            res = self.config_coll.find_one({"_id": ctx.guild.id})
+            res = self.bot.config_coll.find_one({"_id": ctx.guild.id})
 
             try:
                 if channel.id not in res["messageLogIgnore"]:
@@ -124,7 +146,7 @@ class Config(commands.Cog):
                             _("cmds.config.logs.message.res.whitelist.not_found")
                         )
                     )
-            except Exception as e:
+            except Exception as error:
                 return await ctx.send(
                     embed=embed.warn_embed_ephemeral(
                         _("cmds.config.logs.message.res.whitelist.not_found")
@@ -189,8 +211,8 @@ class Config(commands.Cog):
                     # f'Set welcome message to "{message}" in {channel.mention}.'
                 )
             )
-        except Exception as e:
-            print(e)
+        except Exception as error:
+            print(error)
 
     # Logs end
 
@@ -221,8 +243,8 @@ class Config(commands.Cog):
                     # f'Set welcome message to "{message}" in {channel.mention}.'
                 )
             )
-        except Exception as e:
-            await ctx.send(e)
+        except Exception as error:
+            await ctx.send(error)
 
     @welcome.command(name="clear", description=_("cmds.config.welcome.desc"))
     @commands.has_guild_permissions(manage_channels=True)
@@ -241,8 +263,8 @@ class Config(commands.Cog):
                     )
                 )
             )
-        except Exception as e:
-            await ctx.send(e)
+        except Exception as error:
+            await ctx.send(error)
 
     # Welcome end
 
@@ -275,8 +297,8 @@ class Config(commands.Cog):
                     )
                 )
             )
-        except Exception as e:
-            await ctx.send(e)
+        except Exception as error:
+            await ctx.send(error)
 
     @giveaways.command(name="clear", description=_("cmds.config.giveaway.set.desc"))
     @commands.has_guild_permissions(manage_channels=True)
@@ -299,8 +321,8 @@ class Config(commands.Cog):
                     )
                 )
             )
-        except Exception as e:
-            await ctx.send(e)
+        except Exception as error:
+            await ctx.send(error)
 
 
 def setup(bot):

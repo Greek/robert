@@ -1,5 +1,5 @@
 """
-Copyright (c) 2021-present flower and contributors
+Copyright (c) 2021-present Onyx Studios
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -63,7 +63,7 @@ class Fun(commands.Cog):
         )
         embed.add_field(
             name="Roles",
-            value=f", ".join([r.mention for r in member.roles[::-1]]),
+            value=", ".join([r.mention for r in member.roles[::-1]]),
             inline=False,
         )
         embed.set_footer(text="ID: " + str(member.id))
@@ -128,8 +128,8 @@ class Fun(commands.Cog):
             else:
                 member = member or ctx.author
             await ctx.send(member.avatar.with_format("webp").with_size(2048))
-        except Exception as e:
-            await create_error_log(self, ctx, e)
+        except Exception as error:
+            await create_error_log(self, ctx, error)
 
     @nextcord.slash_command(name="avatar", description=_("cmds.avatar.desc"))
     async def get_user_avatar_slash(
@@ -151,9 +151,7 @@ class Fun(commands.Cog):
         await ctx.send(f"No, you're {ctx.author.name}!")
 
     @commands.command(name="emoji", aliases=["e", "emote", "jumbo"])
-    async def _enlarge_emoji(
-        self, ctx: commands.Context, emoji: nextcord.PartialEmoji
-    ):
+    async def _enlarge_emoji(self, ctx: commands.Context, emoji: nextcord.PartialEmoji):
         return await ctx.send(emoji.url)
 
 

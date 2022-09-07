@@ -1,6 +1,6 @@
+import os
 import nextcord
 import pylast
-import os
 
 from nextcord.ext import commands
 from pymongo import MongoClient
@@ -8,7 +8,6 @@ from pymongo import MongoClient
 from cogs.lf import Lastfm
 
 from utils.default import translate as _
-from utils.data import Bot
 
 
 class LfSlash(commands.Cog):

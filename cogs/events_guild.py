@@ -1,5 +1,27 @@
-import nextcord
+"""
+Copyright (c) 2021-present Onyx Studios
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 import json
+import nextcord
 
 from nextcord.ext import commands
 from utils import embed as embed2, default
@@ -13,13 +35,14 @@ class EventsGuild(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: nextcord.Guild):
-        f = open("./config.json")
-        config = json.load(f)
-        guilds = config.get("allowlistServers")
+        file = open("./config.json")
+        config = json.load(file)
+        # guilds = config.get("allowlistServers")
+
         try:
             cid = int(config.get("guild_log"))
         except ValueError:
-            return print("[Guild Log] Tried to log join, no channel ID found in config")
+            return
 
         owner: nextcord.User = await self.bot.fetch_user(guild.owner_id)
         log_channel: nextcord.TextChannel = self.bot.get_channel(cid)
@@ -47,19 +70,18 @@ class EventsGuild(commands.Cog):
             embed.add_field(
                 name="Invite code", value=f"Could not fetch invite.", inline=True
             )
-            pass
-        except:
+        # pylint: disable=W0703
+        except Exception:
             embed.add_field(
                 name="Invite code", value="Failed to print invites", inline=True
             )
-            pass
         await log_channel.send(embed=embed)
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: nextcord.Guild):
-        f = open("config.json")
-        config = json.load(f)
-        guilds = config.get("allowlistServers")
+        file = open("config.json")
+        config = json.load(file)
+        # guilds = config.get("allowlistServers")
         try:
             cid = int(config.get("guild_log"))
         except ValueError:

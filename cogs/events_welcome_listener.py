@@ -13,8 +13,8 @@ class EventsWelcomeListener(commands.Cog):
         self.bot = bot
 
         self.cluster = MongoClient(os.environ.get("MONGO_DB"))
-        self.db = self.cluster[os.environ.get("MONGO_NAME")]
-        self.config_coll = self.db["guild-configs"]
+        self.database = self.cluster[os.environ.get("MONGO_NAME")]
+        self.config_coll = self.database["guild-configs"]
 
     @commands.Cog.listener()
     async def on_member_join(self, member: nextcord.Member):
@@ -34,8 +34,9 @@ class EventsWelcomeListener(commands.Cog):
             channel = self.bot.get_channel(res["welcomeChannel"])
 
             await channel.send(parsed_message)
-        except Exception as e:
+        except nextcord.errors.Forbidden:
             return
+
 
 def setup(bot):
     bot.add_cog(EventsWelcomeListener(bot))

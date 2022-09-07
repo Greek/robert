@@ -1,6 +1,4 @@
 import nextcord
-import pymongo
-import os
 
 from nextcord.ext import commands
 
@@ -25,7 +23,7 @@ class Messages(commands.Cog):
             return
 
         log = self.bot.get_channel(cid)
-        tz = timezone("EST")
+        timezone_est = timezone("EST")
 
         try:
             if message.channel.id in res["messageLogIgnore"]:
@@ -40,7 +38,7 @@ class Messages(commands.Cog):
             return
 
         embed: nextcord.Embed = default.branded_embed(
-            title=f"Message deleted",
+            title="Message deleted",
             description=f"<#{message.to_reference().channel_id}>",
             color=eutil.failed_embed_color,
             inline=True,
@@ -55,7 +53,7 @@ class Messages(commands.Cog):
             else "https://canary.discord.com/assets/c09a43a372ba81e3018c3151d4ed4773.png",
         )
         # embed.set_image(url=message.attachments[0].proxy_url) if message.attachments else None
-        embed.timestamp = message.created_at.now(tz=tz)
+        embed.timestamp = message.created_at.now(tz=timezone_est)
         embed.set_footer(
             text=f"Message ID: {message.id}" + f"\nAuthor ID: {message.author.id}\n"
         )
@@ -74,7 +72,7 @@ class Messages(commands.Cog):
             cid = res["messageLog"]
             log = self.bot.get_channel(cid)
 
-            tz = timezone("EST")
+            timezone_est = timezone("EST")
 
             try:
                 if message.channel.id in res["messageLogIgnore"]:
@@ -89,7 +87,7 @@ class Messages(commands.Cog):
                 return
 
             embed: nextcord.Embed = default.branded_embed(
-                title=f"Message edited",
+                title="Message edited",
                 description=f"<#{message.to_reference().channel_id}> ([Go to message]({message.to_reference().jump_url}))",
                 color=eutil.warn_embed_color,
                 inline=True,
@@ -102,12 +100,12 @@ class Messages(commands.Cog):
                 if message.author.avatar
                 else "https://canary.discord.com/assets/c09a43a372ba81e3018c3151d4ed4773.png",
             )
-            embed.timestamp = message.created_at.now(tz=tz)
+            embed.timestamp = message.created_at.now(tz=timezone_est)
             embed.set_footer(text=f"Author ID: {message.author.id}\n")
 
             await log.send(embed=embed)
-        except Exception as e:
-            print(e)
+        except Exception as error:
+            print(error)
 
 
 def setup(bot):
