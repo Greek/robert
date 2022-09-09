@@ -107,6 +107,35 @@ class Bot(AutoShardedBot):
 
         await super().start(*args, **kwargs)
 
+    async def create_error_log(self, ctx: Interaction, err):
+        f = open("config.json")
+        config = json.load(f)
+        channel_id = int(config.get("error_reporting"))
+
+        log = self.bot.get_channel(channel_id)
+        ref_id = uuid.uuid4()
+        if log is None:
+            return print("[Error] Couldn't find log channel. Printing:\n", err)
+
+        embed = nextcord.Embed(
+            color=uembed.warn_embed_color,
+            description=f"⚠️ {_('events.command_error.title')}",
+        )
+        embed.set_footer(text=f"{ref_id}")
+
+        embed_error = nextcord.Embed(
+            color=uembed.failed_embed_color,
+            title="Error",
+            description=f"**Information**\nInvoked command: `{ctx.message.content if isinstance(ctx, Context) else ctx.application_command}`\n"
+            + f"Invoked by: `{str(ctx.author if isinstance(ctx, Context) else ctx.user)} ({ctx.author.id if isinstance(ctx, Context) else ctx.user.id})`"
+            + f"\nGuild Name & ID: `{str(ctx.guild)} ({ctx.guild.id})`"
+            + f"\n\nTrace: {traceback_maker(err, advance=True)}",
+        )
+        embed_error.set_footer(text=f"Diagnosis code: {ref_id}")
+
+        await log.send(embed=embed_error)
+        await ctx.send(embed=embed)
+
 
 class HelpFormat(MinimalHelpCommand):
     def get_destination(self, no_pm: bool = False):
@@ -193,33 +222,3 @@ class HelpFormat(MinimalHelpCommand):
         except nextcord.Forbidden:
             destination = self.get_destination(no_pm=True)
             await destination.send(_("events.forbidden_dm"))
-
-
-async def create_error_log(self, ctx: Interaction, err):
-    f = open("config.json")
-    config = json.load(f)
-    cid = int(config.get("error_reporting"))
-
-    log = self.bot.get_channel(cid)
-    ref_id = uuid.uuid4()
-    if log is None:
-        return print("[Error] Couldn't find log channel. Printing:\n", err)
-
-    embed = nextcord.Embed(
-        color=uembed.warn_embed_color,
-        description=f"⚠️ {_('events.command_error.title')}",
-    )
-    embed.set_footer(text=f"{ref_id}")
-
-    embed_error = nextcord.Embed(
-        color=uembed.failed_embed_color,
-        title="Error",
-        description=f"**Information**\nInvoked command: `{ctx.message.content if isinstance(ctx, Context) else ctx.application_command}`\n"
-        + f"Invoked by: `{str(ctx.author if isinstance(ctx, Context) else ctx.user)} ({ctx.author.id if isinstance(ctx, Context) else ctx.user.id})`"
-        + f"\nGuild Name & ID: `{str(ctx.guild)} ({ctx.guild.id})`"
-        + f"\n\nTrace: {traceback_maker(err, advance=True)}",
-    )
-    embed_error.set_footer(text=f"Diagnosis code: {ref_id}")
-
-    await log.send(embed=embed_error)
-    await ctx.send(embed=embed)

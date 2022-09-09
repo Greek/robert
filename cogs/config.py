@@ -26,7 +26,7 @@ from nextcord import TextChannel
 from nextcord.ext import commands
 
 from utils import embed
-from utils.data import Bot, create_error_log
+from utils.data import Bot
 from utils.default import translate as _
 
 
@@ -132,7 +132,7 @@ class Config(commands.Cog):
                 )
             )
         except Exception as error:
-            await create_error_log(self, ctx, error)
+            await self.bot.create_error_log(self, ctx, error)
 
     @messages.command(
         name="unwhitelist", description=_("cmds.config.logs.message.desc_whitelist")
@@ -172,7 +172,7 @@ class Config(commands.Cog):
                 )
             )
         except Exception as error:
-            await create_error_log(self, ctx, error)
+            await self.bot.create_error_log(self, ctx, error)
 
     @messages.command(
         name="clearwhitelist", description=_("cmds.config.logs.message.desc_whitelist")
@@ -193,7 +193,7 @@ class Config(commands.Cog):
                 )
             )
         except Exception as error:
-            await create_error_log(self, ctx, error)
+            await self.bot.create_error_log(self, ctx, error)
 
     @messages.command(
         name="clear", description=_("cmds.config.logs.message.desc_clear")

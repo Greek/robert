@@ -10,7 +10,7 @@ from pytimeparse.timeparse import timeparse
 from dotenv import dotenv_values, load_dotenv
 
 
-from utils.data import Bot, create_error_log
+from utils.data import Bot
 from utils.embed import success_embed_ephemeral
 
 
@@ -61,7 +61,7 @@ class Giveaways(commands.Cog):
                 )
             except Exception as error:
                 ctx = self.bot
-                await create_error_log(self, ctx, error)
+                await self.bot.create_error_log(self, ctx, error)
 
     @tasks.loop(count=1)
     async def subscribe_expiry_handler(self):
@@ -173,7 +173,7 @@ class Giveaways(commands.Cog):
                 )
 
             except Exception as error:
-                await create_error_log(self, ctx, error)
+                await self.bot.create_error_log(self, ctx, error)
         else:
             return await ctx.send("As you wish, captain.")
 

@@ -10,20 +10,14 @@ generator client {
 }
 
 model GuildConfiguration {
-  id                      BigInt                 @id // Guild ID
-  message_log_channel_id  BigInt?
-  message_log_ignore_list MessageLogIgnoreList[]
-  welcome_channel         BigInt?
-  welcome_greeting        String?
-  giveaway_channel        BigInt?
+  id                     BigInt  @id // Guild ID
+  message_log_channel_id BigInt?
+  // message_log_ignore_list BigInt[] Handled in Mongo.
+  welcome_channel        BigInt?
+  welcome_greeting       String?
+  giveaway_channel       BigInt?
 }
 
 model ToiletGuild {
   id BigInt @id
-}
-
-model MessageLogIgnoreList {
-  guildConfigurationId BigInt              @id
-  GuildConfiguration   GuildConfiguration? @relation(fields: [guildConfigurationId], references: [id])
-  channel_id           BigInt
 }

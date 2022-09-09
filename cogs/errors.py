@@ -25,7 +25,7 @@ import nextcord
 from nextcord.ext import commands, application_checks
 from nextcord.ext.commands import errors
 
-from utils.data import create_error_log
+from utils.data import Bot
 from utils.default import translate as _
 from utils.embed import (
     missing_permissions,
@@ -37,13 +37,13 @@ from utils.embed import (
 class Errors(commands.Cog):
     """Command error handlers"""
 
-    def __init__(self, bot):
+    def __init__(self, bot: Bot):
         self.bot = bot
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, err):
         if isinstance(err, errors.CommandInvokeError):
-            await create_error_log(self, ctx, err)
+            await self.bot.create_error_log(self, ctx, err)
 
         if isinstance(err, errors.MissingPermissions):
             await ctx.send(
