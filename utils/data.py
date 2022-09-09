@@ -29,6 +29,8 @@ import logging
 import itertools
 import nextcord
 import asyncpg
+import motor.motor_asyncio
+
 
 from nextcord import Interaction
 from nextcord.ext.commands import AutoShardedBot, MinimalHelpCommand, Context
@@ -37,7 +39,6 @@ from prisma import Prisma
 from utils import default, embed as uembed
 from utils.default import translate as _, traceback_maker
 
-from pymongo import MongoClient
 
 do_not_load = ("cogs.interactives", "cogs.gw", "cogs.mod")
 
@@ -94,7 +95,9 @@ class Bot(AutoShardedBot):
             raise exc
 
     async def start(self, *args, **kwargs):
-        self.mclient = MongoClient(os.environ.get("MONGO_DB"))
+        self.mclient = motor.motor_asyncio.AsyncIOMotorClient(
+            os.environ.get("MONGO_DB")
+        )
         self.mdb = self.mclient[os.environ.get("MONGO_NAME")]
 
         self.pool = await asyncpg.create_pool(dsn=os.environ.get("DATABASE_DSN"))
