@@ -68,7 +68,7 @@ class EventsGuild(commands.Cog):
             )
         except nextcord.errors.Forbidden:
             embed.add_field(
-                name="Invite code", value=f"Could not fetch invite.", inline=True
+                name="Invite code", value="Could not fetch invite.", inline=True
             )
         # pylint: disable=W0703
         except Exception:

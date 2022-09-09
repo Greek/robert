@@ -105,9 +105,11 @@ class Giveaways(commands.Cog):
         def check(message):
             return message.author == ctx.author
 
-        res = self.bot.mguild_config.find_one({"_id": ctx.guild.id})
+        res = await self.bot.prisma.guildconfiguration.find_first(
+            where={"id": ctx.guild.id}
+        )
         try:
-            res["giveawayChannel"]
+            res.giveaway_channel
         except KeyError:
             return await ctx.send("Please provide a giveaway channel in the config!")
 
@@ -142,7 +144,7 @@ class Giveaways(commands.Cog):
             except asyncio.TimeoutError:
                 return await ctx.send("You took too long! Action cancelled.")
             dedicated_channel: nextcord.TextChannel = self.bot.get_channel(
-                int(res["giveawayChannel"])
+                res.giveaway_channel
             )
 
             try:
@@ -173,6 +175,7 @@ class Giveaways(commands.Cog):
                 )
 
             except Exception as error:
+                print(error)
                 await self.bot.create_error_log(self, ctx, error)
         else:
             return await ctx.send("As you wish, captain.")

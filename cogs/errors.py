@@ -43,7 +43,7 @@ class Errors(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, err):
         if isinstance(err, errors.CommandInvokeError):
-            await self.bot.create_error_log(self, ctx, err)
+            await self.bot.create_error_log(ctx, err)
 
         if isinstance(err, errors.MissingPermissions):
             await ctx.send(

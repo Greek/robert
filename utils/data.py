@@ -115,7 +115,7 @@ class Bot(AutoShardedBot):
         config = json.load(f)
         channel_id = int(config.get("error_reporting"))
 
-        log = self.bot.get_channel(channel_id)
+        log = self.get_channel(channel_id)
         ref_id = uuid.uuid4()
         if log is None:
             return print("[Error] Couldn't find log channel. Printing:\n", err)

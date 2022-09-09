@@ -103,7 +103,7 @@ class Config(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs_whitelist(self, ctx, channel: TextChannel):
         try:
-            res = self.bot.mguild_config.find_one({"_id": ctx.guild.id})
+            res = await self.bot.mguild_config.find_one({"_id": ctx.guild.id})
 
             try:
                 if channel.id in res["messageLogIgnore"]:
@@ -117,7 +117,7 @@ class Config(commands.Cog):
             except:
                 pass
 
-            self.bot.mguild_config.find_one_and_update(
+            await self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$push": {"messageLogIgnore": channel.id}},
                 upsert=True,
@@ -141,7 +141,7 @@ class Config(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs_whitelist_remove(self, ctx, channel: TextChannel):
         try:
-            res = self.bot.mguild_config.find_one({"_id": ctx.guild.id})
+            res = await self.bot.mguild_config.find_one({"_id": ctx.guild.id})
 
             try:
                 if channel.id not in res["messageLogIgnore"]:
@@ -157,7 +157,7 @@ class Config(commands.Cog):
                     )
                 )
 
-            self.bot.mguild_config.find_one_and_update(
+            await self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$pull": {"messageLogIgnore": channel.id}},
                 upsert=True,
@@ -181,7 +181,7 @@ class Config(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs_whitelist_clear(self, ctx):
         try:
-            self.bot.mguild_config.find_one_and_update(
+            await self.bot.mguild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$unset": {"messageLogIgnore": f""}},
                 upsert=True,
@@ -309,14 +309,12 @@ class Config(commands.Cog):
             if channel is None:
                 return await ctx.send(_("cmds.config.giveaway.set.not_found"))
 
-            self.bot.mguild_config.find_one_and_update(
-                {"_id": ctx.guild.id},
-                {
-                    "$set": {
-                        "giveawayChannel": channel.id,
-                    }
+            await self.bot.prisma.guildconfiguration.upsert(
+                where={"id": ctx.guild.id},
+                data={
+                    "create": {"id": ctx.guild.id, "giveaway_channel": channel.id},
+                    "update": {"id": ctx.guild.id, "giveaway_channel": channel.id},
                 },
-                upsert=True,
             )
             await ctx.send(
                 embed=embed.success_embed_ephemeral(
@@ -334,14 +332,12 @@ class Config(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def clear_giveaway_channel(self, ctx: commands.Context):
         try:
-            self.bot.mguild_config.find_one_and_update(
-                {"_id": ctx.guild.id},
-                {
-                    "$unset": {
-                        "giveawayChannel": "",
-                    }
+            await self.bot.prisma.guildconfiguration.upsert(
+                where={"id": ctx.guild.id},
+                data={
+                    "create": {"id": ctx.guild.id, "giveaway_channel": None},
+                    "update": {"id": ctx.guild.id, "giveaway_channel": None},
                 },
-                upsert=True,
             )
             await ctx.send(
                 embed=embed.success_embed_ephemeral(
