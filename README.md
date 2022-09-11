@@ -2,16 +2,6 @@
 
 A monorepository holding all the code responsible for the Toilet bot, API and dash.
 
-## monorepo setup
-
-To begin coding in the monorepo, ensure you have your IDE opened in the root
-directory of the repository. Do NOT open your IDE in the place you wish to edit.
-
-Follow these installation steps:
-
-1. Begin with installing the **recommended** version of [NodeJS](https://nodejs.org/en/)
-2. Install [Yarn v1](https://classic.yarnpkg.com/en/docs/install)
-
 # how to run (docker)
 
 1. Create a working directory for the bot to hold the `.env` and `config.json` files.
@@ -36,7 +26,8 @@ Steps:
 4. In the `discord` directory, copy `config.json.example` to `config.json`
    and change [appropriate values][values].
 5. In the `discord` directory, copy `.env.example` to `.env` and change the values.
-6. Run `python discord/bot.py`
+6. If you have Docker installed, run `cd docker && docker-compose up -d`
+7. Run `python bot.py`
 
 ## config settings
 
