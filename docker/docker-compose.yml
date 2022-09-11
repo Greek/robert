@@ -10,3 +10,19 @@ services:
       - 5432:5432
     volumes:
       - ./postgres-data:/var/lib/postgresql
+
+  redis:
+    container_name: toilet-dev-temp-store
+    image: redis:7.0.4
+    restart: always
+    command: "redis-server /usr/local/etc/redis/redis.conf --save 20 1 --loglevel warning"
+    ports:
+      - 6379:6379
+    hostname: 0.0.0.0
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - cache:/data
+
+volumes:
+  cache:
+    driver: local
