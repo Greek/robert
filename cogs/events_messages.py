@@ -17,8 +17,12 @@ class Messages(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self, message: nextcord.Message):
         try:
-            res = self.bot.mguild_config.find_one({"_id": message.guild.id})
-            cid = res["messageLog"]
+            res = await self.bot.prisma.guildconfiguration.find_unique(
+                where={"id": message.guild.id}
+            )
+            mongo_res = await self.bot.mguild_config.find_one({"_id": message.guild.id})
+
+            cid = res.message_log_channel_id
         except:
             return
 
@@ -26,7 +30,7 @@ class Messages(commands.Cog):
         timezone_est = timezone("EST")
 
         try:
-            if message.channel.id in res["messageLogIgnore"]:
+            if message.channel.id in mongo_res["messageLogIgnore"]:
                 return
         except:
             pass
@@ -68,9 +72,19 @@ class Messages(commands.Cog):
             if message.content == new_message.content:
                 return
 
-            res = self.bot.mguild_config.find_one({"_id": message.guild.id})
-            cid = res["messageLog"]
+            res = await self.bot.prisma.guildconfiguration.find_unique(
+                where={"id": message.guild.id}
+            )
+            mongo_res = await self.bot.mguild_config.find_one({"_id": message.guild.id})
+            cid = res.message_log_channel_id
+
             log = self.bot.get_channel(cid)
+
+            try:
+                if message.channel.id in mongo_res["messageLogIgnore"]:
+                    return
+            except:
+                pass
 
             timezone_est = timezone("EST")
 

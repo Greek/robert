@@ -5,11 +5,13 @@ from nextcord.ext import commands
 
 from pymongo import MongoClient
 
+from utils.data import Bot
+
 
 class EventsWelcomeListener(commands.Cog):
     """Member welcome listener"""
 
-    def __init__(self, bot):
+    def __init__(self, bot: Bot):
         self.bot = bot
 
         self.cluster = MongoClient(os.environ.get("MONGO_DB"))
@@ -19,10 +21,11 @@ class EventsWelcomeListener(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member: nextcord.Member):
         try:
-            res = self.config_coll.find_one({"_id": member.guild.id})
+            res = await self.bot.prisma.guildconfiguration.find_unique(
+                where={"id": member.guild.id}
+            )
             parsed_message = (
-                res["welcomeGreeting"]
-                .replace("@everyone", "everyone")
+                res.welcome_greeting.replace("@everyone", "everyone")
                 .replace("@here", "here")
                 .replace("{mention}", f"{member.mention}")
                 .replace("{name}", f"{member.name}")
@@ -31,7 +34,7 @@ class EventsWelcomeListener(commands.Cog):
                 .replace("{user.name}", f"{member.name}")
                 .replace("{user.tag}", f"{member.name}#{member.discriminator}")
             )
-            channel = self.bot.get_channel(res["welcomeChannel"])
+            channel = self.bot.get_channel(res.welcome_channel)
 
             await channel.send(parsed_message)
         except nextcord.errors.Forbidden:

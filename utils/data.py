@@ -20,23 +20,27 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import nextcord
-import itertools
 import sys
-import logging
 import os
 import json
 import uuid
+import logging
+
+import itertools
+import nextcord
+import asyncpg
+import motor.motor_asyncio
+
 
 from nextcord import Interaction
 from nextcord.ext.commands import AutoShardedBot, MinimalHelpCommand, Context
+from prisma import Prisma
 
 from utils import default, embed as uembed
 from utils.default import translate as _, traceback_maker
 
-from pymongo import MongoClient
 
-do_not_load = ("cogs.interactives",)
+do_not_load = ("cogs.interactives", "cogs.gw", "cogs.mod")
 
 
 class Bot(AutoShardedBot):
@@ -44,9 +48,11 @@ class Bot(AutoShardedBot):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.logger = logging.getLogger("nextcord")
         try:
-            logger = logging.getLogger("nextcord")
-            logger.setLevel(logging.INFO)
+
+            self.logger.setLevel(logging.INFO)
+            self.logger.name = "toilet"
 
             handler = logging.FileHandler(
                 filename="./logs/discord.log", encoding="utf-8", mode="a"
@@ -62,8 +68,8 @@ class Bot(AutoShardedBot):
                 logging.Formatter("[%(levelname)s] [%(name)s] %(message)s")
             )
 
-            logger.addHandler(handler)
-            logger.addHandler(handler2)
+            self.logger.addHandler(handler)
+            self.logger.addHandler(handler2)
 
             self.load_extension("jishaku")
             for cog in os.listdir("./cogs"):
@@ -89,13 +95,49 @@ class Bot(AutoShardedBot):
             raise exc
 
     async def start(self, *args, **kwargs):
-        self.mclient = MongoClient(os.environ.get("MONGO_DB"))
+        self.mclient = motor.motor_asyncio.AsyncIOMotorClient(
+            os.environ.get("MONGO_DB")
+        )
         self.mdb = self.mclient[os.environ.get("MONGO_NAME")]
+
+        self.pool = await asyncpg.create_pool(dsn=os.environ.get("DATABASE_DSN"))
+        self.prisma = Prisma()
+        await self.prisma.connect()
+        self.logger.info("Connected to PostgreSQL.")
 
         self.mguild_config = self.mdb.guildconfig
         self.mlastfm = self.mdb.lastfm
 
         await super().start(*args, **kwargs)
+
+    async def create_error_log(self, ctx: Interaction, err):
+        f = open("config.json")
+        config = json.load(f)
+        channel_id = int(config.get("error_reporting"))
+
+        log = self.get_channel(channel_id)
+        ref_id = uuid.uuid4()
+        if log is None:
+            return print("[Error] Couldn't find log channel. Printing:\n", err)
+
+        embed = nextcord.Embed(
+            color=uembed.warn_embed_color,
+            description=f"⚠️ {_('events.command_error.title')}",
+        )
+        embed.set_footer(text=f"{ref_id}")
+
+        embed_error = nextcord.Embed(
+            color=uembed.failed_embed_color,
+            title="Error",
+            description=f"**Information**\nInvoked command: `{ctx.message.content if isinstance(ctx, Context) else ctx.application_command}`\n"
+            + f"Invoked by: `{str(ctx.author if isinstance(ctx, Context) else ctx.user)} ({ctx.author.id if isinstance(ctx, Context) else ctx.user.id})`"
+            + f"\nGuild Name & ID: `{str(ctx.guild)} ({ctx.guild.id})`"
+            + f"\n\nTrace: {traceback_maker(err, advance=True)}",
+        )
+        embed_error.set_footer(text=f"Diagnosis code: {ref_id}")
+
+        await log.send(embed=embed_error)
+        await ctx.send(embed=embed)
 
 
 class HelpFormat(MinimalHelpCommand):
@@ -183,33 +225,3 @@ class HelpFormat(MinimalHelpCommand):
         except nextcord.Forbidden:
             destination = self.get_destination(no_pm=True)
             await destination.send(_("events.forbidden_dm"))
-
-
-async def create_error_log(self, ctx: Interaction, err):
-    f = open("config.json")
-    config = json.load(f)
-    cid = int(config.get("error_reporting"))
-
-    log = self.bot.get_channel(cid)
-    ref_id = uuid.uuid4()
-    if log is None:
-        return print("[Error] Couldn't find log channel. Printing:\n", err)
-
-    embed = nextcord.Embed(
-        color=uembed.warn_embed_color,
-        description=f"⚠️ {_('events.command_error.title')}",
-    )
-    embed.set_footer(text=f"{ref_id}")
-
-    embed_error = nextcord.Embed(
-        color=uembed.failed_embed_color,
-        title="Error",
-        description=f"**Information**\nInvoked command: `{ctx.message.content if isinstance(ctx, Context) else ctx.application_command}`\n"
-        + f"Invoked by: `{str(ctx.author if isinstance(ctx, Context) else ctx.user)} ({ctx.author.id if isinstance(ctx, Context) else ctx.user.id})`"
-        + f"\nGuild Name & ID: `{str(ctx.guild)} ({ctx.guild.id})`"
-        + f"\n\nTrace: {traceback_maker(err, advance=True)}",
-    )
-    embed_error.set_footer(text=f"Diagnosis code: {ref_id}")
-
-    await log.send(embed=embed_error)
-    await ctx.send(embed=embed)

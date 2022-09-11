@@ -1,7 +1,7 @@
 nextcord
 python-i18n[yaml]
 python-dotenv
-pymongo
+motor
 pymongo[srv]
 redis>=4.2.0rc1
 requests
@@ -13,3 +13,5 @@ pytimeparse
 pylast
 pylint
 black
+asyncpg
+prisma

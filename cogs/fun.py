@@ -27,12 +27,12 @@ from nextcord import SlashOption
 from nextcord.ext import commands
 
 from utils import default
+from utils.data import Bot
 from utils.default import translate as _
-from utils.data import create_error_log
 
 
 class Fun(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: Bot):
         self.bot = bot
 
     @commands.command(
@@ -129,7 +129,7 @@ class Fun(commands.Cog):
                 member = member or ctx.author
             await ctx.send(member.avatar.with_format("webp").with_size(2048))
         except Exception as error:
-            await create_error_log(self, ctx, error)
+            await self.bot.create_error_log(ctx, error)
 
     @nextcord.slash_command(name="avatar", description=_("cmds.avatar.desc"))
     async def get_user_avatar_slash(
