@@ -111,7 +111,7 @@ cmds:
       invalid:
         not_muted: "%{person} isn't muted."
 
-  nuke:
+  recreate:
     desc: "Re-create a channel instantly."
     warning:
       desc: "Are you sure you want to re-create %{channel}? You may need to re-adjust permissions."

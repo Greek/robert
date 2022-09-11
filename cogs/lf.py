@@ -8,7 +8,7 @@ from utils.constants import LASTFM_EMBED_COLOR
 from utils.default import translate as _
 from utils.embed import warn_embed_ephemeral
 from utils.perms import only_owner
-from utils.data import Bot, create_error_log
+from utils.data import Bot
 
 
 class Lastfm(commands.Cog):
@@ -106,7 +106,7 @@ class Lastfm(commands.Cog):
 
                     return await ctx.send(embed=lastfm_embed)
             except Exception as exc:
-                return await create_error_log(self, ctx, exc)
+                return await self.bot.create_error_log(self, ctx, exc)
 
         lastfm_embed = nextcord.Embed(color=LASTFM_EMBED_COLOR)
         lastfm_embed.set_author(name=f"Currently playing - {ctx.author.name}")
