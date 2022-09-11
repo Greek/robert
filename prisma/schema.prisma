@@ -10,13 +10,14 @@ generator client {
 }
 
 model GuildConfiguration {
-  id                     BigInt  @id // Guild ID
+  id                     BigInt   @id // Guild ID
   message_log_channel_id BigInt?
   // message_log_ignore_list BigInt[] Handled in Mongo.
   welcome_channel        BigInt?
   welcome_greeting       String?
   giveaway_channel       BigInt?
   mute_role              BigInt?
+  color_enabled          Boolean?
 }
 
 model ToiletGuild {

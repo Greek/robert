@@ -8,7 +8,6 @@ services:
       - POSTGRES_DB=toilet
     ports:
       - 5432:5432
-    hostname: 0.0.0.0
     volumes:
       - ./postgres-data:/var/lib/postgresql
 
