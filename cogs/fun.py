@@ -129,7 +129,7 @@ class Fun(commands.Cog):
                 member = member or ctx.author
             await ctx.send(member.avatar.with_format("webp").with_size(2048))
         except Exception as error:
-            await self.bot.create_error_log(self, ctx, error)
+            await self.bot.create_error_log(ctx, error)
 
     @nextcord.slash_command(name="avatar", description=_("cmds.avatar.desc"))
     async def get_user_avatar_slash(

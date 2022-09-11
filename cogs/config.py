@@ -132,7 +132,7 @@ class Config(commands.Cog):
                 )
             )
         except Exception as error:
-            await self.bot.create_error_log(self, ctx, error)
+            await self.bot.create_error_log(ctx, error)
 
     @messages.command(
         name="unwhitelist", description=_("cmds.config.logs.message.desc_whitelist")
@@ -172,7 +172,7 @@ class Config(commands.Cog):
                 )
             )
         except Exception as error:
-            await self.bot.create_error_log(self, ctx, error)
+            await self.bot.create_error_log(ctx, error)
 
     @messages.command(
         name="clearwhitelist", description=_("cmds.config.logs.message.desc_whitelist")
@@ -193,7 +193,7 @@ class Config(commands.Cog):
                 )
             )
         except Exception as error:
-            await self.bot.create_error_log(self, ctx, error)
+            await self.bot.create_error_log(ctx, error)
 
     @messages.command(
         name="clear", description=_("cmds.config.logs.message.desc_clear")

@@ -49,10 +49,10 @@ class ChannelRecreate(commands.Cog):
     def __init__(self, bot: nextcord.Client):
         self.bot = bot
 
-    @commands.command(name="nuke")
+    @commands.command(name="recreate")
     @commands.has_permissions(manage_channels=True)
     @commands.bot_has_guild_permissions(manage_channels=True)
-    async def _nuke(self, ctx: commands.Context):
+    async def _recreate(self, ctx: commands.Context):
         def check(interaction: nextcord.Interaction):
             return interaction.user
 
@@ -60,8 +60,8 @@ class ChannelRecreate(commands.Cog):
         await ctx.send(
             embed=cancellable_embed_ephemeral(
                 ctx.author,
-                _("cmds.nuke.warning.desc", channel=ctx.channel.mention),
-                _("cmds.nuke.warning.footer", timeout=f"{view.timeout:.0f}"),
+                _("cmds.recreate.warning.desc", channel=ctx.channel.mention),
+                _("cmds.recreate.warning.footer", timeout=f"{view.timeout:.0f}"),
             ),
             view=view,
         )

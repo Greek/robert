@@ -61,7 +61,7 @@ class Giveaways(commands.Cog):
                 )
             except Exception as error:
                 ctx = self.bot
-                await self.bot.create_error_log(self, ctx, error)
+                await self.bot.create_error_log(ctx, error)
 
     @tasks.loop(count=1)
     async def subscribe_expiry_handler(self):
@@ -108,9 +108,8 @@ class Giveaways(commands.Cog):
         res = await self.bot.prisma.guildconfiguration.find_first(
             where={"id": ctx.guild.id}
         )
-        try:
-            res.giveaway_channel
-        except KeyError:
+
+        if not res.giveaway_channel:
             return await ctx.send("Please provide a giveaway channel in the config!")
 
         await ctx.send(
@@ -118,7 +117,7 @@ class Giveaways(commands.Cog):
         )
         msg = await self.bot.wait_for("message", check=check, timeout=30)
         if msg.content == "yes".lower():
-            await ctx.send("What are you giving away?")
+            await ctx.send("What are you giving away? (Must be below 48 characters!)")
             try:
                 gw_prize = await self.bot.wait_for("message", check=check, timeout=30)
                 if len(gw_prize.content) > 48:
@@ -152,18 +151,15 @@ class Giveaways(commands.Cog):
                     return await ctx.send(
                         "Please re-run the command with a valid time. (30s, 2h, 3d, etc..)"
                     )
-                giveaway_embed = (
-                    nextcord.Embed(
-                        title=f"Giveaway: {gw_prize.content}",
-                        description=f"React with :tada: to enter this giveaway!\nThis giveaway will end <t:{parsed_gw_duration + int(time.time())}:R>.",
-                        color=nextcord.Embed.Empty,
-                    ).set_author(
-                        name=ctx.author.name,
-                        icon_url=ctx.author.avatar
-                        if ctx.author.avatar
-                        else "https://canary.discord.com/assets/c09a43a372ba81e3018c3151d4ed4773.png",
-                    )
-                    # .set_footer(text=f"")
+                giveaway_embed = nextcord.Embed(
+                    title=f"Giveaway: {gw_prize.content}",
+                    description=f"React with :tada: to enter this giveaway!\nThis giveaway will end <t:{parsed_gw_duration + int(time.time())}:R>.",
+                    color=None,
+                ).set_author(
+                    name=ctx.author.name,
+                    icon_url=ctx.author.avatar
+                    if ctx.author.avatar
+                    else "https://canary.discord.com/assets/c09a43a372ba81e3018c3151d4ed4773.png",
                 )
                 msg = await dedicated_channel.send(embed=giveaway_embed)
                 await msg.add_reaction("🎉")
@@ -175,8 +171,7 @@ class Giveaways(commands.Cog):
                 )
 
             except Exception as error:
-                print(error)
-                await self.bot.create_error_log(self, ctx, error)
+                await self.bot.create_error_log(ctx, error)
         else:
             return await ctx.send("As you wish, captain.")
 

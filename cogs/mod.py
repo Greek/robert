@@ -79,6 +79,7 @@ class Mod(commands.Cog):
         self.listen_messages.cancel()
 
     async def expiry_handler(self, msg) -> None:
+        self.bot.logger.debug(f"Recieved pubsub message:\n{msg}")
         if msg["data"].startswith("mute"):
             try:
                 data = msg["data"].split("-")
@@ -86,8 +87,10 @@ class Mod(commands.Cog):
                 member = guild.get_member(int(data[1]))
 
                 try:
-                    res = self.bot.mguild_config.find_one({"_id": guild.id})
-                    role = guild.get_role(res["muteRole"])
+                    res = await self.bot.prisma.guildconfiguration.find_unique(
+                        where={"id": self.guild_id}
+                    )
+                    role = guild.get_role(res.mute_role)
                 except:
                     return
 
@@ -95,7 +98,7 @@ class Mod(commands.Cog):
                 await member.remove_roles(role, reason="Mute expired.")
             except Exception as error:
                 ctx = self.bot
-                await self.bot.create_error_log(self, ctx, error)
+                await self.bot.create_error_log(ctx, error)
 
     @tasks.loop(count=1)
     async def subscribe_expiry_handler(self):
@@ -180,7 +183,7 @@ class Mod(commands.Cog):
                 )
             )
         except Exception as error:
-            await self.bot.create_error_log(self, ctx, error)
+            await self.bot.create_error_log(ctx, error)
             await ctx.send(embed=failed_embed_ephemeral("I can't kick that person."))
 
     @commands.command(name="ban", description=_("cmds.ban.desc"))
@@ -212,7 +215,7 @@ class Mod(commands.Cog):
                 )
             )
         except Exception as error:
-            await self.bot.create_error_log(self, ctx, error)
+            await self.bot.create_error_log(ctx, error)
             await ctx.send(embed=failed_embed_ephemeral("I can't ban that person."))
 
     @commands.command(
@@ -247,19 +250,25 @@ class Mod(commands.Cog):
                 return
 
             existing_mute = await self.redis.get(f"mute-{member.id}-{ctx.guild.id}")
-            res = self.bot.mguild_config.find_one({"_id": ctx.guild.id})
+            res = await self.bot.prisma.guildconfiguration.find_unique(
+                where={"id": ctx.guild.id}
+            )
 
             try:
-                role = ctx.guild.get_role(res["muteRole"])
-            except KeyError:
+                role = ctx.guild.get_role(res.mute_role)
+            except AttributeError:
                 role = await ctx.guild.create_role(name="Muted")
                 role.permissions.send_messages = False
                 channels = ctx.guild.channels
                 for channel in channels:
                     await channel.set_permissions(role, send_messages=False)
 
-                self.bot.mguild_config.find_one_and_update(
-                    {"_id": ctx.guild.id}, {"$set": {"muteRole": role.id}}
+                await self.bot.prisma.guildconfiguration.upsert(
+                    where={"id": ctx.guild.id},
+                    data={
+                        "create": {"id": ctx.guild.id, "mute_role": role.id},
+                        "update": {"id": ctx.guild.id, "mute_role": role.id},
+                    },
                 )
 
             if role is None:
@@ -269,8 +278,12 @@ class Mod(commands.Cog):
                 for channel in channels:
                     await channel.set_permissions(role, send_messages=False)
 
-                self.bot.mguild_config.find_one_and_update(
-                    {"_id": ctx.guild.id}, {"$set": {"muteRole": role.id}}
+                await self.bot.prisma.guildconfiguration.upsert(
+                    where={"id": ctx.guild.id},
+                    data={
+                        "create": {"id": ctx.guild.id, "mute_role": role.id},
+                        "update": {"id": ctx.guild.id, "mute_role": role.id},
+                    },
                 )
 
             if existing_mute:
@@ -321,7 +334,7 @@ class Mod(commands.Cog):
                 )
 
         except Exception as error:
-            await self.bot.create_error_log(self, ctx, error)
+            await self.bot.create_error_log(ctx, error)
 
     @commands.command(name="unmute", aliases=["um"], description="Un-mute a person.")
     @commands.has_guild_permissions(manage_messages=True)
@@ -344,10 +357,12 @@ class Mod(commands.Cog):
                     )
                 )
 
-            res = self.bot.mguild_config.find_one({"_id": ctx.guild.id})
+            res = await self.bot.prisma.guildconfiguration.find_unique(
+                where={"id": ctx.guild.id}
+            )
             try:
-                role = ctx.guild.get_role(res["muteRole"])
-            except KeyError:
+                role = ctx.guild.get_role(res.mute_role)
+            except AttributeError:
                 await ctx.send(
                     embed=success_embed_ephemeral(
                         _("cmds.unmute.res.success", person=member.mention)
@@ -378,7 +393,7 @@ class Mod(commands.Cog):
                 )
             )
         except Exception as error:
-            await self.bot.create_error_log(self, ctx, error)
+            await self.bot.create_error_log(ctx, error)
 
     @commands.command(
         name="servermute", aliases=["sm"], description="Server mute a person."
