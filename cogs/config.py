@@ -132,6 +132,7 @@ class Config(commands.Cog):
                 )
             )
         except Exception as error:
+            self.bot.logger.error(error)
             await self.bot.create_error_log(ctx, error)
 
     @messages.command(
