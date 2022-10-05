@@ -16,7 +16,7 @@ from utils.embed import (
 from utils.default import translate as _
 
 
-class Rmute(commands.Cog):
+class Imute(commands.Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
         self.guild_id = 932369210611494982
@@ -34,7 +34,7 @@ class Rmute(commands.Cog):
 
     async def expiry_handler(self, msg) -> None:
         self.bot.logger.debug(f"Recieved pubsub message:\n{msg}")
-        if msg["data"].startswith("rmute"):
+        if msg["data"].startswith("imute"):
             try:
                 data = msg["data"].split(":")
                 guild = self.bot.get_guild(int(data[2]))
@@ -44,12 +44,12 @@ class Rmute(commands.Cog):
                     res = await self.bot.prisma.guildconfiguration.find_unique(
                         where={"id": self.guild_id}
                     )
-                    role = guild.get_role(res.reaction_mute_role)
+                    role = guild.get_role(res.image_mute_role)
                 except:
                     return
 
-                self.bot.logger.debug(f"Reaction Mute expired from {self.redis}")
-                await member.remove_roles(role, reason="Reaction Mute expired.")
+                self.bot.logger.debug(f"Image Mute expired from {self.redis}")
+                await member.remove_roles(role, reason="Image Mute expired.")
             except Exception as error:
                 ctx = self.bot
                 await self.bot.create_error_log(ctx, error)
@@ -82,33 +82,34 @@ class Rmute(commands.Cog):
             res = await self.bot.prisma.guildconfiguration.find_unique(
                 where={"id": channel.guild.id}
             )
-            role = channel.guild.get_role(res.reaction_mute_role)
+            role = channel.guild.get_role(res.image_mute_role)
             await channel.set_permissions(
                 role,
-                add_reactions=False,
+                attach_files=False,
+                embed_links=False,
                 reason="Found new channel, adding permissions.",
             )
-            self.bot.logger.debug("rmute: Added role to channel")
+            self.bot.logger.debug("imute: Added role to channel")
         except:
             return
 
     @commands.Cog.listener()
     async def on_member_join(self, member: nextcord.Member):
-        reaction_mute_key = await self.redis.get(f"rmute:{member.id}:{member.guild.id}")
+        reaction_mute_key = await self.redis.get(f"imute:{member.id}:{member.guild.id}")
         if reaction_mute_key is not None:
             try:
                 res = await self.bot.prisma.guildconfiguration.find_unique(
                     where={"id": member.guild.id}
                 )
-                role = member.guild.get_role(res.reaction_mute_role)
+                role = member.guild.get_role(res.image_mute_role)
             except Exception as error:
                 self.bot.logger.debug(error)
 
             return await member.add_roles(
-                role, reason="Reaction Muted person re-joined the server. Muting again."
+                role, reason="Image Muted person re-joined the server. Muting again."
             )
 
-    @commands.command(name="rmute", description=_("cmds.rmute.desc"))
+    @commands.command(name="imute", description=_("cmds.imute.desc"))
     @commands.has_guild_permissions(manage_messages=True)
     @commands.bot_has_guild_permissions(manage_roles=True)
     @commands.guild_only()
@@ -122,56 +123,60 @@ class Rmute(commands.Cog):
             if await perms.check_priv(ctx, member=member):
                 return
 
-            existing_mute = await self.redis.get(f"rmute:{member.id}:{ctx.guild.id}")
+            existing_mute = await self.redis.get(f"imute:{member.id}:{ctx.guild.id}")
             res = await self.bot.prisma.guildconfiguration.find_unique(
                 where={"id": ctx.guild.id}
             )
 
             try:
-                role = ctx.guild.get_role(res.reaction_mute_role)
+                role = ctx.guild.get_role(res.image_mute_role)
             except AttributeError:
-                role = await ctx.guild.create_role(name="Reaction Muted")
+                role = await ctx.guild.create_role(name="Image Muted")
                 role.permissions.send_messages = False
                 channels = ctx.guild.channels
                 for channel in channels:
-                    await channel.set_permissions(role, add_reactions=False)
+                    await channel.set_permissions(
+                        role, attach_files=False, embed_links=False
+                    )
 
                 await self.bot.prisma.guildconfiguration.upsert(
                     where={"id": ctx.guild.id},
                     data={
-                        "create": {"id": ctx.guild.id, "reaction_mute_role": role.id},
-                        "update": {"id": ctx.guild.id, "reaction_mute_role": role.id},
+                        "create": {"id": ctx.guild.id, "image_mute_role": role.id},
+                        "update": {"id": ctx.guild.id, "image_mute_role": role.id},
                     },
                 )
 
             if role is None:
-                role = await ctx.guild.create_role(name="Reaction Muted")
+                role = await ctx.guild.create_role(name="Image Muted")
                 role.permissions.send_messages = False
                 channels = ctx.guild.channels
                 for channel in channels:
-                    await channel.set_permissions(role, add_reactions=False)
+                    await channel.set_permissions(
+                        role, attach_files=False, embed_links=False
+                    )
 
                 await self.bot.prisma.guildconfiguration.upsert(
                     where={"id": ctx.guild.id},
                     data={
-                        "create": {"id": ctx.guild.id, "reaction_mute_role": role.id},
-                        "update": {"id": ctx.guild.id, "reaction_mute_role": role.id},
+                        "create": {"id": ctx.guild.id, "image_mute_role": role.id},
+                        "update": {"id": ctx.guild.id, "image_mute_role": role.id},
                     },
                 )
 
             if existing_mute:
                 return await ctx.send(
                     embed=warn_embed_ephemeral(
-                        _("cmds.rmute.res.invalid.already_muted", person=member.mention)
+                        _("cmds.imute.res.invalid.already_muted", person=member.mention)
                     )
                 )
 
             try:
                 await member.add_roles(
                     role,
-                    reason=f"Reaction Muted by {ctx.author}"
+                    reason=f"Image Muted by {ctx.author}"
                     if isinstance(ctx, commands.Context)
-                    else f"Reaction Muted by {ctx.user}",
+                    else f"Image Muted by {ctx.user}",
                 )
             except nextcord.errors.Forbidden:
                 return
@@ -184,24 +189,22 @@ class Rmute(commands.Cog):
             #     )
 
             if parsed_duration is None:
-                await self.redis.set(
-                    f"rmute:{member.id}:{ctx.guild.id}", "Reaction Muted"
-                )
+                await self.redis.set(f"imute:{member.id}:{ctx.guild.id}", "Image Muted")
                 await ctx.send(
                     embed=success_embed_ephemeral(
-                        _("cmds.rmute.res.muted.forever", person=member.mention)
+                        _("cmds.imute.res.muted.forever", person=member.mention)
                     )
                 )
             else:
                 await self.redis.setex(
-                    f"rmute:{member.id}:{ctx.guild.id}",
+                    f"imute:{member.id}:{ctx.guild.id}",
                     parsed_duration,
-                    "Reaction Muted",
+                    "Image Muted",
                 )
                 return await ctx.send(
                     embed=success_embed_ephemeral(
                         _(
-                            "cmds.rmute.res.muted.temp",
+                            "cmds.imute.res.muted.temp",
                             person=member.mention,
                             duration=duration,
                         )
@@ -211,7 +214,7 @@ class Rmute(commands.Cog):
         except Exception as error:
             await self.bot.create_error_log(ctx, error)
 
-    @commands.command(name="runmute", aliases=["rum"], description="Un-mute a person.")
+    @commands.command(name="iunmute", aliases=["ium"], description="Un-mute a person.")
     @commands.has_guild_permissions(manage_messages=True)
     @commands.bot_has_guild_permissions(manage_roles=True)
     @commands.guild_only()
@@ -224,11 +227,11 @@ class Rmute(commands.Cog):
             if await perms.check_priv(ctx, member=member):
                 return
 
-            mute = await self.redis.get(f"rmute:{member.id}:{ctx.guild.id}")
+            mute = await self.redis.get(f"imute:{member.id}:{ctx.guild.id}")
             if mute is None:
                 return await ctx.send(
                     embed=warn_embed_ephemeral(
-                        _("cmds.runmute.res.invalid.not_muted", person=member.mention)
+                        _("cmds.iumnute.res.invalid.not_muted", person=member.mention)
                     )
                 )
 
@@ -236,36 +239,36 @@ class Rmute(commands.Cog):
                 where={"id": ctx.guild.id}
             )
             try:
-                role = ctx.guild.get_role(res.reaction_mute_role)
+                role = ctx.guild.get_role(res.image_mute_role)
 
             except AttributeError:
                 await ctx.send(
                     embed=success_embed_ephemeral(
-                        _("cmds.runmute.res.success", person=member.mention)
+                        _("cmds.iunmute.res.success", person=member.mention)
                     )
                 ),
                 return await self.redis.delete(
-                    f"rmute:{member.id}:{ctx.guild.id}"
+                    f"imute:{member.id}:{ctx.guild.id}"
                 )  # It doesn't exist anyway.
 
             if role is None:
                 await ctx.send(
                     embed=success_embed_ephemeral(
-                        _("cmds.runmute.res.success", person=member.mention)
+                        _("cmds.iunmute.res.success", person=member.mention)
                     )
                 ),
-                return await self.redis.delete(f"rmute:{member.id}:{ctx.guild.id}")
+                return await self.redis.delete(f"imute:{member.id}:{ctx.guild.id}")
 
-            await self.redis.delete(f"rmute:{member.id}:{ctx.guild.id}")
+            await self.redis.delete(f"imute:{member.id}:{ctx.guild.id}")
             await member.remove_roles(
                 role,
-                reason=f"Reaction Mute removed by {ctx.author}"
+                reason=f"Image Mute removed by {ctx.author}"
                 if isinstance(ctx, commands.Context)
-                else f"Reaction Mute removed by {ctx.user}",
+                else f"Image Mute removed by {ctx.user}",
             )
             await ctx.send(
                 embed=success_embed_ephemeral(
-                    _("cmds.runmute.res.success", person=member.mention)
+                    _("cmds.iumnute.res.success", person=member.mention)
                 )
             )
         except Exception as error:
@@ -273,4 +276,4 @@ class Rmute(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Rmute(bot))
+    bot.add_cog(Imute(bot))
