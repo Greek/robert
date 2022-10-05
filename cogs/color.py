@@ -11,13 +11,13 @@ class Color(commands.Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
 
-    async def _create_color_role(self, ctx: commands.Context, color):
+    async def create_color_role(self, ctx: commands.Context, color):
         existing_color_role: nextcord.Role = nextcord.utils.get(
             ctx.guild.roles, name=f"{str(ctx.author)}"
         )
 
         if existing_color_role:
-            await existing_color_role.delete(reason="New color requested.")
+            await existing_color_role.edit(color=color, reason="New color requested.")
 
         color_role = await ctx.guild.create_role(
             name=f"{str(ctx.author)}",
@@ -49,7 +49,7 @@ class Color(commands.Cog):
                     )
                 )
 
-            color_role = await self._create_color_role(ctx, color)
+            color_role = await self.create_color_role(ctx, color)
             await ctx.author.add_roles(color_role, reason="Requested color role.")
 
             return await ctx.send(
