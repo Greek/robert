@@ -1,9 +1,17 @@
 cmds:
+  generic:
+    res:
+      disabled_module: "Module `%{module_name}` is not enabled."
+
   about: "About the bot"
   avatar:
     desc: "Get a person's avatar"
     options:
       user: "The person's avatar you want to get"
+  color:
+    desc: "Change your role color!"
+    res:
+      success: "Color changed to %{color_hex}."
 
   lastfm:
     desc: "A collection of LastFM utilities."
