@@ -77,7 +77,7 @@ class Bot(AutoShardedBot):
                     name = cog[:-3]
                     self.load_extension(f"cogs.{name}")
 
-            # Do not load following cogs
+            # # Do not load following cogs
             # for cog in do_not_load:
             #     try:
             #         with warnings.catch_warnings():

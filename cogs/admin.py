@@ -29,6 +29,7 @@ from nextcord.ext import commands
 from pymongo import MongoClient
 from utils import default, perms, _io
 from utils.default import traceback_maker, translate as _
+from utils.data import Bot
 
 from utils.embed import (
     failed_embed,
@@ -41,7 +42,7 @@ from utils.embed import (
 
 
 class Admin(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: Bot):
         self.bot = bot
         self.config = default.get("./config.json")
         self.cluster = MongoClient(os.environ.get("MONGO_DB"))
