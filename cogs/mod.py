@@ -137,7 +137,7 @@ class Mod(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member: nextcord.Member):
-        mute_key = await self.redis.get(f"mute-{member.id}-{member.guild.id}")
+        mute_key = await self.redis.get(f"mute:{member.id}:{member.guild.id}")
         if mute_key is not None:
             try:
                 res = self.bot.mguild_config.find_one({"_id": member.guild.id})
@@ -249,7 +249,7 @@ class Mod(commands.Cog):
             if await perms.check_priv(ctx, member=member):
                 return
 
-            existing_mute = await self.redis.get(f"mute-{member.id}-{ctx.guild.id}")
+            existing_mute = await self.redis.get(f"mute:{member.id}:{ctx.guild.id}")
             res = await self.bot.prisma.guildconfiguration.find_unique(
                 where={"id": ctx.guild.id}
             )
@@ -311,7 +311,7 @@ class Mod(commands.Cog):
             #     )
 
             if parsed_duration is None:
-                await self.redis.set(f"mute-{member.id}-{ctx.guild.id}", "Muted")
+                await self.redis.set(f"mute:{member.id}:{ctx.guild.id}", "Muted")
                 await ctx.send(
                     embed=success_embed_ephemeral(
                         _("cmds.mute.res.muted.forever", person=member.mention)
@@ -319,7 +319,7 @@ class Mod(commands.Cog):
                 )
             else:
                 await self.redis.setex(
-                    f"mute-{member.id}-{ctx.guild.id}",
+                    f"mute:{member.id}:{ctx.guild.id}",
                     parsed_duration,
                     "Muted",
                 )
@@ -349,7 +349,7 @@ class Mod(commands.Cog):
             if await perms.check_priv(ctx, member=member):
                 return
 
-            mute = await self.redis.get(f"mute-{member.id}-{ctx.guild.id}")
+            mute = await self.redis.get(f"mute:{member.id}:{ctx.guild.id}")
             if mute is None:
                 return await ctx.send(
                     embed=warn_embed_ephemeral(
@@ -362,6 +362,7 @@ class Mod(commands.Cog):
             )
             try:
                 role = ctx.guild.get_role(res.mute_role)
+
             except AttributeError:
                 await ctx.send(
                     embed=success_embed_ephemeral(
@@ -369,7 +370,7 @@ class Mod(commands.Cog):
                     )
                 ),
                 return await self.redis.delete(
-                    f"mute-{member.id}-{ctx.guild.id}"
+                    f"mute:{member.id}:{ctx.guild.id}"
                 )  # It doesn't exist anyway.
 
             if role is None:
@@ -378,9 +379,9 @@ class Mod(commands.Cog):
                         _("cmds.unmute.res.success", person=member.mention)
                     )
                 ),
-                return await self.redis.delete(f"mute-{member.id}-{ctx.guild.id}")
+                return await self.redis.delete(f"mute:{member.id}:{ctx.guild.id}")
 
-            await self.redis.delete(f"mute-{member.id}-{ctx.guild.id}")
+            await self.redis.delete(f"mute:{member.id}:{ctx.guild.id}")
             await member.remove_roles(
                 role,
                 reason=f"Mute removed by {ctx.author}"

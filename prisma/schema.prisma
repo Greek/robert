@@ -17,6 +17,8 @@ model GuildConfiguration {
   welcome_greeting       String?
   giveaway_channel       BigInt?
   mute_role              BigInt?
+  reaction_mute_role     BigInt?
+  image_mute_role        BigInt?
   color_enabled          Boolean?
 }
 
