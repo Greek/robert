@@ -118,6 +118,39 @@ cmds:
       success: "%{person} has been un-muted."
       invalid:
         not_muted: "%{person} isn't muted."
+  rmute:
+    desc: "Reaction mute a person."
+    no_permission: "I can't reaction mute this person."
+    res:
+      muted:
+        temp: "%{person} has been reaction muted for %{duration}."
+        forever: "%{person} has been reaction muted."
+      invalid:
+        time: "Please provide a valid time period below 14 days."
+        already_muted: "%{person} is already reaction muted."
+  runmute:
+    desc: "Reaction un-mute a person."
+    res:
+      success: "%{person} can now react!"
+      invalid:
+        not_muted: "%{person} isn't reaction muted."
+
+  imute:
+    desc: "Image mute a person."
+    no_permission: "I can't image mute this person."
+    res:
+      muted:
+        temp: "%{person} has been image muted for %{duration}."
+        forever: "%{person} has been image muted."
+      invalid:
+        time: "Please provide a valid time period below 14 days."
+        already_muted: "%{person} is already reaction muted."
+  iunmute:
+    desc: "Image un-mute a person."
+    res:
+      success: "%{person} can now post images!"
+      invalid:
+        not_muted: "%{person} isn't image muted."
 
   recreate:
     desc: "Re-create a channel instantly."
