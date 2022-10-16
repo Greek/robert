@@ -51,7 +51,7 @@ class Bot(AutoShardedBot):
         self.logger = logging.getLogger("nextcord")
         try:
 
-            self.logger.setLevel(logging.INFO)
+            self.logger.setLevel(logging.DEBUG)
             self.logger.name = "toilet"
 
             handler = logging.FileHandler(
