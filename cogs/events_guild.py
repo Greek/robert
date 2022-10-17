@@ -25,63 +25,35 @@ import nextcord
 
 from nextcord.ext import commands
 from utils import embed as embed2, default
+from utils.data import Bot
 
 
 class EventsGuild(commands.Cog):
     """Guild event handlers"""
 
-    def __init__(self, bot):
+    def __init__(self, bot: Bot):
         self.bot = bot
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild: nextcord.Guild):
-        file = open("./config.json")
+        file = open("./config.json", encoding="utf8")
         config = json.load(file)
-        # guilds = config.get("allowlistServers")
 
         try:
             cid = int(config.get("guild_log"))
         except ValueError:
             return
 
-        owner: nextcord.User = await self.bot.fetch_user(guild.owner_id)
         log_channel: nextcord.TextChannel = self.bot.get_channel(cid)
-        embed = default.branded_embed(
-            title=f"Guild joined | {guild.name} ({guild.id})",
-            color=embed2.success_embed_color,
-        )
+        embed = await embed2.create_guild_join(guild)
 
-        embed.set_author(name=f"{guild.name}", icon_url=f"{guild.icon}")
-        embed.add_field(name="Owner", value=f"<@{owner.id}>", inline=True)
-        embed.add_field(name="Member count", value=f"{guild.member_count}", inline=True)
-        # embed.add_field(
-        #     name="On Allowlist?",
-        #     value="true" if guild.id in guilds else "false",
-        #     inline=True,
-        # )
-        embed.set_footer(text=f"Owner ID: {guild.owner_id}")
-        try:
-            embed.add_field(
-                name="Invite code",
-                value=f"{[str(x.code) for x in await guild.invites()]}",
-                inline=True,
-            )
-        except nextcord.errors.Forbidden:
-            embed.add_field(
-                name="Invite code", value="Could not fetch invite.", inline=True
-            )
-        # pylint: disable=W0703
-        except Exception:
-            embed.add_field(
-                name="Invite code", value="Failed to print invites", inline=True
-            )
         await log_channel.send(embed=embed)
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild: nextcord.Guild):
-        file = open("config.json")
+        file = open("config.json", encoding="utf8")
         config = json.load(file)
-        # guilds = config.get("allowlistServers")
+
         try:
             cid = int(config.get("guild_log"))
         except ValueError:
@@ -89,22 +61,9 @@ class EventsGuild(commands.Cog):
                 "[Guild Log] Tried to log guild leave, no channel ID found in config"
             )
 
-        owner: nextcord.User = await self.bot.fetch_user(guild.owner_id)
         log_channel: nextcord.TextChannel = self.bot.get_channel(cid)
-        embed = default.branded_embed(
-            title=f"Guild left | {guild.name} ({guild.id})",
-            color=embed2.failed_embed_color,
-        )
+        embed = await embed2.create_guild_leave(guild)
 
-        embed.set_author(name=f"{guild.name}", icon_url=f"{guild.icon}")
-        embed.add_field(name="Owner", value=f"<@{owner.id}>", inline=True)
-        embed.add_field(name="Member count", value=f"{guild.member_count}", inline=True)
-        # embed.add_field(
-        #     name="On Allowlist?",
-        #     value="true" if guild.id in guilds else "false",
-        #     inline=True,
-        # )
-        embed.set_footer(text=f"Owner ID: {guild.owner_id}")
         await log_channel.send(embed=embed)
 
 

@@ -1,5 +1,8 @@
 import nextcord
 
+from utils import default
+from utils.constants import DEFAULT_IMAGE
+
 # Colors
 success_embed_color = 0x63D46F
 warn_embed_color = 0xEBBD47
@@ -82,3 +85,61 @@ def self_missing_permissions(description: str, footer: str = None) -> nextcord.E
         color=failed_embed_color,
         description=f"<:red_tick:954499768124583947> I don't have the `{description.lower()}` permission.",
     )
+
+
+async def create_guild_join(guild: nextcord.Guild):
+    embed = default.branded_embed(
+        title=f"Guild joined | {guild.name} ({guild.id})",
+        color=success_embed_color,
+    )
+
+    embed.set_author(
+        name=f"{guild.name}",
+        icon_url=f"{guild.icon if guild.icon else DEFAULT_IMAGE}",
+    )
+    embed.add_field(name="Owner", value=f"<@{guild.owner.id}>", inline=True)
+    embed.add_field(name="Member count", value=f"{guild.member_count}", inline=True)
+    # embed.add_field(
+    #     name="On Allowlist?",
+    #     value="true" if guild.id in guilds else "false",
+    #     inline=True,
+    # )
+    embed.set_footer(text=f"Owner ID: {guild.owner_id}")
+    try:
+        embed.add_field(
+            name="Invite code",
+            value=f"{[str(x.code) for x in await guild.invites()]}",
+            inline=True,
+        )
+    except nextcord.errors.Forbidden:
+        embed.add_field(
+            name="Invite code", value="Could not fetch invite.", inline=True
+        )
+    # pylint: disable=W0703
+    except Exception:
+        embed.add_field(
+            name="Invite code", value="Failed to print invites", inline=True
+        )
+
+    return embed
+
+
+async def create_guild_leave(guild: nextcord.Guild):
+    embed = default.branded_embed(
+        title=f"Guild left | {guild.name} ({guild.id})",
+        color=failed_embed_color,
+    )
+
+    embed.set_author(
+        name=f"{guild.name}", icon_url=f"{guild.icon if guild.icon else DEFAULT_IMAGE}"
+    )
+    embed.add_field(name="Owner", value=f"<@{guild.owner.id}>", inline=True)
+    embed.add_field(name="Member count", value=f"{guild.member_count}", inline=True)
+    # embed.add_field(
+    #     name="On Allowlist?",
+    #     value="true" if guild.id in guilds else "false",
+    #     inline=True,
+    # )
+    embed.set_footer(text=f"Owner ID: {guild.owner_id}")
+
+    return embed

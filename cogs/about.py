@@ -23,7 +23,6 @@ SOFTWARE.
 from random import choice
 import os
 import platform
-import subprocess
 
 import nextcord
 import psutil
@@ -77,8 +76,8 @@ class About(commands.Cog):
                 )
 
                 await ctx.send(content="", embed=embed)
-        except Exception as eror:
-            await self.bot.create_error_log(ctx, eror)
+        except Exception as error:
+            await self.bot.create_error_log(ctx, error)
 
     @commands.command(name="ping", descriptions="Pong!")
     async def ping(self, ctx: commands.Context):
