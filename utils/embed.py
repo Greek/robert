@@ -1,31 +1,35 @@
 import nextcord
 
 from utils import default
-from utils.constants import DEFAULT_IMAGE
+from utils.constants import (
+    DEFAULT_IMAGE,
+    SUCCESS_EMBED_COLOR,
+    SUCCESS_EMOJI,
+    WARN_EMBED_COLOR,
+    FAILED_EMBED_COLOR,
+    FAILED_EMOJI,
+)
 
 # Colors
-success_embed_color = 0x63D46F
-warn_embed_color = 0xEBBD47
-failed_embed_color = 0xEB4747
 
 
 def success_embed_ephemeral(description: str) -> nextcord.Embed:
     return nextcord.Embed(
-        color=success_embed_color,
-        description=f"<:check:954163199446499389> {description}",
+        color=SUCCESS_EMBED_COLOR,
+        description=f"{SUCCESS_EMOJI} {description}",
     )
 
 
 def success_embed(user: nextcord.User, description: str) -> nextcord.Embed:
     return nextcord.Embed(
-        color=success_embed_color,
-        description=f"<:check:954163199446499389> {description}",
+        color=SUCCESS_EMBED_COLOR,
+        description=f"{SUCCESS_EMOJI} {description}",
     ).set_author(name=user.name, icon_url=user.display_avatar)
 
 
 def warn_embed_ephemeral(description: str, footer: str = None) -> nextcord.Embed:
     return nextcord.Embed(
-        color=warn_embed_color,
+        color=WARN_EMBED_COLOR,
         description=f"⚠️ {description}",
     )
 
@@ -35,7 +39,7 @@ def cancellable_embed_ephemeral(
 ) -> nextcord.Embed:
     return (
         nextcord.Embed(
-            color=warn_embed_color,
+            color=WARN_EMBED_COLOR,
             description=f"⚠️ {description}",
         )
         .set_author(
@@ -52,15 +56,15 @@ def warn_embed(
     user: nextcord.User, description: str, footer: str = None
 ) -> nextcord.Embed:
     return nextcord.Embed(
-        color=warn_embed_color,
+        color=WARN_EMBED_COLOR,
         description=f"⚠️ {description}",
     ).set_author(name=user.name, icon_url=user.display_avatar)
 
 
 def failed_embed_ephemeral(description: str, footer: str = None) -> nextcord.Embed:
     return nextcord.Embed(
-        color=failed_embed_color,
-        description=f"<:red_tick:954499768124583947> {description}",
+        color=FAILED_EMBED_COLOR,
+        description=f"{FAILED_EMOJI} {description}",
     )
 
 
@@ -68,29 +72,29 @@ def failed_embed(
     user: nextcord.User, description: str, footer: str = None
 ) -> nextcord.Embed:
     return nextcord.Embed(
-        color=failed_embed_color,
-        description=f"<:red_tick:954499768124583947> {description}",
+        color=FAILED_EMBED_COLOR,
+        description=f"{FAILED_EMOJI} {description}",
     ).set_author(name=user.name, icon_url=user.display_avatar)
 
 
 def missing_permissions(description: str, footer: str = None) -> nextcord.Embed:
     return nextcord.Embed(
-        color=failed_embed_color,
-        description=f"<:red_tick:954499768124583947> You're missing the `{description.lower()}` permission.",
+        color=FAILED_EMBED_COLOR,
+        description=f"{FAILED_EMOJI} You're missing the `{description.lower()}` permission.",
     )
 
 
 def self_missing_permissions(description: str, footer: str = None) -> nextcord.Embed:
     return nextcord.Embed(
-        color=failed_embed_color,
-        description=f"<:red_tick:954499768124583947> I don't have the `{description.lower()}` permission.",
+        color=FAILED_EMBED_COLOR,
+        description=f"{FAILED_EMOJI} I don't have the `{description.lower()}` permission.",
     )
 
 
 async def create_guild_join(guild: nextcord.Guild):
     embed = default.branded_embed(
         title=f"Guild joined | {guild.name} ({guild.id})",
-        color=success_embed_color,
+        color=SUCCESS_EMBED_COLOR,
     )
 
     embed.set_author(
@@ -127,7 +131,7 @@ async def create_guild_join(guild: nextcord.Guild):
 async def create_guild_leave(guild: nextcord.Guild):
     embed = default.branded_embed(
         title=f"Guild left | {guild.name} ({guild.id})",
-        color=failed_embed_color,
+        color=FAILED_EMBED_COLOR,
     )
 
     embed.set_author(
