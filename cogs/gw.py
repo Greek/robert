@@ -8,6 +8,8 @@ from redis.asyncio import Redis
 from nextcord.ext import commands, tasks
 from pytimeparse.timeparse import timeparse
 from dotenv import dotenv_values, load_dotenv
+from utils import embed
+from utils.default import translate as _
 
 
 from utils.data import Bot
@@ -182,6 +184,58 @@ class Giveaways(commands.Cog):
     # @_slash_giveaway.subcommand(name="create", description="Create a new giveaway!")
     # async def _slash_giveaway_create(self, interaction: Interaction):
     #     return await self._create(context=self)
+
+    # Giveaways
+
+    @_giveaway.command(name="set", description=_("cmds.config.giveaway.set.desc"))
+    @commands.has_guild_permissions(manage_channels=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
+    async def set_giveaway_channel(
+        self, ctx: commands.Context, channel: nextcord.TextChannel
+    ):
+        try:
+            if channel is None:
+                return await ctx.send(_("cmds.config.giveaway.set.not_found"))
+
+            await self.bot.prisma.guildconfiguration.upsert(
+                where={"id": ctx.guild.id},
+                data={
+                    "create": {"id": ctx.guild.id, "giveaway_channel": channel.id},
+                    "update": {"id": ctx.guild.id, "giveaway_channel": channel.id},
+                },
+            )
+            await ctx.send(
+                embed=embed.success_embed_ephemeral(
+                    _(
+                        "cmds.config.giveaway.set.res.success",
+                        channel=channel.mention,
+                    )
+                )
+            )
+        except Exception as error:
+            await ctx.send(error)
+
+    @_giveaway.command(name="clear", description=_("cmds.config.giveaway.set.desc"))
+    @commands.has_guild_permissions(manage_channels=True)
+    @commands.bot_has_guild_permissions(manage_channels=True)
+    async def clear_giveaway_channel(self, ctx: commands.Context):
+        try:
+            await self.bot.prisma.guildconfiguration.upsert(
+                where={"id": ctx.guild.id},
+                data={
+                    "create": {"id": ctx.guild.id, "giveaway_channel": None},
+                    "update": {"id": ctx.guild.id, "giveaway_channel": None},
+                },
+            )
+            await ctx.send(
+                embed=embed.success_embed_ephemeral(
+                    _(
+                        "cmds.config.giveaway.set.res.cleared",
+                    )
+                )
+            )
+        except Exception as error:
+            await ctx.send(error)
 
 
 def setup(bot):

@@ -1,3 +1,5 @@
+# pylint: disable=W0106
+
 import nextcord
 
 from nextcord.ext import commands
@@ -56,7 +58,9 @@ class Messages(commands.Cog):
             if message.author.avatar
             else "https://canary.discord.com/assets/c09a43a372ba81e3018c3151d4ed4773.png",
         )
-        # embed.set_image(url=message.attachments[0].proxy_url) if message.attachments else None
+        embed.set_image(
+            url=message.attachments[0].proxy_url
+        ) if message.attachments else None
         embed.timestamp = message.created_at.now(tz=timezone_est)
         embed.set_footer(
             text=f"Message ID: {message.id}" + f"\nAuthor ID: {message.author.id}\n"
