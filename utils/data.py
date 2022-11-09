@@ -49,6 +49,18 @@ class Bot(AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.logger = logging.getLogger("nextcord")
+        self.motor_client = motor.motor_asyncio.AsyncIOMotorClient(
+            os.environ.get("MONGO_DB")
+        )
+        self.mongo_db = self.motor_client[os.environ.get("MONGO_NAME")]
+
+        self.guild_config = self.mongo_db.guildconfig
+        self.lastfm = self.mongo_db.lastfm
+
+        # should be async but this is init
+        self.pool = asyncpg.create_pool(dsn=os.environ.get("DATABASE_DSN"))
+        self.prisma = Prisma()
+
         try:
 
             self.logger.setLevel(logging.DEBUG)
@@ -77,36 +89,15 @@ class Bot(AutoShardedBot):
                     name = cog[:-3]
                     self.load_extension(f"cogs.{name}")
 
-            # # Do not load following cogs
-            # for cog in do_not_load:
-            #     try:
-            #         with warnings.catch_warnings():
-            #             warnings.simplefilter("ignore")  # silencing async warnings here
-            #             self.unload_extension(str(cog))
-            #     except Exception as e:
-            #         print(f"{cog} was never loaded.")
-
         except Exception as exc:
             print(
-                "Could not load extension {0} due to {1.__class__.__name__}: {1}".format(
-                    cog, exc
-                )  # ignore this pylance err
+                f"Could not load extension {cog} due to {exc.__class__.__name__}: {exc}"
             )
             raise exc
 
     async def start(self, *args, **kwargs):
-        self.mclient = motor.motor_asyncio.AsyncIOMotorClient(
-            os.environ.get("MONGO_DB")
-        )
-        self.mdb = self.mclient[os.environ.get("MONGO_NAME")]
-
-        self.pool = await asyncpg.create_pool(dsn=os.environ.get("DATABASE_DSN"))
-        self.prisma = Prisma()
         await self.prisma.connect()
         self.logger.info("Connected to PostgreSQL.")
-
-        self.mguild_config = self.mdb.guildconfig
-        self.mlastfm = self.mdb.lastfm
 
         await super().start(*args, **kwargs)
 

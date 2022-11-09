@@ -125,7 +125,7 @@ class Mod(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_channel_create(self, channel: nextcord.TextChannel):
         try:
-            res = self.bot.mguild_config.find_one({"_id": channel.guild.id})
+            res = self.bot.guild_config.find_one({"_id": channel.guild.id})
             role = channel.guild.get_role(int(res["muteRole"]))
             await channel.set_permissions(
                 role,
@@ -140,7 +140,7 @@ class Mod(commands.Cog):
         mute_key = await self.redis.get(f"mute:{member.id}:{member.guild.id}")
         if mute_key is not None:
             try:
-                res = self.bot.mguild_config.find_one({"_id": member.guild.id})
+                res = self.bot.guild_config.find_one({"_id": member.guild.id})
                 role = member.guild.get_role(res["muteRole"])
             except:
                 return

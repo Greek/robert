@@ -32,7 +32,7 @@ class Lastfm(commands.Cog):
         caller = ctx.user if isinstance(ctx, nextcord.Interaction) else ctx.author
 
         try:
-            if self.bot.mlastfm.find_one({"_id": caller.id, "username": f"{username}"}):
+            if self.bot.lastfm.find_one({"_id": caller.id, "username": f"{username}"}):
                 return await ctx.send(
                     embed=warn_embed_ephemeral(
                         _("cmds.lastfm.login.res.already_claimed")
@@ -51,7 +51,7 @@ class Lastfm(commands.Cog):
 
         # except:
         # pass
-        self.bot.mlastfm.find_one_and_update(
+        self.bot.lastfm.find_one_and_update(
             {"_id": caller.id},
             {"$set": {"username": f"{username}"}},
             upsert=True,
@@ -68,7 +68,7 @@ class Lastfm(commands.Cog):
         await ctx.trigger_typing()
         caller = ctx.user if isinstance(ctx, nextcord.Interaction) else ctx.author
 
-        res = self.bot.mlastfm.find_one({"_id": caller.id})
+        res = self.bot.lastfm.find_one({"_id": caller.id})
 
         try:
             lfuser = self.lastfm.get_user(res["username"])

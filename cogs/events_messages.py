@@ -22,7 +22,7 @@ class Messages(commands.Cog):
             res = await self.bot.prisma.guildconfiguration.find_unique(
                 where={"id": message.guild.id}
             )
-            mongo_res = await self.bot.mguild_config.find_one({"_id": message.guild.id})
+            mongo_res = await self.bot.guild_config.find_one({"_id": message.guild.id})
 
             cid = res.message_log_channel_id
         except:
@@ -79,7 +79,7 @@ class Messages(commands.Cog):
             res = await self.bot.prisma.guildconfiguration.find_unique(
                 where={"id": message.guild.id}
             )
-            mongo_res = await self.bot.mguild_config.find_one({"_id": message.guild.id})
+            mongo_res = await self.bot.guild_config.find_one({"_id": message.guild.id})
             cid = res.message_log_channel_id
 
             log = self.bot.get_channel(cid)

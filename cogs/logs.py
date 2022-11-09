@@ -63,7 +63,7 @@ class Logs(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs_whitelist(self, ctx, channel: TextChannel):
         try:
-            res = await self.bot.mguild_config.find_one({"_id": ctx.guild.id})
+            res = await self.bot.guild_config.find_one({"_id": ctx.guild.id})
 
             try:
                 if channel.id in res["messageLogIgnore"]:
@@ -77,7 +77,7 @@ class Logs(commands.Cog):
             except:
                 pass
 
-            await self.bot.mguild_config.find_one_and_update(
+            await self.bot.guild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$push": {"messageLogIgnore": channel.id}},
                 upsert=True,
@@ -102,7 +102,7 @@ class Logs(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs_whitelist_remove(self, ctx, channel: TextChannel):
         try:
-            res = await self.bot.mguild_config.find_one({"_id": ctx.guild.id})
+            res = await self.bot.guild_config.find_one({"_id": ctx.guild.id})
 
             try:
                 if channel.id not in res["messageLogIgnore"]:
@@ -118,7 +118,7 @@ class Logs(commands.Cog):
                     )
                 )
 
-            await self.bot.mguild_config.find_one_and_update(
+            await self.bot.guild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$pull": {"messageLogIgnore": channel.id}},
                 upsert=True,
@@ -142,7 +142,7 @@ class Logs(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def set_message_logs_whitelist_clear(self, ctx):
         try:
-            await self.bot.mguild_config.find_one_and_update(
+            await self.bot.guild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$unset": {"messageLogIgnore": f""}},
                 upsert=True,

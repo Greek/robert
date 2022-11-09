@@ -19,7 +19,7 @@ class Filter(commands.Cog):
     async def check_message_content(self, message: nextcord.Message):
         try:
             try:
-                filtered_words = await self.bot.mguild_config.find_one(
+                filtered_words = await self.bot.guild_config.find_one(
                     {"_id": message.guild.id}
                 )
             except:
@@ -107,7 +107,7 @@ class Filter(commands.Cog):
 
     @_filter_add.command(name="delete", description=_("cmds.filter.desc"))
     async def _filter_add_delete(self, ctx: commands.Context, *, word: str):
-        word_list = await self.bot.mguild_config.find_one({"_id": ctx.guild.id})
+        word_list = await self.bot.guild_config.find_one({"_id": ctx.guild.id})
 
         try:
             if word in word_list["deleteWordList"]:
@@ -117,7 +117,7 @@ class Filter(commands.Cog):
         except:
             pass  # There is nothing to check.
 
-        await self.bot.mguild_config.find_one_and_update(
+        await self.bot.guild_config.find_one_and_update(
             {"_id": ctx.guild.id},
             {"$push": {"deleteWordList": f"{word}"}},
             upsert=True,
@@ -129,7 +129,7 @@ class Filter(commands.Cog):
 
     @_filter_add.command(name="ban", description=_("cmds.filter.desc_ban"))
     async def _filter_add_ban(self, ctx: commands.Context, *, word: str):
-        word_list = await self.bot.mguild_config.find_one({"_id": ctx.guild.id})
+        word_list = await self.bot.guild_config.find_one({"_id": ctx.guild.id})
 
         try:
             if word in word_list["banWordList"]:
@@ -141,7 +141,7 @@ class Filter(commands.Cog):
 
         await asyncio.sleep(0.2)
 
-        await self.bot.mguild_config.find_one_and_update(
+        await self.bot.guild_config.find_one_and_update(
             {"_id": ctx.guild.id},
             {"$push": {"banWordList": f"{word}"}},
             upsert=True,
@@ -153,10 +153,10 @@ class Filter(commands.Cog):
 
     @_filter.command(name="links", description=_("cmds.filter.desc_ban"))
     async def _filter_add_links(self, ctx: commands.Context):
-        res = await self.bot.mguild_config.find_one({"_id": ctx.guild.id})
+        res = await self.bot.guild_config.find_one({"_id": ctx.guild.id})
 
         if res["linksDelete"] == True:
-            await self.bot.mguild_config.find_one_and_update(
+            await self.bot.guild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$set": {"linksDelete": False}},
                 upsert=True,
@@ -166,7 +166,7 @@ class Filter(commands.Cog):
                 embed=success_embed_ephemeral(_("cmds.filter.res.success.allow"))
             )
         else:
-            await self.bot.mguild_config.find_one_and_update(
+            await self.bot.guild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$set": {"linksDelete": True}},
                 upsert=True,
@@ -179,7 +179,7 @@ class Filter(commands.Cog):
     @_filter.command(name="remove", description=_("cmds.filter.desc_remove"))
     async def _filter_remove(self, ctx: commands.Context, word: str):
         try:
-            await self.bot.mguild_config.find_one_and_update(
+            await self.bot.guild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$pull": {"banWordList": f"{word}"}},
                 upsert=True,
@@ -188,7 +188,7 @@ class Filter(commands.Cog):
             pass
 
         try:
-            await self.bot.mguild_config.find_one_and_update(
+            await self.bot.guild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$pull": {"deleteWordList": f"{word}"}},
                 upsert=True,
@@ -209,7 +209,7 @@ class Filter(commands.Cog):
     @_filter.command(name="reset", description=_("cmds.filter.desc_reset"))
     async def _filter_reset(self, ctx: commands.Context):
         try:
-            await self.bot.mguild_config.find_one_and_update(
+            await self.bot.guild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$unset": {"banWordList": ""}},
                 upsert=True,
@@ -218,7 +218,7 @@ class Filter(commands.Cog):
             pass
 
         try:
-            await self.bot.mguild_config.find_one_and_update(
+            await self.bot.guild_config.find_one_and_update(
                 {"_id": ctx.guild.id},
                 {"$unset": {"deleteWordList": ""}},
                 upsert=True,
