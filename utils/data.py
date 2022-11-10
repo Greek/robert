@@ -102,8 +102,8 @@ class Bot(AutoShardedBot):
         await super().start(*args, **kwargs)
 
     async def create_error_log(self, ctx: Interaction, err):
-        f = open("config.json")
-        config = json.load(f)
+        config_file = open("config.json")
+        config = json.load(config_file)
         channel_id = int(config.get("error_reporting"))
 
         log = self.get_channel(channel_id)
@@ -141,9 +141,7 @@ class HelpFormat(MinimalHelpCommand):
     def get_ending_note(self):
         command_name = self.invoked_with
         cfg_prefix = os.environ.get("DISCORD_PREFIX")
-        return 'Run "{0}{1} <command name>" to see help for a specific command.'.format(
-            cfg_prefix, command_name
-        )
+        return f'Run "{cfg_prefix}{command_name} <command name>" to see help for a specific command.'
 
     def get_opening_note(self):
         pass
@@ -171,7 +169,7 @@ class HelpFormat(MinimalHelpCommand):
 
         embed = default.branded_embed(
             title="Help guide",
-            description=f"A list of all the commands the bot has to offer.",
+            description="A list of all the commands the bot has to offer.",
             color="green",
             inline=True,
         )
@@ -189,17 +187,12 @@ class HelpFormat(MinimalHelpCommand):
 
         embed.set_footer(text=note)
 
-        # try:
-        #     await destination.send(embed=embed)
-        # except nextcord.Forbidden:
-        #     return await self.get_destination(no_pm=True).send(_("events.forbidden_dm"))
-        await self.context.send(
-            "Check out the help guide here: http://s.apap04.com/0trneJ4\nIf you need any further help, join our Discord: discord.gg/YqkpR4g5dX"
-        )
+        try:
+            await destination.send(embed=embed)
+        except nextcord.Forbidden:
+            return await self.get_destination(no_pm=True).send(_("events.forbidden_dm"))
 
     async def send_command_help(self, command):
-        global _cmd
-        _cmd = command
         self.add_command_formatting(command)
         self.paginator.close_page()
         await self.send_pages(no_pm=True)
@@ -208,7 +201,7 @@ class HelpFormat(MinimalHelpCommand):
         try:
             destination = self.get_destination(no_pm=True)
             embed = default.branded_embed(
-                title=f"Help guide", description=f"", color="green", inline=True
+                title="Help guide", description="", color="green", inline=True
             )
             for page in self.paginator.pages:
                 embed.description += page
