@@ -2,6 +2,22 @@
 
 A monorepository holding all the code responsible for the Toilet bot, API and dash.
 
+# database setup
+
+Before setting up the bot, you need to set up a database so Toilet knows how to
+store and get data.
+
+1. Copy `.env.example` to `.env`
+2. Add your database URL to the appropriate field
+4. Run the following commands:
+```sh
+$ python -m pip install prisma # Install Prisma
+$ prisma generate
+$ prisma db push # Push the DB schema to your database
+```
+
+This will make sure that the bot is able to access the database through Prisma.
+
 # how to run (docker)
 
 1. Create a working directory for the bot to hold the `.env` and `config.json` files.
