@@ -7,4 +7,5 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
+RUN ["prisma", "generate"]
 CMD ["python", "bot.py"]
