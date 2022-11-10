@@ -28,16 +28,6 @@ class Filter(commands.Cog):
             msg_split = message.content.lower().split()
 
             try:
-                link_filtering = filtered_words["linksDelete"]
-            except:
-                pass
-
-            try:
-                mute_list = filtered_words["muteWordList"]
-            except:
-                pass
-
-            try:
                 delete_list = filtered_words["deleteWordList"]
             except:
                 delete_list = None
@@ -46,11 +36,6 @@ class Filter(commands.Cog):
                 ban_list = filtered_words["banWordList"]
             except:
                 ban_list = None
-
-            try:
-                exemption_list = filtered_words["exemptionFilterList"]
-            except:
-                pass
 
             if message.author.id == message.guild.owner_id:
                 return
@@ -80,17 +65,6 @@ class Filter(commands.Cog):
                         except Exception as error:
                             print(error)
 
-                try:
-                    if link_filtering:
-                        if word.startswith(
-                            "http" or "https" or "https://" or "http://" or "www"
-                        ) or word.endswith(
-                            ".com" or ".net" or ".org" or ".gg" or ".xxx"
-                        ):
-                            await message.delete()
-                except:
-                    pass
-
         except Exception as e:
             print(e)
 
@@ -112,7 +86,7 @@ class Filter(commands.Cog):
         try:
             if word in word_list["deleteWordList"]:
                 return await ctx.send(
-                    embed=warn_embed_ephemeral(f"That word is already on the list.")
+                    embed=warn_embed_ephemeral("That word is already on the list.")
                 )
         except:
             pass  # There is nothing to check.
