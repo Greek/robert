@@ -21,9 +21,10 @@ SOFTWARE.
 """
 
 import json
-import nextcord
 
+import nextcord
 from nextcord.ext import commands
+
 from utils import embed as embed2
 from utils.data import Bot
 

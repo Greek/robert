@@ -1,11 +1,9 @@
-from discord import Interaction
 import nextcord
-
+from discord import Interaction
 from nextcord import SlashOption
-from nextcord.ext import commands, application_checks
+from nextcord.ext import application_checks, commands
 
 from cogs.mod import Mod
-
 from utils.data import Bot
 from utils.default import translate as _
 

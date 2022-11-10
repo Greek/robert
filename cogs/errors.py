@@ -21,17 +21,13 @@ SOFTWARE.
 """
 
 import nextcord
-
-from nextcord.ext import commands, application_checks
+from nextcord.ext import application_checks, commands
 from nextcord.ext.commands import errors
 
 from utils.data import Bot
 from utils.default import translate as _
-from utils.embed import (
-    missing_permissions,
-    self_missing_permissions,
-    warn_embed_ephemeral,
-)
+from utils.embed import (missing_permissions, self_missing_permissions,
+                         warn_embed_ephemeral)
 
 
 class Errors(commands.Cog):

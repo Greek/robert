@@ -1,7 +1,8 @@
-from nextcord.ext import commands
 import nextcord
-from utils.data import Bot
+from nextcord.ext import commands
+
 from cogs.color import Color
+from utils.data import Bot
 
 
 class EventsUssy(commands.Cog):

@@ -1,10 +1,9 @@
 import asyncio
 
 import nextcord
-
 from nextcord.ext import commands
-from utils.data import Bot
 
+from utils.data import Bot
 from utils.default import translate as _
 from utils.embed import success_embed_ephemeral, warn_embed_ephemeral
 

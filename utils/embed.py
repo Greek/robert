@@ -1,14 +1,9 @@
 import nextcord
 
 from utils import default
-from utils.constants import (
-    DEFAULT_IMAGE,
-    SUCCESS_EMBED_COLOR,
-    SUCCESS_EMOJI,
-    WARN_EMBED_COLOR,
-    FAILED_EMBED_COLOR,
-    FAILED_EMOJI,
-)
+from utils.constants import (DEFAULT_IMAGE, FAILED_EMBED_COLOR, FAILED_EMOJI,
+                             SUCCESS_EMBED_COLOR, SUCCESS_EMOJI,
+                             WARN_EMBED_COLOR)
 
 # Colors
 

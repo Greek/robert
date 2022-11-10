@@ -1,5 +1,4 @@
 import nextcord
-
 from nextcord.ext import commands
 
 from utils.data import Bot

@@ -1,14 +1,14 @@
 import os
+
 import nextcord
 import pylast
-
 from nextcord.ext import commands
 
 from utils.constants import LASTFM_EMBED_COLOR
+from utils.data import Bot
 from utils.default import translate as _
 from utils.embed import warn_embed_ephemeral
 from utils.perms import only_owner
-from utils.data import Bot
 
 
 class Lastfm(commands.Cog):

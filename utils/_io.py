@@ -22,6 +22,7 @@ SOFTWARE.
 
 import json
 
+
 def change_value(file: str, value: str, changeto: str):
     """ Change the value of a field inside a JSON file. """
     try:

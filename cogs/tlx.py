@@ -1,8 +1,9 @@
-import nextcord
-import aiohttp
 import os
 
+import aiohttp
+import nextcord
 from nextcord.ext import commands
+
 from utils.data import Bot
 from utils.embed import success_embed_ephemeral
 

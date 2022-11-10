@@ -1,5 +1,4 @@
 import nextcord
-
 from nextcord.ext import commands
 
 from utils.default import translate as _

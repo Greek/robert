@@ -1,12 +1,11 @@
 # pylint: disable=W0106
 
 import nextcord
-
 from nextcord.ext import commands
-
 from pytz import timezone
 
-from utils import default, embed as eutil
+from utils import default
+from utils import embed as eutil
 from utils.data import Bot
 
 

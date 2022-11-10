@@ -1,20 +1,18 @@
 import asyncio
+import os
 import random
 import time
-import os
-import nextcord
 
-from redis.asyncio import Redis
+import nextcord
+from dotenv import dotenv_values, load_dotenv
 from nextcord.ext import commands, tasks
 from pytimeparse.timeparse import timeparse
-from dotenv import dotenv_values, load_dotenv
+from redis.asyncio import Redis
+
 from utils import embed
-from utils.default import translate as _
-
-
 from utils.data import Bot
+from utils.default import translate as _
 from utils.embed import success_embed_ephemeral
-
 
 dot_cfg = dotenv_values(".env")
 load_dotenv(".env")

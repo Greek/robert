@@ -1,12 +1,11 @@
 import os
+
 import nextcord
 import pylast
-
 from nextcord.ext import commands
 from pymongo import MongoClient
 
 from cogs.lf import Lastfm
-
 from utils.default import translate as _
 
 

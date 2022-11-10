@@ -1,8 +1,7 @@
-import nextcord
 import os
 
+import nextcord
 from nextcord.ext import commands
-
 from pymongo import MongoClient
 
 from utils.data import Bot

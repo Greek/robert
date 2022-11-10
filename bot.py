@@ -3,8 +3,8 @@
 # pylint: disable=E0237,W0104
 
 import os
-import nextcord
 
+import nextcord
 from dotenv import dotenv_values, load_dotenv
 
 from utils.data import Bot, HelpFormat

@@ -20,16 +20,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-from random import choice
 import os
 import platform
+from random import choice
 
 import nextcord
 import psutil
-
 from nextcord.ext import commands
-from utils.data import Bot
+
 from utils import default
+from utils.data import Bot
 from utils.default import translate as _
 
 

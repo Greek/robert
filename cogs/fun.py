@@ -22,7 +22,6 @@ SOFTWARE.
 
 
 import nextcord
-
 from nextcord import SlashOption
 from nextcord.ext import commands
 
