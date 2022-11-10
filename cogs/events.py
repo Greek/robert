@@ -35,9 +35,7 @@ class Events(commands.Cog):
 
     def __init__(self, bot: nextcord.Client):
         self.bot = bot
-        self.last_timeStamp = datetime.datetime.utcfromtimestamp(0)
         self.config = default.get("config.json")
-        self.db = pymongo.MongoClient(os.environ.get("MONGO_DB"))
         # pylint: disable=E1101
         self.update_top_gg_guilds.start()
 

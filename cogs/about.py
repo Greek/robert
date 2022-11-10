@@ -22,13 +22,13 @@ SOFTWARE.
 
 from random import choice
 import os
-import subprocess
+import platform
 
 import nextcord
 import psutil
 
 from nextcord.ext import commands
-from nextcord import Client
+from utils.data import Bot
 from utils import default
 from utils.default import translate as _
 
@@ -36,7 +36,7 @@ from utils.default import translate as _
 class About(commands.Cog):
     """Basic commands providing information about the bot."""
 
-    def __init__(self, bot: Client):
+    def __init__(self, bot: Bot):
         self.bot = bot
         self.process = psutil.Process(os.getpid())
         self.config = default.get("config.json")
@@ -45,37 +45,39 @@ class About(commands.Cog):
         name="about", description=_("cmds.about"), aliases=["info", "stats", "status"]
     )
     async def about(self, ctx: commands.Context):
-        system_id = subprocess.check_output(["uname", "-n"]).decode()
-        avg_members = sum(g.member_count for g in self.bot.guilds)
+        try:
+            avg_members = sum(g.member_count for g in self.bot.guilds)
 
-        if hasattr(ctx, "guild") and ctx.guild is not None:
-            embed_color = (
-                ctx.guild.me.top_role.color
-                if isinstance(ctx, nextcord.Interaction)
-                else ctx.me.top_role.color
-            )
-            embed = nextcord.Embed(
-                title=f"About {self.bot.user.name}",
-                color=embed_color,
-            )
-            embed.set_thumbnail(url=self.bot.user.avatar)
-            embed.add_field(
-                name=f"Developer{'' if len(self.config.owners) == 1 else 's'}",
-                value=",\n".join(
-                    [str(await self.bot.fetch_user(x)) for x in self.config.owners]
-                ),
-            )
-            embed.add_field(
-                name="Host ID",
-                value=f"{system_id}",
-            )
-            embed.add_field(
-                name="Servers",
-                value=f"{len(self.bot.guilds)} (serving {avg_members} members)",
-                inline=False,
-            )
+            if hasattr(ctx, "guild") and ctx.guild is not None:
+                embed_color = (
+                    ctx.guild.me.top_role.color
+                    if isinstance(ctx, nextcord.Interaction)
+                    else ctx.me.top_role.color
+                )
+                embed = nextcord.Embed(
+                    title=f"About {self.bot.user.name}",
+                    color=embed_color,
+                )
+                embed.set_thumbnail(url=self.bot.user.avatar)
+                embed.add_field(
+                    name=f"Developer{'' if len(self.config.owners) == 1 else 's'}",
+                    value=",\n".join(
+                        [str(await self.bot.fetch_user(x)) for x in self.config.owners]
+                    ),
+                )
+                embed.add_field(
+                    name="Servers",
+                    value=f"{len(self.bot.guilds)} (serving {avg_members} members)",
+                    inline=False,
+                )
+                embed.add_field(
+                    name="Host ID",
+                    value=f"{platform.node()}",
+                )
 
-            await ctx.send(content="", embed=embed)
+                await ctx.send(content="", embed=embed)
+        except Exception as error:
+            await self.bot.create_error_log(ctx, error)
 
     @commands.command(name="ping", descriptions="Pong!")
     async def ping(self, ctx: commands.Context):

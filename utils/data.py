@@ -49,6 +49,18 @@ class Bot(AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.logger = logging.getLogger("nextcord")
+        self.motor_client = motor.motor_asyncio.AsyncIOMotorClient(
+            os.environ.get("MONGO_DB")
+        )
+        self.mongo_db = self.motor_client[os.environ.get("MONGO_NAME")]
+
+        self.guild_config = self.mongo_db.guildconfig
+        self.lastfm = self.mongo_db.lastfm
+
+        # should be async but this is init
+        self.pool = asyncpg.create_pool(dsn=os.environ.get("DATABASE_DSN"))
+        self.prisma = Prisma()
+
         try:
 
             self.logger.setLevel(logging.DEBUG)
@@ -77,42 +89,21 @@ class Bot(AutoShardedBot):
                     name = cog[:-3]
                     self.load_extension(f"cogs.{name}")
 
-            # Do not load following cogs
-            # for cog in do_not_load:
-            #     try:
-            #         with warnings.catch_warnings():
-            #             warnings.simplefilter("ignore")  # silencing async warnings here
-            #             self.unload_extension(str(cog))
-            #     except Exception as e:
-            #         print(f"{cog} was never loaded.")
-
         except Exception as exc:
             print(
-                "Could not load extension {0} due to {1.__class__.__name__}: {1}".format(
-                    cog, exc
-                )  # ignore this pylance err
+                f"Could not load extension {cog} due to {exc.__class__.__name__}: {exc}"
             )
             raise exc
 
     async def start(self, *args, **kwargs):
-        self.mclient = motor.motor_asyncio.AsyncIOMotorClient(
-            os.environ.get("MONGO_DB")
-        )
-        self.mdb = self.mclient[os.environ.get("MONGO_NAME")]
-
-        self.pool = await asyncpg.create_pool(dsn=os.environ.get("DATABASE_DSN"))
-        self.prisma = Prisma()
         await self.prisma.connect()
         self.logger.info("Connected to PostgreSQL.")
-
-        self.mguild_config = self.mdb.guildconfig
-        self.mlastfm = self.mdb.lastfm
 
         await super().start(*args, **kwargs)
 
     async def create_error_log(self, ctx: Interaction, err):
-        f = open("config.json")
-        config = json.load(f)
+        config_file = open("config.json")
+        config = json.load(config_file)
         channel_id = int(config.get("error_reporting"))
 
         log = self.get_channel(channel_id)
@@ -150,9 +141,7 @@ class HelpFormat(MinimalHelpCommand):
     def get_ending_note(self):
         command_name = self.invoked_with
         cfg_prefix = os.environ.get("DISCORD_PREFIX")
-        return 'Run "{0}{1} <command name>" to see help for a specific command.'.format(
-            cfg_prefix, command_name
-        )
+        return f'Run "{cfg_prefix}{command_name} <command name>" to see help for a specific command.'
 
     def get_opening_note(self):
         pass
@@ -180,7 +169,7 @@ class HelpFormat(MinimalHelpCommand):
 
         embed = default.branded_embed(
             title="Help guide",
-            description=f"A list of all the commands the bot has to offer.",
+            description="A list of all the commands the bot has to offer.",
             color="green",
             inline=True,
         )
@@ -198,17 +187,12 @@ class HelpFormat(MinimalHelpCommand):
 
         embed.set_footer(text=note)
 
-        # try:
-        #     await destination.send(embed=embed)
-        # except nextcord.Forbidden:
-        #     return await self.get_destination(no_pm=True).send(_("events.forbidden_dm"))
-        await self.context.send(
-            "Check out the help guide here: http://s.apap04.com/0trneJ4\nIf you need any further help, join our Discord: discord.gg/YqkpR4g5dX"
-        )
+        try:
+            await destination.send(embed=embed)
+        except nextcord.Forbidden:
+            return await self.get_destination(no_pm=True).send(_("events.forbidden_dm"))
 
     async def send_command_help(self, command):
-        global _cmd
-        _cmd = command
         self.add_command_formatting(command)
         self.paginator.close_page()
         await self.send_pages(no_pm=True)
@@ -217,7 +201,7 @@ class HelpFormat(MinimalHelpCommand):
         try:
             destination = self.get_destination(no_pm=True)
             embed = default.branded_embed(
-                title=f"Help guide", description=f"", color="green", inline=True
+                title="Help guide", description="", color="green", inline=True
             )
             for page in self.paginator.pages:
                 embed.description += page

@@ -1,3 +1,5 @@
+# pylint: disable=W0106
+
 import nextcord
 
 from nextcord.ext import commands
@@ -20,7 +22,7 @@ class Messages(commands.Cog):
             res = await self.bot.prisma.guildconfiguration.find_unique(
                 where={"id": message.guild.id}
             )
-            mongo_res = await self.bot.mguild_config.find_one({"_id": message.guild.id})
+            mongo_res = await self.bot.guild_config.find_one({"_id": message.guild.id})
 
             cid = res.message_log_channel_id
         except:
@@ -56,7 +58,9 @@ class Messages(commands.Cog):
             if message.author.avatar
             else "https://canary.discord.com/assets/c09a43a372ba81e3018c3151d4ed4773.png",
         )
-        # embed.set_image(url=message.attachments[0].proxy_url) if message.attachments else None
+        embed.set_image(
+            url=message.attachments[0].proxy_url
+        ) if message.attachments else None
         embed.timestamp = message.created_at.now(tz=timezone_est)
         embed.set_footer(
             text=f"Message ID: {message.id}" + f"\nAuthor ID: {message.author.id}\n"
@@ -75,7 +79,7 @@ class Messages(commands.Cog):
             res = await self.bot.prisma.guildconfiguration.find_unique(
                 where={"id": message.guild.id}
             )
-            mongo_res = await self.bot.mguild_config.find_one({"_id": message.guild.id})
+            mongo_res = await self.bot.guild_config.find_one({"_id": message.guild.id})
             cid = res.message_log_channel_id
 
             log = self.bot.get_channel(cid)
