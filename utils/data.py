@@ -20,6 +20,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+# pylint: disable=W0106
+
 import itertools
 import json
 import logging
@@ -48,6 +50,11 @@ class Bot(AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.logger = logging.getLogger("nextcord")
+        self.logger.name = "toilet"
+        self.logger.setLevel(logging.DEBUG) if os.environ.get(
+            "DEBUG"
+        ) is True else self.logger.setLevel(logging.INFO)
+
         self.motor_client = motor.motor_asyncio.AsyncIOMotorClient(
             os.environ.get("MONGO_DB")
         )
@@ -61,10 +68,6 @@ class Bot(AutoShardedBot):
         self.prisma = Prisma()
 
         try:
-
-            self.logger.setLevel(logging.DEBUG)
-            self.logger.name = "toilet"
-
             handler = logging.FileHandler(
                 filename="./logs/discord.log", encoding="utf-8", mode="a"
             )
