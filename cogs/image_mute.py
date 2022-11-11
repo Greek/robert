@@ -8,11 +8,12 @@ from redis.asyncio import Redis
 from utils import perms
 from utils.data import Bot
 from utils.default import translate as _
-from utils.embed import (failed_embed_ephemeral, success_embed_ephemeral,
-                         warn_embed_ephemeral)
+from utils.embed import success_embed_ephemeral, warn_embed_ephemeral
 
 
-class Imute(commands.Cog):
+class Image_Mute(commands.Cog):
+    """Image Mute"""
+
     def __init__(self, bot: Bot):
         self.bot = bot
         self.guild_id = 932369210611494982
@@ -272,4 +273,4 @@ class Imute(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Imute(bot))
+    bot.add_cog(Image_Mute(bot))

@@ -8,11 +8,16 @@ from redis.asyncio import Redis
 from utils import perms
 from utils.data import Bot
 from utils.default import translate as _
-from utils.embed import (failed_embed_ephemeral, success_embed_ephemeral,
-                         warn_embed_ephemeral)
+from utils.embed import (
+    failed_embed_ephemeral,
+    success_embed_ephemeral,
+    warn_embed_ephemeral,
+)
 
 
-class Rmute(commands.Cog):
+class Reaction_Mute(commands.Cog):
+    """Reaction Mute"""
+
     def __init__(self, bot: Bot):
         self.bot = bot
         self.guild_id = 932369210611494982
@@ -269,4 +274,4 @@ class Rmute(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Rmute(bot))
+    bot.add_cog(Reaction_Mute(bot))

@@ -39,5 +39,7 @@ media/*
 
 # other
 node_modules
-docker/postgres-data/
 config.json
+toilet-dev-docker/mongo/data
+toilet-dev-docker/redis/cache
+toilet-dev-docker/postgres/data

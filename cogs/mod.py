@@ -31,8 +31,11 @@ from redis.asyncio import Redis
 from utils import default, perms
 from utils.data import Bot
 from utils.default import translate as _
-from utils.embed import (failed_embed_ephemeral, success_embed_ephemeral,
-                         warn_embed_ephemeral)
+from utils.embed import (
+    failed_embed_ephemeral,
+    success_embed_ephemeral,
+    warn_embed_ephemeral,
+)
 
 dot_cfg = dotenv_values(".env")
 load_dotenv(".env")
@@ -77,7 +80,7 @@ class Mod(commands.Cog):
         self.bot.logger.debug(f"Recieved pubsub message:\n{msg}")
         if msg["data"].startswith("mute"):
             try:
-                data = msg["data"].split("-")
+                data = msg["data"].split(":")
                 guild = self.bot.get_guild(int(data[2]))
                 member = guild.get_member(int(data[1]))
 

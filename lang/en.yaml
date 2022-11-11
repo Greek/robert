@@ -77,7 +77,7 @@ cmds:
     option_reason: "Reason to ban a person."
     reason: "Your reason"
     res_noreason: "Banned %{user}."
-    res_reason: "Banned %{user} for %{reason}."
+    res_reason: "Banned %{user} for '%{reason}'."
   kick:
     desc: "Kick a person."
     option_member: "The person you want to kick"

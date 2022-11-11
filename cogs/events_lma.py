@@ -16,6 +16,12 @@ class EventsLmaAutorole(commands.Cog):
 
         return await member.add_roles(lma_role)
 
+    @commands.Cog.listener(name="on_member_update")
+    async def assure_believer_role(self, member: nextcord.Member):
+        lma_role = member.guild.get_role(1040437387962093661)
+
+        return await member.add_roles(lma_role)
+
 
 def setup(bot):
     bot.add_cog(EventsLmaAutorole(bot))

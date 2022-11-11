@@ -164,7 +164,11 @@ class HelpFormat(MinimalHelpCommand):
 
         def get_category(command, *, no_category=no_category):
             cog = command.cog
-            return f"{cog.qualified_name}" if cog is not None else no_category
+            return (
+                f"{cog.qualified_name.replace('_', ' ')}"
+                if cog is not None
+                else no_category
+            )
 
         filtered = await self.filter_commands(bot.commands, sort=True, key=get_category)
         to_iterate = itertools.groupby(filtered, key=get_category)

@@ -6,7 +6,7 @@ from utils.data import Bot
 from utils.default import translate as _
 
 
-class Logs(commands.Cog):
+class Log_Configuration(commands.Cog):
     """Logs configuration commands"""
 
     def __init__(self, bot: Bot):
@@ -191,4 +191,4 @@ class Logs(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Logs(bot))
+    bot.add_cog(Log_Configuration(bot))
