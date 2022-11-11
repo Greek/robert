@@ -45,7 +45,7 @@ class Messages(commands.Cog):
         embed: nextcord.Embed = default.branded_embed(
             title="Message deleted",
             description=f"<#{message.to_reference().channel_id}>",
-            color=eutil.failed_embed_color,
+            color=eutil.FAILED_EMBED_COLOR,
             inline=True,
         )
         embed.add_field(
@@ -106,7 +106,7 @@ class Messages(commands.Cog):
             embed: nextcord.Embed = default.branded_embed(
                 title="Message edited",
                 description=f"<#{message.to_reference().channel_id}> ([Go to message]({message.to_reference().jump_url}))",
-                color=eutil.warn_embed_color,
+                color=eutil.WARN_EMBED_COLOR,
                 inline=True,
             )
             embed.add_field(name="Before", value=f"{message.content}", inline=False)

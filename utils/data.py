@@ -111,13 +111,13 @@ class Bot(AutoShardedBot):
             return print("[Error] Couldn't find log channel. Printing:\n", err)
 
         embed = nextcord.Embed(
-            color=uembed.warn_embed_color,
+            color=uembed.WARN_EMBED_COLOR,
             description=f"⚠️ {_('events.command_error.title')}",
         )
         embed.set_footer(text=f"{ref_id}")
 
         embed_error = nextcord.Embed(
-            color=uembed.failed_embed_color,
+            color=uembed.FAILED_EMBED_COLOR,
             title="Error",
             description=f"**Information**\nInvoked command: `{ctx.message.content if isinstance(ctx, Context) else ctx.application_command}`\n"
             + f"Invoked by: `{str(ctx.author if isinstance(ctx, Context) else ctx.user)} ({ctx.author.id if isinstance(ctx, Context) else ctx.user.id})`"
