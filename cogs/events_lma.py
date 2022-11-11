@@ -14,7 +14,7 @@ class EventsLmaAutorole(commands.Cog):
             return
         lma_role = member.guild.get_role(1040437387962093661)
 
-        return await member.add_roles(lma_role.id)
+        return await member.add_roles(lma_role)
 
 
 def setup(bot):
