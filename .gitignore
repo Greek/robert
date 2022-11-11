@@ -40,3 +40,4 @@ media/*
 # other
 node_modules
 docker/postgres-data/
+config.json
