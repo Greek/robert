@@ -37,10 +37,11 @@ logs/*.log
 media/*
 .env
 .*.env
+.env.prod
 
 # other
 node_modules
-config.json
+# config.json
 *.config.json
 toilet-dev-docker/mongo/data
 toilet-dev-docker/redis/cache
