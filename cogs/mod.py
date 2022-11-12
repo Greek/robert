@@ -63,7 +63,6 @@ class Mod(commands.Cog):
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.guild_id = 932369210611494982
         self.redis: Redis = Redis.from_url(
             url=os.environ.get("REDIS_URL"), decode_responses=True
         )
@@ -81,12 +80,13 @@ class Mod(commands.Cog):
         if msg["data"].startswith("mute"):
             try:
                 data = msg["data"].split(":")
+
                 guild = self.bot.get_guild(int(data[2]))
                 member = guild.get_member(int(data[1]))
 
                 try:
                     res = await self.bot.prisma.guildconfiguration.find_unique(
-                        where={"id": self.guild_id}
+                        where={"id": guild.id}
                     )
                     role = guild.get_role(res.mute_role)
                 except:
@@ -123,8 +123,10 @@ class Mod(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_channel_create(self, channel: nextcord.TextChannel):
         try:
-            res = self.bot.guild_config.find_one({"_id": channel.guild.id})
-            role = channel.guild.get_role(int(res["muteRole"]))
+            res = await self.bot.prisma.guildconfiguration.find_unique(
+                where={"id": channel.guild.id}
+            )
+            role = channel.guild.get_role(res.mute_role)
             await channel.set_permissions(
                 role,
                 send_messages=False,
@@ -138,8 +140,10 @@ class Mod(commands.Cog):
         mute_key = await self.redis.get(f"mute:{member.id}:{member.guild.id}")
         if mute_key is not None:
             try:
-                res = self.bot.guild_config.find_one({"_id": member.guild.id})
-                role = member.guild.get_role(res["muteRole"])
+                res = await self.bot.prisma.guildconfiguration.find_unique(
+                    where={"id": member.guild.id}
+                )
+                role = member.guild.get_role(res.mute_role)
             except:
                 return
 
@@ -254,7 +258,7 @@ class Mod(commands.Cog):
 
             try:
                 role = ctx.guild.get_role(res.mute_role)
-            except AttributeError:
+            except:
                 role = await ctx.guild.create_role(name="Muted")
                 role.permissions.send_messages = False
                 channels = ctx.guild.channels

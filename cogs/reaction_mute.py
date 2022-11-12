@@ -20,7 +20,6 @@ class Reaction_Mute(commands.Cog):
 
     def __init__(self, bot: Bot):
         self.bot = bot
-        self.guild_id = 932369210611494982
         self.redis: Redis = Redis.from_url(
             url=os.environ.get("REDIS_URL"), decode_responses=True
         )
@@ -43,7 +42,7 @@ class Reaction_Mute(commands.Cog):
 
                 try:
                     res = await self.bot.prisma.guildconfiguration.find_unique(
-                        where={"id": self.guild_id}
+                        where={"id": guild.id}
                     )
                     role = guild.get_role(res.reaction_mute_role)
                 except:
