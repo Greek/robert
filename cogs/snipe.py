@@ -3,12 +3,13 @@ from nextcord.ext import commands
 
 from utils import default
 from utils.default import translate as _
+from utils.data import Bot
 
 
 class Snipe(commands.Cog):
     """Catch any previously deleted messages. :eyes:"""
 
-    def __init__(self, bot):
+    def __init__(self, bot: Bot):
         self.bot = bot
         self.snipe_message = {}
         self.snipe_message_old = {}
@@ -37,12 +38,11 @@ class Snipe(commands.Cog):
     @commands.command(name="snipe", aliases=["s"], description=_("cmds.snipe.desc"))
     async def get_last_deleted_message(self, ctx: commands.Context):
         try:
-            embed = default.branded_embed(
+            embed = nextcord.Embed(
                 description=str(self.snipe_message[ctx.channel.id].content)
                 if self.snipe_message[ctx.channel.id].content
                 else "",
-                color=nextcord.Embed.Empty,
-                inline=True,
+                color=None,
             )
 
             embed.set_author(
@@ -60,16 +60,17 @@ class Snipe(commands.Cog):
             return await ctx.send(embed=embed)
         except KeyError:
             return await ctx.send(_("cmds.snipe.failed"))
+        except Exception as error:
+            await self.bot.create_error_log(ctx, error)
 
     @commands.command(
         name="editsnipe", aliases=["es"], description=_("cmds.snipe.desc")
     )
     async def get_last_edited_message(self, ctx: commands.Context):
         try:
-            embed = default.branded_embed(
+            embed = nextcord.Embed(
                 description=str(self.snipe_message_old[ctx.channel.id].content),
-                color=nextcord.Embed.Empty,
-                inline=True,
+                color=None,
             )
 
             embed.set_author(

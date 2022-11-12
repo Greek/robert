@@ -1,7 +1,5 @@
 {
-  "owners": [
-    403308385539194880
-  ],
+  "owners": [403308385539194880],
   "emojis": {
     "check": "<:check:954163199446499389>",
     "fail": "<:red_tick:954499768124583947>"
@@ -9,6 +7,6 @@
   "playing": ".help",
   "playing_type": "",
   "status": "dnd",
-  "error_reporting": "1040442334460006460",
+  "error_reporting": "1030886659757195334",
   "guild_log": "1031364215673458768"
 }
