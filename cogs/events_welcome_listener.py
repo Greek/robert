@@ -20,7 +20,7 @@ class EventsWelcomeListener(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member: nextcord.Member):
         try:
-            res = await self.bot.prisma.guildconfiguration.find_unique(
+            res = await self.bot.prisma.guild_config.find_unique(
                 where={"id": member.guild.id}
             )
             parsed_message = (

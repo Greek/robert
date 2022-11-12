@@ -28,7 +28,7 @@ class Log_Configuration(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def _message_set_logs(self, ctx: commands.Context, channel: TextChannel):
         try:
-            await self.bot.prisma.guildconfiguration.upsert(
+            await self.bot.prisma.guild_config.upsert(
                 where={"id": ctx.guild.id},
                 data={
                     "create": {
@@ -163,7 +163,7 @@ class Log_Configuration(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def clear_message_logs(self, ctx):
         try:
-            await self.bot.prisma.guildconfiguration.upsert(
+            await self.bot.prisma.guild_config.upsert(
                 where={"id": ctx.guild.id},
                 data={
                     "create": {

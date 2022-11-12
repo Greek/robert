@@ -9,7 +9,7 @@ generator client {
   provider = "prisma-client-py"
 }
 
-model GuildConfiguration {
+model guild_config {
   id                     BigInt   @id // Guild ID
   message_log_channel_id BigInt?
   // message_log_ignore_list BigInt[] Handled in Mongo.
@@ -20,8 +20,19 @@ model GuildConfiguration {
   reaction_mute_role     BigInt?
   image_mute_role        BigInt?
   color_enabled          Boolean?
+
+  @@map("GuildConfiguration")
 }
 
-model ToiletGuild {
-  id BigInt @id
+enum word_filter_action {
+  MUTE
+  KICK
+  BAN
+}
+
+model word_filter {
+  id       String             @id @default(cuid())
+  guild_id BigInt // Cannot use Guild IDs as regular IDs. IDs have to be unique.
+  word     String
+  action   word_filter_action @default(MUTE)
 }

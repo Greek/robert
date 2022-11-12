@@ -18,7 +18,7 @@ class Messages(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self, message: nextcord.Message):
         try:
-            res = await self.bot.prisma.guildconfiguration.find_unique(
+            res = await self.bot.prisma.guild_config.find_unique(
                 where={"id": message.guild.id}
             )
             mongo_res = await self.bot.guild_config.find_one({"_id": message.guild.id})
@@ -75,7 +75,7 @@ class Messages(commands.Cog):
             if message.content == new_message.content:
                 return
 
-            res = await self.bot.prisma.guildconfiguration.find_unique(
+            res = await self.bot.prisma.guild_config.find_unique(
                 where={"id": message.guild.id}
             )
             mongo_res = await self.bot.guild_config.find_one({"_id": message.guild.id})

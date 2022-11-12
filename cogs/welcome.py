@@ -23,7 +23,7 @@ class Welcome(commands.Cog):
         self, ctx, channel: nextcord.TextChannel, *, message: str
     ):
         try:
-            await self.bot.prisma.guildconfiguration.upsert(
+            await self.bot.prisma.guild_config.upsert(
                 where={"id": ctx.guild.id},
                 data={
                     "create": {
@@ -56,7 +56,7 @@ class Welcome(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def clear_welcome_message(self, ctx: commands.Context):
         try:
-            await self.bot.prisma.guildconfiguration.upsert(
+            await self.bot.prisma.guild_config.upsert(
                 where={"id": ctx.guild.id},
                 data={
                     "create": {

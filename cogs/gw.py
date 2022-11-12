@@ -105,9 +105,7 @@ class Giveaways(commands.Cog):
         def check(message):
             return message.author == ctx.author
 
-        res = await self.bot.prisma.guildconfiguration.find_first(
-            where={"id": ctx.guild.id}
-        )
+        res = await self.bot.prisma.guild_config.find_first(where={"id": ctx.guild.id})
 
         if not res.giveaway_channel:
             return await ctx.send("Please provide a giveaway channel in the config!")
@@ -195,7 +193,7 @@ class Giveaways(commands.Cog):
             if channel is None:
                 return await ctx.send(_("cmds.config.giveaway.set.not_found"))
 
-            await self.bot.prisma.guildconfiguration.upsert(
+            await self.bot.prisma.guild_config.upsert(
                 where={"id": ctx.guild.id},
                 data={
                     "create": {"id": ctx.guild.id, "giveaway_channel": channel.id},
@@ -218,7 +216,7 @@ class Giveaways(commands.Cog):
     @commands.bot_has_guild_permissions(manage_channels=True)
     async def clear_giveaway_channel(self, ctx: commands.Context):
         try:
-            await self.bot.prisma.guildconfiguration.upsert(
+            await self.bot.prisma.guild_config.upsert(
                 where={"id": ctx.guild.id},
                 data={
                     "create": {"id": ctx.guild.id, "giveaway_channel": None},

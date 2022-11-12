@@ -30,7 +30,7 @@ class Color(commands.Cog):
     async def _color_changer(self, ctx: commands.Context, color: nextcord.Colour):
         """Changes the user color if module is enabled."""
         try:
-            res = await self.bot.prisma.guildconfiguration.find_unique(
+            res = await self.bot.prisma.guild_config.find_unique(
                 where={"id": ctx.guild.id}
             )
 

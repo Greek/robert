@@ -85,7 +85,7 @@ class Mod(commands.Cog):
                 member = guild.get_member(int(data[1]))
 
                 try:
-                    res = await self.bot.prisma.guildconfiguration.find_unique(
+                    res = await self.bot.prisma.guild_config.find_unique(
                         where={"id": guild.id}
                     )
                     role = guild.get_role(res.mute_role)
@@ -123,7 +123,7 @@ class Mod(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_channel_create(self, channel: nextcord.TextChannel):
         try:
-            res = await self.bot.prisma.guildconfiguration.find_unique(
+            res = await self.bot.prisma.guild_config.find_unique(
                 where={"id": channel.guild.id}
             )
             role = channel.guild.get_role(res.mute_role)
@@ -140,7 +140,7 @@ class Mod(commands.Cog):
         mute_key = await self.redis.get(f"mute:{member.id}:{member.guild.id}")
         if mute_key is not None:
             try:
-                res = await self.bot.prisma.guildconfiguration.find_unique(
+                res = await self.bot.prisma.guild_config.find_unique(
                     where={"id": member.guild.id}
                 )
                 role = member.guild.get_role(res.mute_role)
@@ -252,7 +252,7 @@ class Mod(commands.Cog):
                 return
 
             existing_mute = await self.redis.get(f"mute:{member.id}:{ctx.guild.id}")
-            res = await self.bot.prisma.guildconfiguration.find_unique(
+            res = await self.bot.prisma.guild_config.find_unique(
                 where={"id": ctx.guild.id}
             )
 
@@ -265,7 +265,7 @@ class Mod(commands.Cog):
                 for channel in channels:
                     await channel.set_permissions(role, send_messages=False)
 
-                await self.bot.prisma.guildconfiguration.upsert(
+                await self.bot.prisma.guild_config.upsert(
                     where={"id": ctx.guild.id},
                     data={
                         "create": {"id": ctx.guild.id, "mute_role": role.id},
@@ -280,7 +280,7 @@ class Mod(commands.Cog):
                 for channel in channels:
                     await channel.set_permissions(role, send_messages=False)
 
-                await self.bot.prisma.guildconfiguration.upsert(
+                await self.bot.prisma.guild_config.upsert(
                     where={"id": ctx.guild.id},
                     data={
                         "create": {"id": ctx.guild.id, "mute_role": role.id},
@@ -359,7 +359,7 @@ class Mod(commands.Cog):
                     )
                 )
 
-            res = await self.bot.prisma.guildconfiguration.find_unique(
+            res = await self.bot.prisma.guild_config.find_unique(
                 where={"id": ctx.guild.id}
             )
             try:

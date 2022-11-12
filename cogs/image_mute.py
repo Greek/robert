@@ -37,7 +37,7 @@ class Image_Mute(commands.Cog):
                 member = guild.get_member(int(data[1]))
 
                 try:
-                    res = await self.bot.prisma.guildconfiguration.find_unique(
+                    res = await self.bot.prisma.guild_config.find_unique(
                         where={"id": guild.id}
                     )
                     role = guild.get_role(res.image_mute_role)
@@ -75,7 +75,7 @@ class Image_Mute(commands.Cog):
     @commands.Cog.listener()
     async def on_guild_channel_create(self, channel: nextcord.TextChannel):
         try:
-            res = await self.bot.prisma.guildconfiguration.find_unique(
+            res = await self.bot.prisma.guild_config.find_unique(
                 where={"id": channel.guild.id}
             )
             role = channel.guild.get_role(res.image_mute_role)
@@ -94,7 +94,7 @@ class Image_Mute(commands.Cog):
         reaction_mute_key = await self.redis.get(f"imute:{member.id}:{member.guild.id}")
         if reaction_mute_key is not None:
             try:
-                res = await self.bot.prisma.guildconfiguration.find_unique(
+                res = await self.bot.prisma.guild_config.find_unique(
                     where={"id": member.guild.id}
                 )
                 role = member.guild.get_role(res.image_mute_role)
@@ -120,7 +120,7 @@ class Image_Mute(commands.Cog):
                 return
 
             existing_mute = await self.redis.get(f"imute:{member.id}:{ctx.guild.id}")
-            res = await self.bot.prisma.guildconfiguration.find_unique(
+            res = await self.bot.prisma.guild_config.find_unique(
                 where={"id": ctx.guild.id}
             )
 
@@ -135,7 +135,7 @@ class Image_Mute(commands.Cog):
                         role, attach_files=False, embed_links=False
                     )
 
-                await self.bot.prisma.guildconfiguration.upsert(
+                await self.bot.prisma.guild_config.upsert(
                     where={"id": ctx.guild.id},
                     data={
                         "create": {"id": ctx.guild.id, "image_mute_role": role.id},
@@ -152,7 +152,7 @@ class Image_Mute(commands.Cog):
                         role, attach_files=False, embed_links=False
                     )
 
-                await self.bot.prisma.guildconfiguration.upsert(
+                await self.bot.prisma.guild_config.upsert(
                     where={"id": ctx.guild.id},
                     data={
                         "create": {"id": ctx.guild.id, "image_mute_role": role.id},
@@ -231,7 +231,7 @@ class Image_Mute(commands.Cog):
                     )
                 )
 
-            res = await self.bot.prisma.guildconfiguration.find_unique(
+            res = await self.bot.prisma.guild_config.find_unique(
                 where={"id": ctx.guild.id}
             )
             try:
