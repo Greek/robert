@@ -299,7 +299,7 @@ class Mod(commands.Cog):
                 await member.add_roles(
                     role,
                     reason=f"Muted by {ctx.author}"
-                    if isinstance(ctx, commands.Context)
+                    if isinstance(ctx, (commands.Context, nextcord.Message))
                     else f"Muted by {ctx.user}",
                 )
             except nextcord.errors.Forbidden:
@@ -314,6 +314,10 @@ class Mod(commands.Cog):
 
             if parsed_duration is None:
                 await self.redis.set(f"mute:{member.id}:{ctx.guild.id}", "Muted")
+
+                if isinstance(ctx, nextcord.Message):
+                    return  # Can't send a message to a... Message..
+
                 await ctx.send(
                     embed=success_embed_ephemeral(
                         _("cmds.mute.res.muted.forever", person=member.mention)
@@ -325,6 +329,10 @@ class Mod(commands.Cog):
                     parsed_duration,
                     "Muted",
                 )
+
+                if isinstance(ctx, nextcord.Message):
+                    return  # Can't send a message to a... Message..
+
                 return await ctx.send(
                     embed=success_embed_ephemeral(
                         _(
