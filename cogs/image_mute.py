@@ -227,7 +227,7 @@ class Image_Mute(commands.Cog):
             if mute is None:
                 return await ctx.send(
                     embed=warn_embed_ephemeral(
-                        _("cmds.iumnute.res.invalid.not_muted", person=member.mention)
+                        _("cmds.iunmute.res.invalid.not_muted", person=member.mention)
                     )
                 )
 
@@ -264,7 +264,7 @@ class Image_Mute(commands.Cog):
             )
             await ctx.send(
                 embed=success_embed_ephemeral(
-                    _("cmds.iumnute.res.success", person=member.mention)
+                    _("cmds.iunmute.res.success", person=member.mention)
                 )
             )
         except Exception as error:

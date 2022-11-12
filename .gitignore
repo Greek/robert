@@ -36,10 +36,12 @@ logs/*.log
 .idea
 media/*
 .env
+.*.env
 
 # other
 node_modules
 config.json
+*.config.json
 toilet-dev-docker/mongo/data
 toilet-dev-docker/redis/cache
 toilet-dev-docker/postgres/data
