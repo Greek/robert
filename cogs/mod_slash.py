@@ -1,7 +1,10 @@
+import os
+
 import nextcord
 from discord import Interaction
 from nextcord import SlashOption
 from nextcord.ext import application_checks, commands
+from redis.asyncio import Redis
 
 from cogs.mod import Mod
 from utils.data import Bot
@@ -11,6 +14,9 @@ from utils.default import translate as _
 class ModSlash(commands.Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
+        self.redis: Redis = Redis.from_url(
+            url=os.environ.get("REDIS_URL"), decode_responses=True
+        )
 
     @nextcord.slash_command(name="kick", description=_("cmds.kick.desc"))
     @application_checks.has_guild_permissions(kick_members=True)
@@ -72,13 +78,13 @@ class ModSlash(commands.Cog):
     @application_checks.bot_has_guild_permissions(manage_roles=True)
     async def _mute(
         self,
-        ctx,
+        ctx: nextcord.Interaction,
         member: nextcord.Member = SlashOption(
             name="person", description="Person to mute", required=True
         ),
-        duration_in_seconds: int = SlashOption(
-            name="duration_in_seconds",
-            description="The amount of time to mute the person (must be in seconds)",
+        duration: str = SlashOption(
+            name="duration",
+            description="The amount of time to mute the person",
             required=False,
         ),
     ):
@@ -87,10 +93,10 @@ class ModSlash(commands.Cog):
                 context=self,
                 ctx=ctx,
                 member=member,
-                duration_in_seconds=duration_in_seconds,
+                duration=duration,
             )
-        except:
-            pass
+        except Exception as error:
+            await self.bot.create_error_log(ctx, error)
 
     @nextcord.slash_command(name="unmute", description=_("cmds.unmute.desc"))
     @application_checks.has_guild_permissions(manage_messages=True)
@@ -104,8 +110,8 @@ class ModSlash(commands.Cog):
     ):
         try:
             return await Mod.unmute_member(context=self, ctx=ctx, member=member)
-        except:
-            pass
+        except Exception as error:
+            await self.bot.create_error_log(ctx, error)
 
 
 def setup(bot):
