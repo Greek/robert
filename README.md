@@ -24,9 +24,9 @@ This will make sure that the bot is able to access the database through Prisma.
 2. Copy `config.json.example` to `config.json`
    and change [appropriate values][values].
 3. Copy `.env.example` to `.env` and change the values.
-4. Run this docker command:
+4. Run this docker command (REPLACE THE SOURCE IN THE MOUNT WITH THE PATH TO THE CONFIG JSON FILE!):
 ```sh
-$ docker run -it -d --env-file ./.env --name toilet ghcr.io/greek/toilet-bot:master
+$ docker run -it -d --env-file ./.env --mount type=bind,source=<your relative config path>,target=/usr/src/app/config.json --name toilet ghcr.io/greek/toilet-bot:master
 ```
 
 ## how to run (bot)
