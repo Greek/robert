@@ -31,11 +31,8 @@ from redis.asyncio import Redis
 from utils import default, perms
 from utils.data import Bot
 from utils.default import translate as _
-from utils.embed import (
-    failed_embed_ephemeral,
-    success_embed_ephemeral,
-    warn_embed_ephemeral,
-)
+from utils.embed import (failed_embed_ephemeral, success_embed_ephemeral,
+                         warn_embed_ephemeral)
 
 dot_cfg = dotenv_values(".env")
 load_dotenv(".env")
@@ -242,7 +239,7 @@ class Mod(commands.Cog):
     @commands.bot_has_guild_permissions(manage_roles=True)
     @commands.guild_only()
     async def mute_member(
-        self, ctx: commands.Context, member: nextcord.Member, *, duration: str = None
+        self, ctx: commands.Context, member: nextcord.Member, *, duration: str
     ):
         try:
             if isinstance(ctx, nextcord.Interaction):
@@ -305,7 +302,8 @@ class Mod(commands.Cog):
             except nextcord.errors.Forbidden:
                 return
 
-            parsed_duration = timeparse(duration) if duration is not None else None
+            parsed_duration = timeparse(duration)
+            print(parsed_duration)
 
             # if parsed_duration is not None and parsed_duration or int(duration) >= 1209600:
             #     return await ctx.send(

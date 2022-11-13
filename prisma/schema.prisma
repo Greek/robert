@@ -36,4 +36,5 @@ model word_filter {
   guild_id BigInt // Cannot use Guild IDs as regular IDs. IDs have to be unique.
   word     String
   action   word_filter_action @default(NONE)
+  duration String?
 }
