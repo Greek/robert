@@ -32,6 +32,7 @@ import uuid
 import asyncpg
 import motor.motor_asyncio
 import nextcord
+from nanoid import generate as _generate
 from nextcord import Interaction
 from nextcord.ext.commands import AutoShardedBot, Context, MinimalHelpCommand
 
@@ -42,6 +43,12 @@ from utils.default import traceback_maker
 from utils.default import translate as _
 
 do_not_load = ("cogs.interactives", "cogs.gw", "cogs.mod")
+
+
+def generate(size: int) -> str:
+    return _generate(
+        "1234567890AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz", size
+    )
 
 
 class Bot(AutoShardedBot):
