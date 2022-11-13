@@ -8,11 +8,7 @@ from redis.asyncio import Redis
 from utils import perms
 from utils.data import Bot
 from utils.default import translate as _
-from utils.embed import (
-    failed_embed_ephemeral,
-    success_embed_ephemeral,
-    warn_embed_ephemeral,
-)
+from utils.embed import success_embed_ephemeral, warn_embed_ephemeral
 
 
 class Reaction_Mute(commands.Cog):

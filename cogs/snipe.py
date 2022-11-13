@@ -1,9 +1,8 @@
 import nextcord
 from nextcord.ext import commands
 
-from utils import default
-from utils.default import translate as _
 from utils.data import Bot
+from utils.default import translate as _
 
 
 class Snipe(commands.Cog):
