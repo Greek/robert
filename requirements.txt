@@ -1,4 +1,5 @@
 nextcord
+nextcord-ext-menus
 python-i18n[yaml]
 python-dotenv
 motor
