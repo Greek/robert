@@ -23,6 +23,9 @@ class EventsWelcomeListener(commands.Cog):
             res = await self.bot.prisma.guild_config.find_unique(
                 where={"id": member.guild.id}
             )
+            if res is None:
+                return
+
             parsed_message = (
                 res.welcome_greeting.replace("@everyone", "everyone")
                 .replace("@here", "here")
