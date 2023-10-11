@@ -1,6 +1,6 @@
 # bot
 
-A epository holding all the code responsible for the Robert bot, API and dash.
+A repository holding all the code responsible for the Robert bot, API and dash.
 
 # database setup
 
