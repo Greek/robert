@@ -57,7 +57,7 @@ class Bot(AutoShardedBot):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.logger = logging.getLogger("nextcord")
-        self.logger.name = "toilet"
+        self.logger.name = "robert"
         self.logger.setLevel(logging.DEBUG) if os.environ.get(
             "DEBUG"
         ) is True else self.logger.setLevel(logging.INFO)
