@@ -5,9 +5,7 @@ from cogs.color import Color
 from utils.data import Bot
 
 
-class EventsUssy(commands.Cog):
-    """The description for EventsUssy goes here."""
-
+class EventColorChanger(commands.Cog):
     def __init__(self, bot: Bot):
         self.bot = bot
 
